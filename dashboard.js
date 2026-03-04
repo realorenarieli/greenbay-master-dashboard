@@ -103,6 +103,8 @@ var SLIDE_TITLES = [
   "The Problem",
   "Market Opportunity",
   "Why Greenbay Wins",
+  "Traction",
+  "Team",
   "Unit Economics",
   "Growth Trajectory",
   "Validation & Tailwinds",
@@ -657,7 +659,373 @@ function SlideCompetitive() {
   );
 }
 
-// ============ SLIDE 5: UNIT ECONOMICS ============
+// ============ SLIDE 5: TRACTION ============
+function SlideTraction() {
+  var tractionMetrics = [
+    { label: "Revenue Impact", value: "+13%", desc: "Revenue increase for pilot operators", color: COLORS.primary, icon: "\u2197" },
+    { label: "On-Time Performance", value: "+21%", desc: "Improvement in schedule adherence", color: COLORS.success, icon: "\u2713" },
+    { label: "Issue Awareness", value: "54 min", desc: "Earlier detection of operational issues", color: COLORS.accent, icon: "\u26A1" }
+  ];
+
+  var testimonials = [
+    { quote: "First time the screen shows something that makes sense", author: "Mark", role: "Depot Engineer" },
+    { quote: "After few minutes of use I managed to find issues that I had no chance identifying", author: "Ian", role: "Performance Manager" },
+    { quote: "This is what charging companies should give us if they ever listened", author: "Alistair", role: "Bus Operations Owner" }
+  ];
+
+  var milestones = [
+    { period: "Q1 2026", event: "2 paid pilots kickoff", status: "active" },
+    { period: "Q2 2026", event: "First US pilot, commercial agreements", status: "upcoming" },
+    { period: "Q3\u2013Q4 2026", event: "First recurring revenue, 7 POs secured", status: "upcoming" }
+  ];
+
+  return createElement("div", { style: S.slide },
+    createElement("h2", { style: S.slideTitle }, "Traction"),
+    createElement("p", { style: S.slideSubtitle },
+      "2 paid pilots agreed. Real operator feedback from depot-level testing."
+    ),
+    // Traction metrics row
+    createElement("div", {
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 36 }
+    },
+      tractionMetrics.map(function(m, i) {
+        return createElement("div", {
+          key: i,
+          style: {
+            background: "linear-gradient(135deg, " + COLORS.card + ", " + COLORS.cardHover + ")",
+            borderRadius: 16,
+            padding: "36px 28px",
+            textAlign: "center",
+            border: "1px solid " + m.color + "33"
+          }
+        },
+          createElement("div", {
+            style: { fontSize: 28, marginBottom: 8 }
+          }, m.icon),
+          createElement("div", {
+            style: {
+              fontSize: 48,
+              fontWeight: 700,
+              fontFamily: "'DM Serif Display', serif",
+              color: m.color,
+              lineHeight: 1.1,
+              marginBottom: 8
+            }
+          }, m.value),
+          createElement("div", {
+            style: { fontSize: 16, fontWeight: 600, color: COLORS.text, marginBottom: 6 }
+          }, m.label),
+          createElement("div", {
+            style: { fontSize: 13, color: COLORS.textMuted }
+          }, m.desc)
+        );
+      })
+    ),
+    // Testimonials
+    createElement("div", {
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 36 }
+    },
+      testimonials.map(function(t, i) {
+        return createElement("div", {
+          key: i,
+          style: {
+            background: COLORS.card,
+            borderRadius: 12,
+            padding: "24px 22px",
+            borderLeft: "3px solid " + COLORS.primary,
+            position: "relative"
+          }
+        },
+          createElement("div", {
+            style: {
+              fontSize: 36,
+              color: COLORS.primary,
+              opacity: 0.3,
+              position: "absolute",
+              top: 12,
+              left: 18,
+              fontFamily: "Georgia, serif",
+              lineHeight: 1
+            }
+          }, "\u201C"),
+          createElement("div", {
+            style: {
+              fontSize: 14,
+              fontStyle: "italic",
+              color: COLORS.text,
+              lineHeight: 1.6,
+              marginBottom: 14,
+              paddingTop: 8
+            }
+          }, "\u201C" + t.quote + "\u201D"),
+          createElement("div", {
+            style: { fontSize: 13, fontWeight: 600, color: COLORS.primary }
+          }, t.author),
+          createElement("div", {
+            style: { fontSize: 12, color: COLORS.textMuted }
+          }, t.role)
+        );
+      })
+    ),
+    // Milestones timeline
+    createElement("div", {
+      style: {
+        background: COLORS.card,
+        borderRadius: 12,
+        padding: "24px 32px"
+      }
+    },
+      createElement("div", {
+        style: { fontSize: 14, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 20 }
+      }, "24-Month Milestones"),
+      createElement("div", {
+        style: { display: "flex", gap: 0, position: "relative" }
+      },
+        // Connecting line
+        createElement("div", {
+          style: {
+            position: "absolute",
+            top: 10,
+            left: 10,
+            right: 10,
+            height: 2,
+            background: "linear-gradient(90deg, " + COLORS.primary + ", " + COLORS.secondary + ")",
+            zIndex: 0
+          }
+        }),
+        milestones.map(function(m, i) {
+          var isActive = m.status === "active";
+          return createElement("div", {
+            key: i,
+            style: {
+              flex: 1,
+              textAlign: "center",
+              position: "relative",
+              zIndex: 1
+            }
+          },
+            createElement("div", {
+              style: {
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                background: isActive ? COLORS.primary : COLORS.card,
+                border: "2px solid " + (isActive ? COLORS.primary : COLORS.secondary),
+                margin: "0 auto 12px",
+                boxShadow: isActive ? "0 0 12px " + COLORS.primary + "66" : "none"
+              }
+            }),
+            createElement("div", {
+              style: {
+                fontSize: 14,
+                fontWeight: 700,
+                color: isActive ? COLORS.primary : COLORS.text,
+                fontFamily: "'DM Mono', monospace",
+                marginBottom: 4
+              }
+            }, m.period),
+            createElement("div", {
+              style: { fontSize: 13, color: COLORS.textMuted, maxWidth: 200, margin: "0 auto" }
+            }, m.event)
+          );
+        })
+      )
+    )
+  );
+}
+
+// ============ SLIDE 6: TEAM ============
+function SlideTeam() {
+  var team = [
+    {
+      name: "Oren Arieli",
+      role: "CEO",
+      initials: "OA",
+      color: COLORS.primary,
+      background: "10+ years in mobility operations software",
+      prev: "Ex-Optibus & Via",
+      expertise: "Fleet operations, product strategy, market development"
+    },
+    {
+      name: "Shira Golan",
+      role: "Co-CEO",
+      initials: "SG",
+      color: COLORS.secondary,
+      background: "2 successful exits, R&D scaling expert",
+      prev: "Fortune 500 partnerships",
+      expertise: "Business development, enterprise sales, strategic partnerships"
+    },
+    {
+      name: "Daniel Odesser",
+      role: "CTO",
+      initials: "DO",
+      color: COLORS.accent,
+      background: "Second-time founder, high-reliability platforms",
+      prev: "Ex-Optibus & Auto Fleet",
+      expertise: "Platform architecture, real-time systems, infrastructure"
+    }
+  ];
+
+  var investmentAlloc = [
+    { label: "R&D & Product", pct: 65, color: COLORS.primary },
+    { label: "Operations & Overhead", pct: 18, color: COLORS.secondary },
+    { label: "Buffer", pct: 9, color: COLORS.textDim },
+    { label: "Sales & BD", pct: 8, color: COLORS.accent }
+  ];
+
+  return createElement("div", { style: S.slide },
+    createElement("h2", { style: S.slideTitle }, "Team"),
+    createElement("p", { style: S.slideSubtitle },
+      "Deep domain expertise in fleet operations, mobility software, and enterprise scale."
+    ),
+    // Team cards
+    createElement("div", {
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28, marginBottom: 40 }
+    },
+      team.map(function(t, i) {
+        return createElement("div", {
+          key: i,
+          style: {
+            background: "linear-gradient(135deg, " + COLORS.card + ", " + COLORS.cardHover + ")",
+            borderRadius: 16,
+            padding: "36px 28px",
+            textAlign: "center",
+            border: "1px solid " + t.color + "33",
+            position: "relative",
+            overflow: "hidden"
+          }
+        },
+          // Decorative gradient top bar
+          createElement("div", {
+            style: {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 3,
+              background: "linear-gradient(90deg, transparent, " + t.color + ", transparent)"
+            }
+          }),
+          // Avatar circle with initials
+          createElement("div", {
+            style: {
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              background: t.color + "22",
+              border: "2px solid " + t.color,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+              fontSize: 24,
+              fontWeight: 700,
+              fontFamily: "'DM Serif Display', serif",
+              color: t.color
+            }
+          }, t.initials),
+          createElement("div", {
+            style: { fontSize: 20, fontWeight: 700, color: COLORS.text, marginBottom: 4 }
+          }, t.name),
+          createElement("div", {
+            style: {
+              fontSize: 13,
+              fontWeight: 600,
+              color: t.color,
+              textTransform: "uppercase",
+              letterSpacing: "1.5px",
+              marginBottom: 16
+            }
+          }, t.role),
+          createElement("div", {
+            style: {
+              fontSize: 14,
+              color: COLORS.text,
+              marginBottom: 8,
+              lineHeight: 1.5
+            }
+          }, t.background),
+          createElement("div", {
+            style: {
+              fontSize: 13,
+              color: COLORS.primary,
+              fontWeight: 600,
+              marginBottom: 10,
+              fontFamily: "'DM Mono', monospace"
+            }
+          }, t.prev),
+          createElement("div", {
+            style: {
+              fontSize: 12,
+              color: COLORS.textMuted,
+              lineHeight: 1.5,
+              borderTop: "1px solid " + COLORS.border,
+              paddingTop: 12,
+              marginTop: 4
+            }
+          }, t.expertise)
+        );
+      })
+    ),
+    // Investment allocation
+    createElement("div", {
+      style: {
+        background: COLORS.card,
+        borderRadius: 12,
+        padding: "28px 32px"
+      }
+    },
+      createElement("div", {
+        style: { fontSize: 14, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 20 }
+      }, "Use of Funds \u2014 $3M Raise"),
+      // Stacked bar
+      createElement("div", {
+        style: { display: "flex", borderRadius: 8, overflow: "hidden", height: 32, marginBottom: 20 }
+      },
+        investmentAlloc.map(function(a, i) {
+          return createElement("div", {
+            key: i,
+            style: {
+              width: a.pct + "%",
+              background: a.color,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 11,
+              fontWeight: 700,
+              color: "#fff",
+              transition: "opacity 0.2s"
+            },
+            title: a.label + ": " + a.pct + "%"
+          }, a.pct >= 12 ? a.pct + "%" : "");
+        })
+      ),
+      // Legend
+      createElement("div", {
+        style: { display: "flex", gap: 28, flexWrap: "wrap" }
+      },
+        investmentAlloc.map(function(a, i) {
+          return createElement("div", {
+            key: i,
+            style: { display: "flex", alignItems: "center", gap: 8 }
+          },
+            createElement("div", {
+              style: { width: 10, height: 10, borderRadius: 2, background: a.color }
+            }),
+            createElement("span", {
+              style: { fontSize: 13, color: COLORS.text }
+            }, a.label),
+            createElement("span", {
+              style: { fontSize: 13, color: COLORS.textMuted, fontFamily: "'DM Mono', monospace" }
+            }, a.pct + "%")
+          );
+        })
+      )
+    )
+  );
+}
+
+// ============ SLIDE 7: UNIT ECONOMICS ============
 function SlideUnitEcon() {
   var cm = ue.core_metrics || {};
   var benchmarks = ue.benchmarks || {};
@@ -1207,6 +1575,8 @@ function App() {
     SlideProblem,
     SlideMarket,
     SlideCompetitive,
+    SlideTraction,
+    SlideTeam,
     SlideUnitEcon,
     SlideGrowth,
     SlideValidation,
