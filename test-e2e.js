@@ -238,6 +238,29 @@ async function run() {
     assert(appendixText.includes('Fleet Orchestration'), 'Appendix links to Fleet Orchestration');
     assert(appendixText.includes('Fleet Electrification'), 'Appendix links to Fleet Electrification Intel');
 
+    // ── 8b. Why Now slide content ──
+    console.log('\n=== 8b. Why Now Slide Content ===');
+    await clickDot(page, 'Why Now');
+    var whyNowText = await page.textContent('#root');
+
+    // Force card titles
+    assert(whyNowText.includes('Regulatory Mandates'), 'Why Now has "Regulatory Mandates" force card');
+    assert(whyNowText.includes('Fleet Electrification'), 'Why Now has "Fleet Electrification" force card');
+    assert(whyNowText.includes('Agentic AI Wave'), 'Why Now has "Agentic AI Wave" force card');
+    assert(whyNowText.includes('Autonomous Vehicles'), 'Why Now has "Autonomous Vehicles" force card');
+
+    // Stat values
+    assert(whyNowText.includes('4x'), 'Why Now has "4x" EV growth stat');
+    assert(whyNowText.includes('176x'), 'Why Now has "176x" autonomous scale stat');
+    assert(whyNowText.includes('-15%'), 'Why Now has "-15%" diesel decline stat');
+
+    // Convergence year
+    assert(whyNowText.includes('2026'), 'Why Now has "2026" convergence year');
+
+    // Gartner chart renders on this slide
+    var whyNowSvgs = await page.$$('svg.recharts-surface');
+    assert(whyNowSvgs.length >= 1, 'Why Now slide renders Gartner chart (' + whyNowSvgs.length + ' svg found)');
+
     // ── 9. Charts rendered ──
     console.log('\n=== 9. Chart Rendering ===');
 

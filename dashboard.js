@@ -1087,9 +1087,8 @@ function SlideSolution() {
 // ============ SLIDE 4: WHY NOW ============
 function SlideWhyNow() {
   var spas = gartner.spas || [];
-  var ahvData = gartner.ahv_fleet_baseline || [];
 
-  // Build SPA chart data
+  // Build SPA chart data (kept from original)
   var spaYears = [];
   spas.forEach(function(spa) {
     (spa.series || []).forEach(function(pt) {
@@ -1107,77 +1106,287 @@ function SlideWhyNow() {
     return row;
   });
 
-  var tailwinds = [
-    { icon: "\uD83C\uDDEA\uD83C\uDDFA", title: "EU Clean Vehicle Directive", description: "Mandates zero-emission procurement for public fleets. Forced adoption timeline.", color: COLORS.primary },
-    { icon: "\uD83C\uDDFA\uD83C\uDDF8", title: "NA ZEV Mandates", description: "CA + 15 states require zero-emission truck sales by 2035.", color: COLORS.info },
-    { icon: "\uD83E\uDD16", title: "Agentic AI Wave", description: "Gartner: 25% of T&L firms will use agentic AI by 2030. Greenbay is the agentic layer.", color: COLORS.accent },
-    { icon: "\uD83D\uDE9B", title: "AV Fleet Explosion", description: "475K L4+ vehicles by 2030 need the same depot orchestration infrastructure.", color: COLORS.purple }
+  // ── 4 mega-forces ──
+  var forces = [
+    { icon: "\uD83C\uDDEA\uD83C\uDDFA", title: "Regulatory Mandates", stat: "100% ZEV trucks by 2036", sub: "CA ACF Rule", color: COLORS.info },
+    { icon: "\u26A1", title: "Fleet Electrification", stat: "93K \u2192 370K EV trucks/yr", sub: "by 2030", color: COLORS.primary },
+    { icon: "\uD83E\uDD16", title: "Agentic AI Wave", stat: "2% \u2192 25% T&L adoption", sub: "Gartner", color: COLORS.accent },
+    { icon: "\uD83D\uDE9B", title: "Autonomous Vehicles", stat: "2.7K \u2192 475K L4+", sub: "by 2030", color: COLORS.purple }
   ];
 
-  return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "Why Now"),
-    createElement("p", { style: S.slideSubtitle },
-      "Regulatory mandates, technology inflections, and Gartner-validated adoption curves create a narrow window for a platform player to own the orchestration layer."
-    ),
-    // Tailwind cards
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 } },
-      tailwinds.map(function(t, i) {
+  // Force card positions: [top-left, top-right, bottom-left, bottom-right]
+  var forcePos = [
+    { top: 8, left: 2 },
+    { top: 8, left: 72 },
+    { top: 62, left: 2 },
+    { top: 62, left: 72 }
+  ];
+
+  // Beam endpoints (from force card edge → center node)
+  // Each beam: { x1, y1, x2, y2 } in % of the convergence container
+  var centerX = 50, centerY = 44;
+  var beamDefs = [
+    { x1: 24, y1: 20, x2: centerX, y2: centerY },
+    { x1: 76, y1: 20, x2: centerX, y2: centerY },
+    { x1: 24, y1: 74, x2: centerX, y2: centerY },
+    { x1: 76, y1: 74, x2: centerX, y2: centerY }
+  ];
+
+  var vizHeight = 320;
+
+  // ── Keyframes ──
+  var styleTag = createElement("style", null,
+    // Central node breathing glow
+    "@keyframes convergePulse { 0%, 100% { box-shadow: 0 0 30px rgba(0,212,170,0.15), 0 0 60px rgba(0,212,170,0.06); } 50% { box-shadow: 0 0 50px rgba(0,212,170,0.35), 0 0 90px rgba(0,212,170,0.12); } } " +
+    // Dashed orbit ring rotation
+    "@keyframes convergeOrbit { 0% { transform: translate(-50%,-50%) rotate(0deg); } 100% { transform: translate(-50%,-50%) rotate(360deg); } } " +
+    // Streaming dots toward center — horizontal flow
+    "@keyframes convergeStreamLR { 0% { left: 0%; opacity: 0; } 10% { opacity: 0.9; } 85% { opacity: 0.9; } 100% { left: 100%; opacity: 0; } } " +
+    "@keyframes convergeStreamRL { 0% { left: 100%; opacity: 0; } 10% { opacity: 0.9; } 85% { opacity: 0.9; } 100% { left: 0%; opacity: 0; } } " +
+    // Force card drift — subtle float per card
+    "@keyframes forceDrift0 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(2px,-3px); } 66% { transform: translate(-2px,2px); } } " +
+    "@keyframes forceDrift1 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(-3px,2px); } 66% { transform: translate(2px,-2px); } } " +
+    "@keyframes forceDrift2 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(3px,3px); } 66% { transform: translate(-2px,-3px); } } " +
+    "@keyframes forceDrift3 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(-2px,-2px); } 66% { transform: translate(3px,2px); } } " +
+    // Stat card border glow
+    "@keyframes statGlow { 0%, 100% { border-color: rgba(255,255,255,0.06); box-shadow: none; } 50% { border-color: var(--glow-color, rgba(0,212,170,0.35)); box-shadow: 0 0 14px var(--glow-color, rgba(0,212,170,0.12)); } }"
+  );
+
+  // ── ZONE B: Convergence Visual ──
+  // Central pulsing "2026 / WINDOW" node
+  var centralNode = createElement("div", {
+    style: {
+      position: "absolute",
+      top: centerY + "%",
+      left: centerX + "%",
+      transform: "translate(-50%, -50%)",
+      width: 90,
+      height: 90,
+      borderRadius: "50%",
+      background: "radial-gradient(circle, rgba(0,212,170,0.18) 0%, rgba(0,212,170,0.04) 70%)",
+      border: "2px solid rgba(0,212,170,0.5)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      animation: "convergePulse 3s ease-in-out infinite",
+      zIndex: 10
+    }
+  },
+    createElement("div", {
+      style: { fontSize: 22, fontWeight: 800, color: COLORS.primary, letterSpacing: "-1px", lineHeight: 1 }
+    }, "2026"),
+    createElement("div", {
+      style: { fontSize: 9, fontWeight: 700, color: COLORS.primary, letterSpacing: "2px", textTransform: "uppercase", marginTop: 3, opacity: 0.8 }
+    }, "WINDOW")
+  );
+
+  // Rotating dashed orbit ring
+  var orbitRing = createElement("div", {
+    style: {
+      position: "absolute",
+      top: centerY + "%",
+      left: centerX + "%",
+      width: 120,
+      height: 120,
+      borderRadius: "50%",
+      border: "1.5px dashed rgba(0,212,170,0.2)",
+      animation: "convergeOrbit 12s linear infinite",
+      pointerEvents: "none",
+      zIndex: 5
+    }
+  });
+
+  // 4 beam lines + streaming dots
+  var beams = beamDefs.map(function(b, i) {
+    var dx = b.x2 - b.x1;
+    var dy = b.y2 - b.y1;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    var angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    var fc = forces[i].color;
+    // Direction: left cards stream right, right cards stream left
+    var streamAnim = (i === 0 || i === 2) ? "convergeStreamLR" : "convergeStreamRL";
+    return createElement("div", { key: "beam-group-" + i },
+      // Static beam line
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: b.y1 + "%",
+          left: b.x1 + "%",
+          width: len + "%",
+          height: 1.5,
+          background: "linear-gradient(to right, " + fc + "55, " + fc + "18)",
+          transformOrigin: "0 50%",
+          transform: "rotate(" + angle + "deg)",
+          pointerEvents: "none",
+          zIndex: 3
+        }
+      }),
+      // 2 streaming dots per beam
+      [0, 1].map(function(d) {
+        var delay = (i * 0.5 + d * 1.8).toFixed(1);
+        var duration = (2.8 + i * 0.15).toFixed(1);
         return createElement("div", {
-          key: i,
-          style: Object.assign({}, S.card, { padding: 20, borderTop: "3px solid " + t.color })
+          key: "bdot-" + i + "-" + d,
+          style: {
+            position: "absolute",
+            top: "calc(" + b.y1 + "% - 2px)",
+            left: b.x1 + "%",
+            width: len + "%",
+            height: 4,
+            pointerEvents: "none",
+            zIndex: 4
+          }
         },
-          createElement("div", { style: { fontSize: 24, marginBottom: 8 } }, t.icon),
-          createElement("div", { style: { fontSize: 13, fontWeight: 700, color: COLORS.text, marginBottom: 6 } }, t.title),
-          createElement("div", { style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 } }, t.description)
+          createElement("div", {
+            style: {
+              position: "absolute",
+              top: 0,
+              width: 5,
+              height: 5,
+              borderRadius: "50%",
+              background: fc,
+              opacity: 0.8,
+              boxShadow: "0 0 8px " + fc + "88",
+              animation: streamAnim + " " + duration + "s " + delay + "s linear infinite",
+              transform: "rotate(" + angle + "deg)",
+              transformOrigin: "0 50%"
+            }
+          })
         );
       })
-    ),
-    // Charts side by side
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 } },
-      // Gartner SPAs
-      createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "Gartner Strategic Planning Assumptions"),
-        createElement("div", { style: S.chartSubtitle }, "Adoption curves \u2014 Predicts 2026: Transportation"),
-        createElement(ResponsiveContainer, { width: "100%", height: 260 },
-          createElement(LineChart, { data: spaChartData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
-            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
-            createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
-            createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + '%'; } }),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return [v + '%']; } }),
-            createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
-            spas.map(function(spa, i) {
-              return createElement(Line, {
-                key: spa.id,
-                type: "monotone",
-                dataKey: spa.id,
-                stroke: CHART_COLORS[i % CHART_COLORS.length],
-                strokeWidth: 2,
-                dot: false,
-                name: spa.title.length > 25 ? spa.title.substring(0, 23) + '...' : spa.title,
-                connectNulls: true
-              });
-            })
-          )
-        )
+    );
+  });
+
+  // 4 force cards at their positions
+  var forceCards = forces.map(function(f, i) {
+    var p = forcePos[i];
+    var driftDuration = [4.5, 5.0, 4.2, 4.8][i];
+    return createElement("div", {
+      key: "force-" + i,
+      style: {
+        position: "absolute",
+        top: p.top + "%",
+        left: p.left + "%",
+        width: "24%",
+        background: "rgba(13,21,37,0.85)",
+        border: "1px solid " + f.color + "44",
+        borderRadius: 12,
+        padding: "14px 16px",
+        animation: "forceDrift" + i + " " + driftDuration + "s ease-in-out infinite",
+        zIndex: 8
+      }
+    },
+      createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 6 } },
+        createElement("span", { style: { fontSize: 18 } }, f.icon),
+        createElement("span", { style: { fontSize: 12, fontWeight: 700, color: f.color } }, f.title)
       ),
-      // AHV Fleet Projection
-      createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "Autonomous Fleet Projection (2024\u20132035)"),
-        createElement("div", { style: S.chartSubtitle }, "L4+ commercially deployed vehicles (thousands) by region"),
-        createElement(ResponsiveContainer, { width: "100%", height: 260 },
-          createElement(AreaChart, { data: ahvData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
-            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
-            createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
-            createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + 'K'; } }),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return [v + 'K']; } }),
-            createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
-            createElement(Area, { type: "monotone", dataKey: "na_eu_k", stackId: "1", stroke: COLORS.primary, fill: COLORS.primary, fillOpacity: 0.3, name: "NA + EU" }),
-            createElement(Area, { type: "monotone", dataKey: "apac_k", stackId: "1", stroke: COLORS.accent, fill: COLORS.accent, fillOpacity: 0.3, name: "APAC" }),
-            createElement(Area, { type: "monotone", dataKey: "china_k", stackId: "1", stroke: COLORS.danger, fill: COLORS.danger, fillOpacity: 0.3, name: "China" })
-          )
+      createElement("div", { style: { fontSize: 15, fontWeight: 800, color: COLORS.text, marginBottom: 2 } }, f.stat),
+      createElement("div", { style: { fontSize: 10, color: COLORS.textMuted } }, f.sub)
+    );
+  });
+
+  // Full convergence visual container
+  var convergenceVisual = createElement("div", {
+    style: {
+      position: "relative",
+      width: "100%",
+      height: vizHeight,
+      marginBottom: 24
+    }
+  },
+    // Radial glow background
+    createElement("div", {
+      style: {
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: "radial-gradient(ellipse at 50% 45%, rgba(0,212,170,0.04) 0%, transparent 60%)",
+        pointerEvents: "none"
+      }
+    }),
+    centralNode,
+    orbitRing,
+    beams,
+    forceCards
+  );
+
+  // ── ZONE C: Bottom Split ──
+  var statCards = [
+    { value: "4x", label: "EV Truck Sales Growth", sub: "93K to 370K units/yr by 2030", color: COLORS.primary, glowColor: "rgba(0,212,170,0.35)" },
+    { value: "176x", label: "Autonomous Fleet Scale", sub: "2.7K to 475K L4+ vehicles", color: COLORS.purple, glowColor: "rgba(168,85,247,0.35)" },
+    { value: "-15%", label: "Diesel Fleet Decline", sub: "Accelerating fleet turnover", color: COLORS.danger, glowColor: "rgba(239,68,68,0.35)" }
+  ];
+
+  var bottomSection = createElement("div", {
+    style: { display: "grid", gridTemplateColumns: "3fr 2fr", gap: 24 }
+  },
+    // Left: Gartner SPAs LineChart
+    createElement("div", { style: S.chartCard },
+      createElement("div", { style: S.chartTitle }, "Gartner Strategic Planning Assumptions"),
+      createElement("div", { style: S.chartSubtitle }, "Adoption curves \u2014 Predicts 2026: Transportation"),
+      createElement(ResponsiveContainer, { width: "100%", height: 240 },
+        createElement(LineChart, { data: spaChartData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
+          createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
+          createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
+          createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + '%'; } }),
+          createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return [v + '%']; } }),
+          createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
+          spas.map(function(spa, i) {
+            return createElement(Line, {
+              key: spa.id,
+              type: "monotone",
+              dataKey: spa.id,
+              stroke: CHART_COLORS[i % CHART_COLORS.length],
+              strokeWidth: 2,
+              dot: false,
+              name: spa.title.length > 25 ? spa.title.substring(0, 23) + '...' : spa.title,
+              connectNulls: true
+            });
+          })
         )
       )
+    ),
+    // Right: 3 stacked stat cards
+    createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12, justifyContent: "center" } },
+      statCards.map(function(sc, i) {
+        var pulseDelay = (i * 1.2).toFixed(1);
+        return createElement("div", {
+          key: "stat-" + i,
+          style: {
+            background: COLORS.card,
+            borderRadius: 14,
+            border: "1px solid rgba(255,255,255,0.06)",
+            padding: "18px 20px",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            "--glow-color": sc.glowColor,
+            animation: "statGlow 4s " + pulseDelay + "s ease-in-out infinite"
+          }
+        },
+          createElement("div", {
+            style: { fontSize: 32, fontWeight: 800, color: sc.color, letterSpacing: "-1px", minWidth: 70, lineHeight: 1 }
+          }, sc.value),
+          createElement("div", null,
+            createElement("div", { style: { fontSize: 13, fontWeight: 700, color: COLORS.text, marginBottom: 2 } }, sc.label),
+            createElement("div", { style: { fontSize: 10, color: COLORS.textMuted } }, sc.sub)
+          )
+        );
+      })
     )
+  );
+
+  return createElement("div", { style: S.slide },
+    styleTag,
+    // Zone A: Title
+    createElement("h2", { style: S.slideTitle }, "Why Now"),
+    createElement("p", { style: Object.assign({}, S.slideSubtitle, { maxWidth: 850, marginBottom: 20 }) },
+      "Four mega-forces are converging on a single window. The platform that captures orchestration now owns the decade."
+    ),
+    // Zone B: Convergence Visual
+    convergenceVisual,
+    // Zone C: Bottom Split
+    bottomSection
   );
 }
 
