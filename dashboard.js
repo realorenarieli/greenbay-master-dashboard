@@ -1025,37 +1025,23 @@ function SlideTraction() {
         })
       )
     ),
-    // Engaged Pipeline logos
+    // Engaged Pipeline summary
     createElement("div", {
       style: {
         background: COLORS.card,
         borderRadius: 16,
         border: "1px solid " + COLORS.border,
-        padding: "16px 28px"
+        padding: "18px 28px",
+        textAlign: "center"
       }
     },
-      createElement("div", {
-        style: { fontSize: 10, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 14, textAlign: "center" }
-      }, "Engaged Pipeline \u2014 12 Accounts, 19,000 Buses"),
-      createElement("div", {
-        style: { display: "flex", justifyContent: "center", alignItems: "center", gap: 20, flexWrap: "wrap" }
+      createElement("span", {
+        style: { fontSize: 14, color: COLORS.text }
       },
-        [
-          { src: "assets/logo-stagecoach.png", alt: "Stagecoach" },
-          { src: "assets/logo-kcata.png", alt: "KC ATA" },
-          { src: "assets/logo-bvg.png", alt: "BVG" },
-          { src: "assets/logo-firstbus.png", alt: "First Bus" }
-        ].map(function(p) {
-          return createElement("div", {
-            key: p.alt,
-            style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 10, padding: "6px 14px", height: 48 }
-          },
-            createElement("img", {
-              src: p.src, alt: p.alt,
-              style: { maxWidth: 140, maxHeight: 36, objectFit: "contain" }
-            })
-          );
-        })
+        createElement("span", { style: { fontWeight: 700, color: COLORS.primary, fontSize: 16 } }, "200+"),
+        " qualified accounts identified \u00B7 ",
+        createElement("span", { style: { fontWeight: 700, color: COLORS.accent, fontSize: 16 } }, "20"),
+        " already engaged"
       )
     ),
     // Testimonials
