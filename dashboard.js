@@ -1406,80 +1406,270 @@ function SlideMarket() {
     return r.region !== 'TOTAL SAM' && r.region !== 'All segments (full)';
   });
 
-  return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "Market Opportunity"),
-    createElement("p", { style: S.slideSubtitle },
-      "Bottom-up TAM built on segment-level vehicle counts \u00D7 ARPU. Validated against IEA fleet data and ACEA registrations."
-    ),
-    // Hero metrics
-    createElement("div", { style: { display: "flex", gap: 24, marginBottom: 36 } },
-      createElement("div", { style: Object.assign({}, S.heroMetric, { borderTop: "4px solid " + COLORS.primary }) },
-        createElement("div", { style: S.heroLabel }, "Total Addressable Market 2030"),
-        createElement("div", { style: Object.assign({}, S.heroValue, { color: COLORS.primary }) }, fmtM(bottomUp.tam_2030_usd_m)),
-        createElement("div", { style: S.heroSub }, "6 fleet segments, global scope")
+  // Growth stats for pills
+  var tamGrowth = bottomUp.tam_2035_usd_m && bottomUp.tam_2030_usd_m
+    ? (bottomUp.tam_2035_usd_m / bottomUp.tam_2030_usd_m).toFixed(1) + "x"
+    : "2.2x";
+  var tdCagr = topDown.cagr_pct ? topDown.cagr_pct + "%" : "13.3%";
+  var tdTam = topDown.tam_2030_usd_b ? "$" + topDown.tam_2030_usd_b + "B" : "$70B";
+
+  // Funnel tier config
+  var tiers = [
+    { label: "Total Addressable Market", sub: "2030", value: fmtM(bottomUp.tam_2030_usd_m), right: "\u2192 " + fmtM(bottomUp.tam_2035_usd_m) + " by 2035", width: "100%", color: COLORS.primary, glowAnim: "funnelGlow0", rgb: "0,212,170" },
+    { label: "Serviceable Addressable Market", sub: "83% of TAM", value: fmtM(bottomUp.sam_2030_usd_m), right: "EU + NA primary", width: "83%", color: COLORS.secondary, glowAnim: "funnelGlow1", rgb: "99,102,241" },
+    { label: "Serviceable Obtainable Market", sub: "5% penetration", value: fmtM(bottomUp.som_base_2030_usd_m), right: "Samsara precedent", width: "30%", color: COLORS.accent, glowAnim: "funnelGlow2", rgb: "245,158,11" }
+  ];
+
+  var growthPills = [
+    { value: tamGrowth, label: "TAM Growth to 2035", color: COLORS.primary, rgb: "0,212,170" },
+    { value: tdCagr, label: "Top-Down CAGR", color: COLORS.info, rgb: "59,130,246" },
+    { value: tdTam, label: "Top-Down TAM 2030", color: COLORS.purple, rgb: "168,85,247" }
+  ];
+
+  // ── Keyframes ──
+  var styleTag = createElement("style", null,
+    // TAM tier green glow
+    "@keyframes funnelGlow0 { 0%, 100% { box-shadow: 0 0 20px rgba(0,212,170,0.08), 0 0 40px rgba(0,212,170,0.04); } 50% { box-shadow: 0 0 30px rgba(0,212,170,0.18), 0 0 60px rgba(0,212,170,0.08); } } " +
+    // SAM tier indigo glow
+    "@keyframes funnelGlow1 { 0%, 100% { box-shadow: 0 0 20px rgba(99,102,241,0.08), 0 0 40px rgba(99,102,241,0.04); } 50% { box-shadow: 0 0 35px rgba(99,102,241,0.22), 0 0 60px rgba(99,102,241,0.1); } } " +
+    // SOM tier gold BRIGHT pulse
+    "@keyframes funnelGlow2 { 0%, 100% { box-shadow: 0 0 25px rgba(245,158,11,0.12), 0 0 50px rgba(245,158,11,0.06); } 50% { box-shadow: 0 0 45px rgba(245,158,11,0.35), 0 0 80px rgba(245,158,11,0.15); } } " +
+    // Streaming dots flowing downward between tiers
+    "@keyframes funnelStreamDown { 0% { top: -4px; opacity: 0; } 10% { opacity: 0.9; } 85% { opacity: 0.9; } 100% { top: calc(100% + 4px); opacity: 0; } } " +
+    // Subtle float on growth pills
+    "@keyframes funnelDrift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } } " +
+    // Orbit ring rotation around SOM
+    "@keyframes funnelOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } " +
+    // Chart card border glow
+    "@keyframes funnelChartGlow { 0%, 100% { border-color: " + COLORS.border + "; box-shadow: none; } 50% { border-color: rgba(0,212,170,0.25); box-shadow: 0 0 12px rgba(0,212,170,0.06); } } " +
+    // Stat pill border pulse
+    "@keyframes funnelPillGlow { 0%, 100% { border-color: rgba(255,255,255,0.06); box-shadow: none; } 50% { border-color: var(--glow-color, rgba(0,212,170,0.35)); box-shadow: 0 0 14px var(--glow-color, rgba(0,212,170,0.12)); } }"
+  );
+
+  // ── ZONE B: Funnel Tiers ──
+  var funnelTiers = tiers.map(function(t, i) {
+    var isLast = i === tiers.length - 1;
+    var tierEl = createElement("div", {
+      key: "tier-" + i,
+      style: {
+        width: t.width,
+        margin: "0 auto",
+        background: COLORS.card,
+        borderRadius: 14,
+        border: "1px solid rgba(" + t.rgb + ",0.25)",
+        padding: "18px 28px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        animation: t.glowAnim + " 3s ease-in-out infinite",
+        animationDelay: (i * 0.3) + "s",
+        position: "relative",
+        zIndex: 5
+      }
+    },
+      // Left: label
+      createElement("div", { style: { flex: "0 0 auto", maxWidth: "35%" } },
+        createElement("div", {
+          style: { fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", color: t.color, opacity: 0.9 }
+        }, t.label),
+        createElement("div", {
+          style: { fontSize: 10, color: COLORS.textDim, marginTop: 3 }
+        }, t.sub)
       ),
-      createElement("div", { style: { display: "flex", alignItems: "center", color: COLORS.textDim, fontSize: 24 } }, "\u2192"),
-      createElement("div", { style: Object.assign({}, S.heroMetric, { borderTop: "4px solid " + COLORS.secondary }) },
-        createElement("div", { style: S.heroLabel }, "Serviceable Addressable Market"),
-        createElement("div", { style: Object.assign({}, S.heroValue, { color: COLORS.secondary }) }, fmtM(bottomUp.sam_2030_usd_m)),
-        createElement("div", { style: S.heroSub }, "83% of TAM \u2014 EU + NA primary")
-      ),
-      createElement("div", { style: { display: "flex", alignItems: "center", color: COLORS.textDim, fontSize: 24 } }, "\u2192"),
-      createElement("div", { style: Object.assign({}, S.heroMetric, { borderTop: "4px solid " + COLORS.accent }) },
-        createElement("div", { style: S.heroLabel }, "Serviceable Obtainable Market"),
-        createElement("div", { style: Object.assign({}, S.heroValue, { color: COLORS.accent }) }, fmtM(bottomUp.som_base_2030_usd_m)),
-        createElement("div", { style: S.heroSub }, "5% SAM penetration (Samsara precedent)")
+      // Center: massive value
+      createElement("div", {
+        style: {
+          fontSize: isLast ? 44 : 48 + (2 - i) * 2,
+          fontWeight: 800,
+          color: t.color,
+          letterSpacing: "-2px",
+          fontFamily: "'DM Mono', monospace",
+          lineHeight: 1,
+          textAlign: "center",
+          flex: 1
+        }
+      }, t.value),
+      // Right: context
+      createElement("div", {
+        style: { flex: "0 0 auto", textAlign: "right", maxWidth: "25%" }
+      },
+        createElement("div", {
+          style: {
+            fontSize: 11,
+            color: i === 0 ? COLORS.primary : COLORS.textDim,
+            fontWeight: i === 0 ? 600 : 400,
+            fontFamily: i === 0 ? "'DM Mono', monospace" : "inherit"
+          }
+        }, t.right)
       )
+    );
+
+    // Build tier + connector dots (except after last tier)
+    if (isLast) {
+      // SOM tier with orbit ring wrapper
+      return createElement("div", { key: "funnel-tier-" + i, style: { position: "relative", width: t.width, margin: "0 auto" } },
+        tierEl,
+        // Orbit ring
+        createElement("div", {
+          style: {
+            position: "absolute",
+            top: -6, left: -6, right: -6, bottom: -6,
+            border: "2px dashed rgba(245,158,11,0.3)",
+            borderRadius: 20,
+            animation: "funnelOrbit 10s linear infinite",
+            pointerEvents: "none"
+          }
+        })
+      );
+    }
+
+    // Connector: streaming dots between tiers
+    var connector = createElement("div", {
+      key: "conn-" + i,
+      style: {
+        display: "flex",
+        justifyContent: "center",
+        gap: 40,
+        height: 28,
+        position: "relative",
+        zIndex: 1
+      }
+    },
+      [0, 1].map(function(d) {
+        return createElement("div", {
+          key: "dotline-" + i + "-" + d,
+          style: { position: "relative", width: 2, height: "100%", background: "rgba(" + tiers[i + 1].rgb + ",0.1)" }
+        },
+          [0, 1].map(function(dd) {
+            return createElement("div", {
+              key: "dot-" + i + "-" + d + "-" + dd,
+              style: {
+                position: "absolute",
+                left: -2,
+                width: 5,
+                height: 5,
+                borderRadius: "50%",
+                background: tiers[i + 1].color,
+                opacity: 0.7,
+                animation: "funnelStreamDown 2s linear infinite",
+                animationDelay: (dd * 1 + d * 0.5) + "s"
+              }
+            });
+          })
+        );
+      })
+    );
+
+    return createElement("div", { key: "funnel-group-" + i }, tierEl, connector);
+  });
+
+  // ── ZONE C: Evidence Layer ──
+  // Left: Segment BarChart
+  var segmentChart = createElement("div", {
+    style: Object.assign({}, S.chartCard, {
+      animation: "funnelChartGlow 5s ease-in-out infinite"
+    })
+  },
+    createElement("div", { style: S.chartTitle }, "TAM by Segment \u2014 Ex-China vs China ($M)"),
+    createElement("div", { style: S.chartSubtitle }, "Vehicles \u00D7 ARPU across 6 fleet segments"),
+    createElement(ResponsiveContainer, { width: "100%", height: 260 },
+      createElement(BarChart, {
+        data: segmentData,
+        layout: "vertical",
+        margin: { top: 10, right: 20, left: 100, bottom: 0 }
+      },
+        createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5, horizontal: false }),
+        createElement(XAxis, { type: "number", stroke: COLORS.textDim, fontSize: 10, tickFormatter: function(v) { return '$' + v + 'M'; } }),
+        createElement(YAxis, { type: "category", dataKey: "name", stroke: COLORS.textDim, fontSize: 10, width: 95 }),
+        createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return ['$' + v + 'M']; } }),
+        createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
+        createElement(Bar, { dataKey: "exChina", stackId: "a", fill: COLORS.primary, name: "Ex-China" }),
+        createElement(Bar, { dataKey: "china", stackId: "a", fill: COLORS.accent, name: "China", radius: [0, 4, 4, 0] })
+      )
+    )
+  );
+
+  // Right: Regional donut + growth pills
+  var regionalDonut = createElement("div", {
+    style: Object.assign({}, S.chartCard, {
+      animation: "funnelChartGlow 5s ease-in-out infinite",
+      animationDelay: "1s",
+      marginBottom: 16
+    })
+  },
+    createElement("div", { style: S.chartTitle }, "SAM by Region \u2014 " + fmtM(bottomUp.sam_2030_usd_m) + " Total"),
+    createElement("div", { style: S.chartSubtitle }, "EU + NA primary | APAC emerging | China 30% accessible"),
+    createElement(ResponsiveContainer, { width: "100%", height: 180 },
+      createElement(PieChart, null,
+        createElement(Pie, {
+          data: samRegions,
+          dataKey: "sam_usd_m",
+          nameKey: "region",
+          cx: "50%",
+          cy: "50%",
+          outerRadius: 65,
+          innerRadius: 30,
+          paddingAngle: 2,
+          label: function(entry) { return '$' + entry.sam_usd_m + 'M'; },
+          labelLine: true
+        },
+          samRegions.map(function(r, i) {
+            return createElement(Cell, { key: i, fill: CHART_COLORS[i % CHART_COLORS.length] });
+          })
+        ),
+        createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v, name) { return ['$' + v + 'M', name]; } }),
+        createElement(Legend, { wrapperStyle: { fontSize: 10, paddingTop: 4 }, formatter: function(value) { return value; } })
+      )
+    )
+  );
+
+  // Growth stat pills
+  var pillsRow = createElement("div", {
+    style: { display: "flex", gap: 10 }
+  },
+    growthPills.map(function(p, i) {
+      return createElement("div", {
+        key: "pill-" + i,
+        style: {
+          flex: 1,
+          background: COLORS.card,
+          borderRadius: 12,
+          border: "1px solid rgba(" + p.rgb + ",0.15)",
+          padding: "14px 12px",
+          textAlign: "center",
+          animation: "funnelPillGlow 4s ease-in-out infinite, funnelDrift 4.5s ease-in-out infinite",
+          animationDelay: (i * 0.6) + "s",
+          "--glow-color": "rgba(" + p.rgb + ",0.35)"
+        }
+      },
+        createElement("div", {
+          style: { fontSize: 22, fontWeight: 800, color: p.color, letterSpacing: "-1px", lineHeight: 1, marginBottom: 6, fontFamily: "'DM Mono', monospace" }
+        }, p.value),
+        createElement("div", {
+          style: { fontSize: 9, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 600 }
+        }, p.label)
+      );
+    })
+  );
+
+  // ── Assemble Slide ──
+  return createElement("div", { style: S.slide },
+    styleTag,
+    // Zone A: Title
+    createElement("h2", { style: S.slideTitle }, "Market Opportunity"),
+    createElement("p", { style: Object.assign({}, S.slideSubtitle, { maxWidth: 850, marginBottom: 28 }) },
+      fmtM(bottomUp.tam_2030_usd_m) + " addressable by 2030 \u2014 built bottom-up from 6 fleet segments \u00D7 ARPU. We capture " + fmtM(bottomUp.som_base_2030_usd_m) + " at just 5%."
     ),
-    // Charts side by side
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 } },
-      // TAM Segments
-      createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "TAM by Segment \u2014 Ex-China vs China ($M)"),
-        createElement("div", { style: S.chartSubtitle }, "Vehicles \u00D7 ARPU across 6 fleet segments"),
-        createElement(ResponsiveContainer, { width: "100%", height: 280 },
-          createElement(BarChart, {
-            data: segmentData,
-            layout: "vertical",
-            margin: { top: 10, right: 20, left: 100, bottom: 0 }
-          },
-            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5, horizontal: false }),
-            createElement(XAxis, { type: "number", stroke: COLORS.textDim, fontSize: 10, tickFormatter: function(v) { return '$' + v + 'M'; } }),
-            createElement(YAxis, { type: "category", dataKey: "name", stroke: COLORS.textDim, fontSize: 10, width: 95 }),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return ['$' + v + 'M']; } }),
-            createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
-            createElement(Bar, { dataKey: "exChina", stackId: "a", fill: COLORS.primary, name: "Ex-China" }),
-            createElement(Bar, { dataKey: "china", stackId: "a", fill: COLORS.accent, name: "China", radius: [0, 4, 4, 0] })
-          )
-        )
-      ),
-      // Regional SAM
-      createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "SAM by Region \u2014 " + fmtM(bottomUp.sam_2030_usd_m) + " Total"),
-        createElement("div", { style: S.chartSubtitle }, "EU + NA primary | APAC emerging | China 30% accessible"),
-        createElement(ResponsiveContainer, { width: "100%", height: 280 },
-          createElement(PieChart, null,
-            createElement(Pie, {
-              data: samRegions,
-              dataKey: "sam_usd_m",
-              nameKey: "region",
-              cx: "50%",
-              cy: "45%",
-              outerRadius: 85,
-              innerRadius: 40,
-              paddingAngle: 2,
-              label: function(entry) { return '$' + entry.sam_usd_m + 'M'; },
-              labelLine: true,
-              isAnimationActive: false
-            },
-              samRegions.map(function(r, i) {
-                return createElement(Cell, { key: i, fill: CHART_COLORS[i % CHART_COLORS.length] });
-              })
-            ),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v, name) { return ['$' + v + 'M', name]; } }),
-            createElement(Legend, { wrapperStyle: { fontSize: 10, paddingTop: 4 }, formatter: function(value) { return value; } })
-          )
-        )
+    // Zone B: Funnel
+    createElement("div", { style: { marginBottom: 28 } },
+      funnelTiers
+    ),
+    // Zone C: Evidence
+    createElement("div", { style: { display: "grid", gridTemplateColumns: "55% 45%", gap: 20 } },
+      segmentChart,
+      createElement("div", { style: { display: "flex", flexDirection: "column" } },
+        regionalDonut,
+        pillsRow
       )
     )
   );

@@ -261,6 +261,29 @@ async function run() {
     var whyNowSvgs = await page.$$('svg.recharts-surface');
     assert(whyNowSvgs.length >= 1, 'Why Now slide renders Gartner chart (' + whyNowSvgs.length + ' svg found)');
 
+    // ── 8c. Market Opportunity slide funnel ──
+    console.log('\n=== 8c. Market Opportunity Funnel ===');
+    await clickDot(page, 'Market Opportunity');
+    var mktText = await page.textContent('#root');
+
+    // Funnel tier labels
+    assert(mktText.includes('Total Addressable Market'), 'Market slide has "Total Addressable Market" funnel tier');
+    assert(mktText.includes('Serviceable Addressable Market'), 'Market slide has "Serviceable Addressable Market" funnel tier');
+    assert(mktText.includes('Serviceable Obtainable Market'), 'Market slide has "Serviceable Obtainable Market" funnel tier');
+
+    // Growth indicator text
+    assert(mktText.includes('2035'), 'Market slide has "2035" growth reference');
+    assert(mktText.includes('13.3%'), 'Market slide has "13.3%" CAGR stat');
+
+    // TAM/SAM/SOM values still present
+    assert(mktText.includes(tamStr) || mktText.includes('$' + bottomUp.tam_2030_usd_m + 'M'), 'Market funnel shows TAM value');
+    assert(mktText.includes(samStr) || mktText.includes('$' + bottomUp.sam_2030_usd_m + 'M'), 'Market funnel shows SAM value');
+    assert(mktText.includes('$' + bottomUp.som_base_2030_usd_m + 'M'), 'Market funnel shows SOM value');
+
+    // Charts still render (2+ svg.recharts-surface)
+    var mktSvgs = await page.$$('svg.recharts-surface');
+    assert(mktSvgs.length >= 2, 'Market slide renders 2+ charts (' + mktSvgs.length + ' svg found)');
+
     // ── 9. Charts rendered ──
     console.log('\n=== 9. Chart Rendering ===');
 
