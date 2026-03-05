@@ -918,15 +918,15 @@ function SlideTraction() {
   ];
 
   var pipeline = [
-    { label: "Paid Pilots Active", value: "2", color: COLORS.primary },
-    { label: "POs in Pipeline", value: "7", color: COLORS.success },
-    { label: "Stage", value: "Q1 2026", color: COLORS.accent }
+    { label: "LOIs for Pilots", value: "2", color: COLORS.primary },
+    { label: "Qualified Accounts", value: "200+", color: COLORS.success },
+    { label: "Engaged Accounts", value: "20", color: COLORS.accent }
   ];
 
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "Traction"),
     createElement("p", { style: S.slideSubtitle },
-      "2 paid pilots agreed. Real operator feedback from depot-level testing. 7 purchase orders in pipeline."
+      "2 LOIs signed for pilot deployments. 200+ qualified accounts identified, 20 already engaged."
     ),
     // Pipeline badges
     createElement("div", {
@@ -1006,7 +1006,7 @@ function SlideTraction() {
       },
         [
           { label: "Design Partner", color: COLORS.primary, src: "assets/logo-transport-uk.png", alt: "Transport UK" },
-          { label: "2 LOIs \u2014 Q1 2026", color: COLORS.accent, src: "assets/logo-alvarada.png", alt: "Alvorada" },
+          { label: "Pilot LOI \u2014 Q1 2026", color: COLORS.accent, src: "assets/logo-alvarada.png", alt: "Alvorada" },
           { label: "Channel Partner", color: COLORS.info, src: "assets/logo-solaredge.png", alt: "SolarEdge" }
         ].map(function(p) {
           return createElement("div", { key: p.alt, style: { textAlign: "center" } },
@@ -1333,9 +1333,9 @@ function SlideAsk() {
   ];
 
   var milestones = [
-    { period: "Q1 2026", event: "2 paid pilots kickoff", status: "active" },
+    { period: "Q1 2026", event: "2 pilot LOIs signed, deployments begin", status: "active" },
     { period: "Q2 2026", event: "First US pilot, commercial agreements", status: "upcoming" },
-    { period: "Q3\u2013Q4 2026", event: "First recurring revenue, 7 POs secured", status: "upcoming" },
+    { period: "Q3\u2013Q4 2026", event: "First recurring revenue from engaged accounts", status: "upcoming" },
     { period: "2027", event: "$3M ARR milestone, Series A readiness", status: "future" }
   ];
 
