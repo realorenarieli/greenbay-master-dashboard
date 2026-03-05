@@ -108,7 +108,8 @@ var SLIDE_TITLES = [
   "Traction",
   "Team",
   "Business Model",
-  "The Ask"
+  "The Ask",
+  "Appendix"
 ];
 
 var TOTAL_SLIDES = SLIDE_TITLES.length;
@@ -1134,7 +1135,7 @@ function SlideTeam() {
       name: "Shira Golan",
       role: "Co-CEO",
       initials: "SG",
-      photo: null,
+      photo: "assets/shira-golan.jpg",
       color: COLORS.secondary,
       background: "2 successful exits, R&D scaling expert",
       prev: "Fortune 500 partnerships",
@@ -1527,9 +1528,159 @@ function SlideAsk() {
         borderTop: "1px solid " + COLORS.border
       }
     },
-      createElement("span", { style: { fontSize: 14, color: COLORS.textMuted } }, "oren@greenbay.tech"),
+      createElement("a", { href: "mailto:info@greenbay.solutions", style: { fontSize: 14, color: COLORS.textMuted, textDecoration: "none" } }, "info@greenbay.solutions"),
       createElement("span", { style: { margin: "0 16px", color: COLORS.border } }, "|"),
-      createElement("span", { style: { fontSize: 14, color: COLORS.textMuted } }, "greenbay.tech")
+      createElement("a", { href: "https://greenbay.solutions", target: "_blank", rel: "noopener", style: { fontSize: 14, color: COLORS.textMuted, textDecoration: "none" } }, "greenbay.solutions"),
+      createElement("span", { style: { margin: "0 16px", color: COLORS.border } }, "|"),
+      createElement("span", { style: { fontSize: 14, color: COLORS.textMuted } }, "+972 (0) 52 7251714")
+    )
+  );
+}
+
+// ============ SLIDE 11: APPENDIX — DASHBOARDS & SOURCES ============
+function SlideAppendix() {
+  var dashboards = [
+    {
+      title: "Market Dashboard",
+      desc: "Total addressable market sizing, fleet statistics, and IEA/ACEA data visualizations.",
+      url: "https://realorenarieli.github.io/greenbay-market-dashboard/"
+    },
+    {
+      title: "Fleet Orchestration",
+      desc: "Unit economics, competitive landscape, and ARR growth scenario modeling.",
+      url: "https://realorenarieli.github.io/greenbay-fleet-orchestration/"
+    },
+    {
+      title: "Fleet Electrification Intel",
+      desc: "EV fleet transition data, regional projections, and Gartner strategic planning assumptions.",
+      url: "https://realorenarieli.github.io/fleet-electrification-intel/"
+    }
+  ];
+
+  var cats = (sources.categories || []);
+
+  var expandedState = useState({});
+  var expanded = expandedState[0];
+  var setExpanded = expandedState[1];
+
+  function toggleCat(idx) {
+    var next = Object.assign({}, expanded);
+    next[idx] = !next[idx];
+    setExpanded(next);
+  }
+
+  return createElement("div", { style: S.slide },
+    createElement("h2", { style: S.slideTitle }, "Appendix"),
+    createElement("p", { style: S.slideSubtitle },
+      "Interactive dashboards and source registry — " + (sources.total_sources || 32) + " verified sources across " + cats.length + " categories."
+    ),
+    // Dashboard links
+    createElement("div", {
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 36 }
+    },
+      dashboards.map(function(d, i) {
+        return createElement("a", {
+          key: i,
+          href: d.url,
+          target: "_blank",
+          rel: "noopener",
+          style: {
+            background: COLORS.card,
+            borderRadius: 14,
+            padding: "24px 24px 20px",
+            textDecoration: "none",
+            border: "1px solid " + COLORS.border,
+            transition: "border-color 0.2s, transform 0.2s",
+            display: "block"
+          },
+          onMouseEnter: function(e) { e.currentTarget.style.borderColor = COLORS.primary; e.currentTarget.style.transform = "translateY(-2px)"; },
+          onMouseLeave: function(e) { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.transform = "none"; }
+        },
+          createElement("div", {
+            style: { fontSize: 15, fontWeight: 700, color: COLORS.primary, marginBottom: 8, fontFamily: "'DM Mono', monospace" }
+          }, d.title),
+          createElement("div", {
+            style: { fontSize: 13, color: COLORS.textMuted, lineHeight: 1.5 }
+          }, d.desc),
+          createElement("div", {
+            style: { fontSize: 12, color: COLORS.textDim, marginTop: 12, fontFamily: "'DM Mono', monospace" }
+          }, "\u2192 Open Dashboard")
+        );
+      })
+    ),
+    // Source registry
+    createElement("div", {
+      style: {
+        background: COLORS.card,
+        borderRadius: 14,
+        padding: "20px 24px",
+        maxHeight: 420,
+        overflowY: "auto"
+      }
+    },
+      createElement("div", {
+        style: { fontSize: 14, fontWeight: 600, color: COLORS.text, marginBottom: 16 }
+      }, "Source Registry"),
+      cats.map(function(cat, ci) {
+        var isOpen = expanded[ci];
+        var items = cat.items || [];
+        return createElement("div", { key: ci, style: { marginBottom: 2 } },
+          createElement("button", {
+            onClick: function() { toggleCat(ci); },
+            style: {
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "10px 12px",
+              background: isOpen ? COLORS.cardHover : "transparent",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              color: COLORS.text,
+              fontSize: 13,
+              fontWeight: 600,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              textAlign: "left"
+            }
+          },
+            createElement("span", null, cat.category),
+            createElement("span", {
+              style: { fontSize: 11, color: COLORS.textDim, fontFamily: "'DM Mono', monospace" }
+            }, items.length + " source" + (items.length !== 1 ? "s" : "") + " " + (isOpen ? "\u25B2" : "\u25BC"))
+          ),
+          isOpen ? createElement("div", {
+            style: { padding: "4px 12px 12px 24px" }
+          },
+            items.map(function(item, ii) {
+              return createElement("div", {
+                key: ii,
+                style: { display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }
+              },
+                createElement("div", {
+                  style: { width: 5, height: 5, borderRadius: "50%", background: COLORS.primary, flexShrink: 0, marginTop: 6 }
+                }),
+                createElement("div", null,
+                  item.url
+                    ? createElement("a", {
+                        href: item.url,
+                        target: "_blank",
+                        rel: "noopener",
+                        style: { fontSize: 12, color: COLORS.info, textDecoration: "none" }
+                      }, item.name)
+                    : createElement("span", { style: { fontSize: 12, color: COLORS.text } }, item.name),
+                  createElement("span", {
+                    style: { fontSize: 11, color: COLORS.textDim, marginLeft: 6 }
+                  }, "\u2014 " + item.org),
+                  item.note ? createElement("div", {
+                    style: { fontSize: 11, color: COLORS.textDim, marginTop: 2, fontStyle: "italic" }
+                  }, item.note) : null
+                )
+              );
+            })
+          ) : null
+        );
+      })
     )
   );
 }
@@ -1612,7 +1763,8 @@ function App() {
     SlideTraction,
     SlideTeam,
     SlideBusinessModel,
-    SlideAsk
+    SlideAsk,
+    SlideAppendix
   ];
 
   return createElement("div", { style: S.app },
