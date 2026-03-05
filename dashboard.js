@@ -101,14 +101,14 @@ function fmtB(n) {
 var SLIDE_TITLES = [
   "Greenbay",
   "The Problem",
+  "The Solution",
+  "Why Now",
   "Market Opportunity",
   "Why Greenbay Wins",
   "Traction",
   "Team",
-  "Unit Economics",
-  "Growth Trajectory",
-  "Validation & Tailwinds",
-  "Dashboards & Sources"
+  "Business Model",
+  "The Ask"
 ];
 
 var TOTAL_SLIDES = SLIDE_TITLES.length;
@@ -375,7 +375,7 @@ function SlideTitle() {
           fontSize: 12,
           fontFamily: "'DM Mono', monospace"
         }
-      }, "Canonical v" + (meta.version || '?')),
+      }, "Seed Round \u2014 $3M"),
       createElement("span", {
         style: { color: COLORS.textDim, fontSize: 13 }
       }, "Data as of " + (meta.data_as_of || ''))
@@ -404,12 +404,12 @@ function SlideProblem() {
       description: "Electric bus stock growing 12x. Truck electrification accelerating. No unified system to orchestrate charging, routing, and grid costs across mixed depots."
     },
     {
-      icon: "\u{1F50C}",
+      icon: "\uD83D\uDD0C",
       title: "Fragmented Tool Chaos",
       description: "Fleet operators juggle 5-8 separate tools for telematics, charging, routing, maintenance, and compliance. Data silos create blind spots and inefficiency."
     },
     {
-      icon: "\u{1F6E2}\uFE0F",
+      icon: "\uD83D\uDEE2\uFE0F",
       title: "Incumbents Built for Diesel",
       description: "Samsara, Geotab, and Trimble were built for ICE fleets. They're adding EV as a feature \u2014 not building EV-native orchestration from the ground up."
     }
@@ -454,7 +454,218 @@ function SlideProblem() {
   );
 }
 
-// ============ SLIDE 3: MARKET OPPORTUNITY ============
+// ============ SLIDE 3: THE SOLUTION ============
+function SlideSolution() {
+  var capabilities = [
+    {
+      icon: "\uD83D\uDD0B",
+      title: "Smart Charge Orchestration",
+      description: "Optimizes when, where, and how much each vehicle charges based on route demand, grid tariffs, and battery health.",
+      color: COLORS.primary
+    },
+    {
+      icon: "\uD83D\uDDFA\uFE0F",
+      title: "Route & Dispatch Intelligence",
+      description: "EV-aware routing that accounts for state-of-charge, charging stops, payload weight, and real-time depot constraints.",
+      color: COLORS.secondary
+    },
+    {
+      icon: "\u26A1",
+      title: "Grid & Energy Management",
+      description: "Demand-response integration, peak shaving, and energy cost optimization across depot infrastructure.",
+      color: COLORS.accent
+    },
+    {
+      icon: "\uD83D\uDCCA",
+      title: "Unified Fleet Analytics",
+      description: "Single pane of glass across mixed EV/ICE/AV fleets. Real-time operational insights replacing 5-8 fragmented tools.",
+      color: COLORS.info
+    }
+  ];
+
+  var productFlow = [
+    { label: "Data Ingestion", sub: "Telematics, chargers, grid, weather", icon: "\u2193" },
+    { label: "Orchestration Engine", sub: "AI-powered optimization layer", icon: "\u2699\uFE0F" },
+    { label: "Operator Interface", sub: "Dashboards, alerts, recommendations", icon: "\u2191" }
+  ];
+
+  return createElement("div", { style: S.slide },
+    createElement("h2", { style: S.slideTitle }, "The Solution"),
+    createElement("p", { style: S.slideSubtitle },
+      "Greenbay is a software platform that sits between fleet assets and fleet strategy \u2014 orchestrating charging, routing, and energy across electric and autonomous fleets."
+    ),
+    // Product architecture flow
+    createElement("div", {
+      style: {
+        display: "flex",
+        gap: 0,
+        marginBottom: 36,
+        alignItems: "stretch"
+      }
+    },
+      productFlow.map(function(step, i) {
+        return createElement("div", { key: i, style: { display: "flex", alignItems: "center", flex: 1 } },
+          createElement("div", {
+            style: {
+              flex: 1,
+              background: i === 1 ? "rgba(0,212,170,0.08)" : COLORS.card,
+              border: i === 1 ? "2px solid " + COLORS.primary : "1px solid " + COLORS.border,
+              borderRadius: 14,
+              padding: "28px 24px",
+              textAlign: "center"
+            }
+          },
+            createElement("div", {
+              style: { fontSize: 24, marginBottom: 8 }
+            }, step.icon),
+            createElement("div", {
+              style: {
+                fontSize: 15,
+                fontWeight: 700,
+                color: i === 1 ? COLORS.primary : COLORS.text,
+                marginBottom: 6
+              }
+            }, step.label),
+            createElement("div", {
+              style: { fontSize: 12, color: COLORS.textMuted }
+            }, step.sub)
+          ),
+          i < productFlow.length - 1 ? createElement("div", {
+            style: {
+              padding: "0 12px",
+              fontSize: 20,
+              color: COLORS.primary
+            }
+          }, "\u2192") : null
+        );
+      })
+    ),
+    // Capability cards
+    createElement("div", {
+      style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }
+    },
+      capabilities.map(function(c, i) {
+        return createElement("div", {
+          key: i,
+          style: {
+            background: COLORS.card,
+            borderRadius: 14,
+            border: "1px solid " + COLORS.border,
+            padding: "24px 20px",
+            borderTop: "3px solid " + c.color
+          }
+        },
+          createElement("div", { style: { fontSize: 28, marginBottom: 12 } }, c.icon),
+          createElement("div", {
+            style: { fontSize: 14, fontWeight: 700, color: c.color, marginBottom: 8 }
+          }, c.title),
+          createElement("div", {
+            style: { fontSize: 12, color: COLORS.textMuted, lineHeight: 1.7 }
+          }, c.description)
+        );
+      })
+    )
+  );
+}
+
+// ============ SLIDE 4: WHY NOW ============
+function SlideWhyNow() {
+  var spas = gartner.spas || [];
+  var ahvData = gartner.ahv_fleet_baseline || [];
+
+  // Build SPA chart data
+  var spaYears = [];
+  spas.forEach(function(spa) {
+    (spa.series || []).forEach(function(pt) {
+      if (spaYears.indexOf(pt.year) === -1) spaYears.push(pt.year);
+    });
+  });
+  spaYears.sort();
+
+  var spaChartData = spaYears.map(function(year) {
+    var row = { year: year };
+    spas.forEach(function(spa) {
+      var pt = (spa.series || []).find(function(p) { return p.year === year; });
+      row[spa.id] = pt ? pt.value_pct : null;
+    });
+    return row;
+  });
+
+  var tailwinds = [
+    { icon: "\uD83C\uDDEA\uD83C\uDDFA", title: "EU Clean Vehicle Directive", description: "Mandates zero-emission procurement for public fleets. Forced adoption timeline.", color: COLORS.primary },
+    { icon: "\uD83C\uDDFA\uD83C\uDDF8", title: "NA ZEV Mandates", description: "CA + 15 states require zero-emission truck sales by 2035.", color: COLORS.info },
+    { icon: "\uD83E\uDD16", title: "Agentic AI Wave", description: "Gartner: 25% of T&L firms will use agentic AI by 2030. Greenbay is the agentic layer.", color: COLORS.accent },
+    { icon: "\uD83D\uDE9B", title: "AV Fleet Explosion", description: "475K L4+ vehicles by 2030 need the same depot orchestration infrastructure.", color: COLORS.purple }
+  ];
+
+  return createElement("div", { style: S.slide },
+    createElement("h2", { style: S.slideTitle }, "Why Now"),
+    createElement("p", { style: S.slideSubtitle },
+      "Regulatory mandates, technology inflections, and Gartner-validated adoption curves create a narrow window for a platform player to own the orchestration layer."
+    ),
+    // Tailwind cards
+    createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 } },
+      tailwinds.map(function(t, i) {
+        return createElement("div", {
+          key: i,
+          style: Object.assign({}, S.card, { padding: 20, borderTop: "3px solid " + t.color })
+        },
+          createElement("div", { style: { fontSize: 24, marginBottom: 8 } }, t.icon),
+          createElement("div", { style: { fontSize: 13, fontWeight: 700, color: COLORS.text, marginBottom: 6 } }, t.title),
+          createElement("div", { style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 } }, t.description)
+        );
+      })
+    ),
+    // Charts side by side
+    createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 } },
+      // Gartner SPAs
+      createElement("div", { style: S.chartCard },
+        createElement("div", { style: S.chartTitle }, "Gartner Strategic Planning Assumptions"),
+        createElement("div", { style: S.chartSubtitle }, "Adoption curves \u2014 Predicts 2026: Transportation"),
+        createElement(ResponsiveContainer, { width: "100%", height: 260 },
+          createElement(LineChart, { data: spaChartData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
+            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
+            createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
+            createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + '%'; } }),
+            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return [v + '%']; } }),
+            createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
+            spas.map(function(spa, i) {
+              return createElement(Line, {
+                key: spa.id,
+                type: "monotone",
+                dataKey: spa.id,
+                stroke: CHART_COLORS[i % CHART_COLORS.length],
+                strokeWidth: 2,
+                dot: false,
+                name: spa.title.length > 25 ? spa.title.substring(0, 23) + '...' : spa.title,
+                connectNulls: true
+              });
+            })
+          )
+        )
+      ),
+      // AHV Fleet Projection
+      createElement("div", { style: S.chartCard },
+        createElement("div", { style: S.chartTitle }, "Autonomous Fleet Projection (2024\u20132035)"),
+        createElement("div", { style: S.chartSubtitle }, "L4+ commercially deployed vehicles (thousands) by region"),
+        createElement(ResponsiveContainer, { width: "100%", height: 260 },
+          createElement(AreaChart, { data: ahvData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
+            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
+            createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
+            createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + 'K'; } }),
+            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return [v + 'K']; } }),
+            createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
+            createElement(Area, { type: "monotone", dataKey: "na_eu_k", stackId: "1", stroke: COLORS.primary, fill: COLORS.primary, fillOpacity: 0.3, name: "NA + EU" }),
+            createElement(Area, { type: "monotone", dataKey: "apac_k", stackId: "1", stroke: COLORS.accent, fill: COLORS.accent, fillOpacity: 0.3, name: "APAC" }),
+            createElement(Area, { type: "monotone", dataKey: "china_k", stackId: "1", stroke: COLORS.danger, fill: COLORS.danger, fillOpacity: 0.3, name: "China" })
+          )
+        )
+      )
+    )
+  );
+}
+
+// ============ SLIDE 5: MARKET OPPORTUNITY ============
 function SlideMarket() {
   var segments = ms.segments_2030 || [];
   var segmentData = segments.map(function(s) {
@@ -547,7 +758,7 @@ function SlideMarket() {
   );
 }
 
-// ============ SLIDE 4: WHY GREENBAY WINS ============
+// ============ SLIDE 6: WHY GREENBAY WINS ============
 function SlideCompetitive() {
   var techLayers = comp.tech_stack_layers || [];
   var competitors = (comp.competitors || []).filter(function(c) { return c.revenue_usd_m; });
@@ -659,7 +870,7 @@ function SlideCompetitive() {
   );
 }
 
-// ============ SLIDE 5: TRACTION ============
+// ============ SLIDE 7: TRACTION ============
 function SlideTraction() {
   var tractionMetrics = [
     { label: "Revenue Impact", value: "+13%", desc: "Revenue increase for pilot operators", color: COLORS.primary, icon: "\u2197" },
@@ -673,20 +884,46 @@ function SlideTraction() {
     { quote: "This is what charging companies should give us if they ever listened", author: "Alistair", role: "Bus Operations Owner" }
   ];
 
-  var milestones = [
-    { period: "Q1 2026", event: "2 paid pilots kickoff", status: "active" },
-    { period: "Q2 2026", event: "First US pilot, commercial agreements", status: "upcoming" },
-    { period: "Q3\u2013Q4 2026", event: "First recurring revenue, 7 POs secured", status: "upcoming" }
+  var pipeline = [
+    { label: "Paid Pilots Active", value: "2", color: COLORS.primary },
+    { label: "POs in Pipeline", value: "7", color: COLORS.success },
+    { label: "Stage", value: "Q1 2026", color: COLORS.accent }
   ];
 
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "Traction"),
     createElement("p", { style: S.slideSubtitle },
-      "2 paid pilots agreed. Real operator feedback from depot-level testing."
+      "2 paid pilots agreed. Real operator feedback from depot-level testing. 7 purchase orders in pipeline."
+    ),
+    // Pipeline badges
+    createElement("div", {
+      style: { display: "flex", gap: 16, marginBottom: 28 }
+    },
+      pipeline.map(function(p, i) {
+        return createElement("div", {
+          key: i,
+          style: {
+            padding: "12px 24px",
+            borderRadius: 12,
+            background: p.color + "15",
+            border: "1px solid " + p.color + "44",
+            display: "flex",
+            alignItems: "center",
+            gap: 12
+          }
+        },
+          createElement("span", {
+            style: { fontSize: 28, fontWeight: 700, color: p.color, fontFamily: "'DM Serif Display', serif" }
+          }, p.value),
+          createElement("span", {
+            style: { fontSize: 13, color: COLORS.textMuted }
+          }, p.label)
+        );
+      })
     ),
     // Traction metrics row
     createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 36 }
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 28 }
     },
       tractionMetrics.map(function(m, i) {
         return createElement("div", {
@@ -694,36 +931,36 @@ function SlideTraction() {
           style: {
             background: "linear-gradient(135deg, " + COLORS.card + ", " + COLORS.cardHover + ")",
             borderRadius: 16,
-            padding: "36px 28px",
+            padding: "28px 24px",
             textAlign: "center",
             border: "1px solid " + m.color + "33"
           }
         },
           createElement("div", {
-            style: { fontSize: 28, marginBottom: 8 }
+            style: { fontSize: 24, marginBottom: 6 }
           }, m.icon),
           createElement("div", {
             style: {
-              fontSize: 48,
+              fontSize: 40,
               fontWeight: 700,
               fontFamily: "'DM Serif Display', serif",
               color: m.color,
               lineHeight: 1.1,
-              marginBottom: 8
+              marginBottom: 6
             }
           }, m.value),
           createElement("div", {
-            style: { fontSize: 16, fontWeight: 600, color: COLORS.text, marginBottom: 6 }
+            style: { fontSize: 14, fontWeight: 600, color: COLORS.text, marginBottom: 4 }
           }, m.label),
           createElement("div", {
-            style: { fontSize: 13, color: COLORS.textMuted }
+            style: { fontSize: 12, color: COLORS.textMuted }
           }, m.desc)
         );
       })
     ),
     // Testimonials
     createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 36 }
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }
     },
       testimonials.map(function(t, i) {
         return createElement("div", {
@@ -731,110 +968,46 @@ function SlideTraction() {
           style: {
             background: COLORS.card,
             borderRadius: 12,
-            padding: "24px 22px",
+            padding: "20px 18px",
             borderLeft: "3px solid " + COLORS.primary,
             position: "relative"
           }
         },
           createElement("div", {
             style: {
-              fontSize: 36,
+              fontSize: 32,
               color: COLORS.primary,
               opacity: 0.3,
               position: "absolute",
-              top: 12,
-              left: 18,
+              top: 8,
+              left: 14,
               fontFamily: "Georgia, serif",
               lineHeight: 1
             }
           }, "\u201C"),
           createElement("div", {
             style: {
-              fontSize: 14,
+              fontSize: 13,
               fontStyle: "italic",
               color: COLORS.text,
               lineHeight: 1.6,
-              marginBottom: 14,
-              paddingTop: 8
+              marginBottom: 12,
+              paddingTop: 6
             }
           }, "\u201C" + t.quote + "\u201D"),
           createElement("div", {
-            style: { fontSize: 13, fontWeight: 600, color: COLORS.primary }
+            style: { fontSize: 12, fontWeight: 600, color: COLORS.primary }
           }, t.author),
           createElement("div", {
-            style: { fontSize: 12, color: COLORS.textMuted }
+            style: { fontSize: 11, color: COLORS.textMuted }
           }, t.role)
         );
       })
-    ),
-    // Milestones timeline
-    createElement("div", {
-      style: {
-        background: COLORS.card,
-        borderRadius: 12,
-        padding: "24px 32px"
-      }
-    },
-      createElement("div", {
-        style: { fontSize: 14, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 20 }
-      }, "24-Month Milestones"),
-      createElement("div", {
-        style: { display: "flex", gap: 0, position: "relative" }
-      },
-        // Connecting line
-        createElement("div", {
-          style: {
-            position: "absolute",
-            top: 10,
-            left: 10,
-            right: 10,
-            height: 2,
-            background: "linear-gradient(90deg, " + COLORS.primary + ", " + COLORS.secondary + ")",
-            zIndex: 0
-          }
-        }),
-        milestones.map(function(m, i) {
-          var isActive = m.status === "active";
-          return createElement("div", {
-            key: i,
-            style: {
-              flex: 1,
-              textAlign: "center",
-              position: "relative",
-              zIndex: 1
-            }
-          },
-            createElement("div", {
-              style: {
-                width: 20,
-                height: 20,
-                borderRadius: "50%",
-                background: isActive ? COLORS.primary : COLORS.card,
-                border: "2px solid " + (isActive ? COLORS.primary : COLORS.secondary),
-                margin: "0 auto 12px",
-                boxShadow: isActive ? "0 0 12px " + COLORS.primary + "66" : "none"
-              }
-            }),
-            createElement("div", {
-              style: {
-                fontSize: 14,
-                fontWeight: 700,
-                color: isActive ? COLORS.primary : COLORS.text,
-                fontFamily: "'DM Mono', monospace",
-                marginBottom: 4
-              }
-            }, m.period),
-            createElement("div", {
-              style: { fontSize: 13, color: COLORS.textMuted, maxWidth: 200, margin: "0 auto" }
-            }, m.event)
-          );
-        })
-      )
     )
   );
 }
 
-// ============ SLIDE 6: TEAM ============
+// ============ SLIDE 8: TEAM ============
 function SlideTeam() {
   var team = [
     {
@@ -866,21 +1039,20 @@ function SlideTeam() {
     }
   ];
 
-  var investmentAlloc = [
-    { label: "R&D & Product", pct: 65, color: COLORS.primary },
-    { label: "Operations & Overhead", pct: 18, color: COLORS.secondary },
-    { label: "Buffer", pct: 9, color: COLORS.textDim },
-    { label: "Sales & BD", pct: 8, color: COLORS.accent }
+  var whyUs = [
+    { label: "Domain Depth", desc: "All 3 founders built fleet-tech at scale. Not tourists \u2014 operators who shipped products used by thousands of vehicles.", color: COLORS.primary },
+    { label: "Technical Edge", desc: "Real-time systems, EV optimization, and hardware-agnostic platform architecture from day one.", color: COLORS.secondary },
+    { label: "Market Access", desc: "Direct relationships with EU and NA fleet operators, charging OEMs, and industry regulators.", color: COLORS.accent }
   ];
 
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "Team"),
     createElement("p", { style: S.slideSubtitle },
-      "Deep domain expertise in fleet operations, mobility software, and enterprise scale."
+      "Deep domain expertise in fleet operations, mobility software, and enterprise scale. All founders are repeat builders in the space."
     ),
     // Team cards
     createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28, marginBottom: 40 }
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28, marginBottom: 32 }
     },
       team.map(function(t, i) {
         return createElement("div", {
@@ -888,7 +1060,7 @@ function SlideTeam() {
           style: {
             background: "linear-gradient(135deg, " + COLORS.card + ", " + COLORS.cardHover + ")",
             borderRadius: 16,
-            padding: "36px 28px",
+            padding: "32px 24px",
             textAlign: "center",
             border: "1px solid " + t.color + "33",
             position: "relative",
@@ -909,222 +1081,127 @@ function SlideTeam() {
           // Avatar circle with initials
           createElement("div", {
             style: {
-              width: 72,
-              height: 72,
+              width: 64,
+              height: 64,
               borderRadius: "50%",
               background: t.color + "22",
               border: "2px solid " + t.color,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "0 auto 16px",
-              fontSize: 24,
+              margin: "0 auto 14px",
+              fontSize: 22,
               fontWeight: 700,
               fontFamily: "'DM Serif Display', serif",
               color: t.color
             }
           }, t.initials),
           createElement("div", {
-            style: { fontSize: 20, fontWeight: 700, color: COLORS.text, marginBottom: 4 }
+            style: { fontSize: 18, fontWeight: 700, color: COLORS.text, marginBottom: 4 }
           }, t.name),
           createElement("div", {
             style: {
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: 600,
               color: t.color,
               textTransform: "uppercase",
               letterSpacing: "1.5px",
-              marginBottom: 16
+              marginBottom: 14
             }
           }, t.role),
           createElement("div", {
             style: {
-              fontSize: 14,
+              fontSize: 13,
               color: COLORS.text,
-              marginBottom: 8,
+              marginBottom: 6,
               lineHeight: 1.5
             }
           }, t.background),
           createElement("div", {
             style: {
-              fontSize: 13,
+              fontSize: 12,
               color: COLORS.primary,
               fontWeight: 600,
-              marginBottom: 10,
+              marginBottom: 8,
               fontFamily: "'DM Mono', monospace"
             }
           }, t.prev),
           createElement("div", {
             style: {
-              fontSize: 12,
+              fontSize: 11,
               color: COLORS.textMuted,
               lineHeight: 1.5,
               borderTop: "1px solid " + COLORS.border,
-              paddingTop: 12,
+              paddingTop: 10,
               marginTop: 4
             }
           }, t.expertise)
         );
       })
     ),
-    // Investment allocation
+    // Why us cards
     createElement("div", {
-      style: {
-        background: COLORS.card,
-        borderRadius: 12,
-        padding: "28px 32px"
-      }
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }
     },
-      createElement("div", {
-        style: { fontSize: 14, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 20 }
-      }, "Use of Funds \u2014 $3M Raise"),
-      // Stacked bar
-      createElement("div", {
-        style: { display: "flex", borderRadius: 8, overflow: "hidden", height: 32, marginBottom: 20 }
-      },
-        investmentAlloc.map(function(a, i) {
-          return createElement("div", {
-            key: i,
-            style: {
-              width: a.pct + "%",
-              background: a.color,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 11,
-              fontWeight: 700,
-              color: "#fff",
-              transition: "opacity 0.2s"
-            },
-            title: a.label + ": " + a.pct + "%"
-          }, a.pct >= 12 ? a.pct + "%" : "");
-        })
-      ),
-      // Legend
-      createElement("div", {
-        style: { display: "flex", gap: 28, flexWrap: "wrap" }
-      },
-        investmentAlloc.map(function(a, i) {
-          return createElement("div", {
-            key: i,
-            style: { display: "flex", alignItems: "center", gap: 8 }
-          },
-            createElement("div", {
-              style: { width: 10, height: 10, borderRadius: 2, background: a.color }
-            }),
-            createElement("span", {
-              style: { fontSize: 13, color: COLORS.text }
-            }, a.label),
-            createElement("span", {
-              style: { fontSize: 13, color: COLORS.textMuted, fontFamily: "'DM Mono', monospace" }
-            }, a.pct + "%")
-          );
-        })
-      )
+      whyUs.map(function(w, i) {
+        return createElement("div", {
+          key: i,
+          style: {
+            background: w.color + "08",
+            border: "1px solid " + w.color + "33",
+            borderRadius: 12,
+            padding: "18px 20px"
+          }
+        },
+          createElement("div", {
+            style: { fontSize: 13, fontWeight: 700, color: w.color, marginBottom: 6 }
+          }, w.label),
+          createElement("div", {
+            style: { fontSize: 12, color: COLORS.textMuted, lineHeight: 1.6 }
+          }, w.desc)
+        );
+      })
     )
   );
 }
 
-// ============ SLIDE 7: UNIT ECONOMICS ============
-function SlideUnitEcon() {
+// ============ SLIDE 9: BUSINESS MODEL ============
+function SlideBusinessModel() {
   var cm = ue.core_metrics || {};
   var benchmarks = ue.benchmarks || {};
+  var arrSeries = (arr.tam_based_scenarios || {}).series || [];
 
-  var metrics = [
-    { label: "ACV", value: "$" + (cm.acv_usd || 0).toLocaleString(), color: COLORS.primary, benchmark: null, benchLabel: "Annual contract value", gbVal: null, medVal: null },
-    { label: "Gross Margin", value: (cm.gross_margin_pct || 0) + "%", color: COLORS.success, benchmark: benchmarks.saas_median_gross_margin_pct, benchLabel: "SaaS median: " + (benchmarks.saas_median_gross_margin_pct || 75) + "%", gbVal: cm.gross_margin_pct, medVal: benchmarks.saas_median_gross_margin_pct },
-    { label: "LTV:CAC", value: (cm.ltv_cac_ratio || 0) + "x", color: COLORS.accent, benchmark: benchmarks.saas_median_ltv_cac, benchLabel: "SaaS median: " + (benchmarks.saas_median_ltv_cac || 3) + "x", gbVal: cm.ltv_cac_ratio, medVal: benchmarks.saas_median_ltv_cac },
-    { label: "CAC Payback", value: (cm.cac_payback_months || 0) + " mo", color: COLORS.info, benchmark: benchmarks.saas_median_cac_payback_months, benchLabel: "SaaS median: " + (benchmarks.saas_median_cac_payback_months || 18) + "mo", gbVal: null, medVal: null, inverted: true },
-    { label: "NRR", value: (cm.nrr_pct || 0) + "%", color: COLORS.purple, benchmark: benchmarks.saas_median_nrr_pct, benchLabel: "SaaS median: " + (benchmarks.saas_median_nrr_pct || 110) + "%", gbVal: cm.nrr_pct, medVal: benchmarks.saas_median_nrr_pct }
+  var keyMetrics = [
+    { label: "ACV", value: "$" + (cm.acv_usd || 0).toLocaleString(), color: COLORS.primary, sub: "Annual contract value" },
+    { label: "Gross Margin", value: (cm.gross_margin_pct || 0) + "%", color: COLORS.success, sub: "SaaS median: " + (benchmarks.saas_median_gross_margin_pct || 75) + "%" },
+    { label: "LTV:CAC", value: (cm.ltv_cac_ratio || 0) + "x", color: COLORS.accent, sub: "SaaS median: " + (benchmarks.saas_median_ltv_cac || 3) + "x" },
+    { label: "CAC Payback", value: (cm.cac_payback_months || 0) + " mo", color: COLORS.info, sub: "SaaS median: " + (benchmarks.saas_median_cac_payback_months || 18) + "mo" },
+    { label: "NRR", value: (cm.nrr_pct || 0) + "%", color: COLORS.purple, sub: "SaaS median: " + (benchmarks.saas_median_nrr_pct || 110) + "%" }
   ];
 
   return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "Unit Economics"),
+    createElement("h2", { style: S.slideTitle }, "Business Model"),
     createElement("p", { style: S.slideSubtitle },
-      "Enterprise SaaS economics with $375K ACV. 5.6-month CAC payback recycles sales spend into product investment immediately."
+      "Enterprise SaaS with $375K ACV. Land-and-expand model: start with one depot, grow across the fleet. 5.6-month CAC payback."
     ),
+    // Key metrics row
     createElement("div", { style: S.grid5 },
-      metrics.map(function(m, i) {
+      keyMetrics.map(function(m, i) {
         return createElement("div", {
           key: i,
           style: Object.assign({}, S.metricCard, { borderTop: "4px solid " + m.color })
         },
           createElement("div", { style: S.metricLabel }, m.label),
           createElement("div", { style: Object.assign({}, S.metricValue, { color: m.color }) }, m.value),
-          createElement("div", { style: S.metricSub }, m.benchLabel)
+          createElement("div", { style: S.metricSub }, m.sub)
         );
       })
     ),
-    // Benchmark comparison bars
-    createElement("div", { style: S.chartCard },
-      createElement("div", { style: S.chartTitle }, "Greenbay vs SaaS Benchmarks"),
-      createElement("div", { style: S.chartSubtitle }, "Source: OpenView SaaS Benchmarks 2024, Bessemer Cloud Index"),
-      createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20, padding: "8px 0" } },
-        [
-          { label: "LTV:CAC Ratio", gb: cm.ltv_cac_ratio || 0, med: benchmarks.saas_median_ltv_cac || 3, top: benchmarks.saas_top_quartile_ltv_cac || 5, unit: "x", max: 25 },
-          { label: "CAC Payback (months)", gb: cm.cac_payback_months || 0, med: benchmarks.saas_median_cac_payback_months || 18, top: null, unit: "mo", max: 20, inverted: true },
-          { label: "Gross Margin", gb: cm.gross_margin_pct || 0, med: benchmarks.saas_median_gross_margin_pct || 75, top: null, unit: "%", max: 100 },
-          { label: "Net Revenue Retention", gb: cm.nrr_pct || 0, med: benchmarks.saas_median_nrr_pct || 110, top: null, unit: "%", max: 130 }
-        ].map(function(b, i) {
-          var gbPct = (b.gb / b.max) * 100;
-          var medPct = (b.med / b.max) * 100;
-          return createElement("div", { key: i },
-            createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 6 } },
-              createElement("span", { style: { fontSize: 12, color: COLORS.text, fontWeight: 500 } }, b.label),
-              createElement("span", { style: { fontSize: 12, color: COLORS.primary, fontWeight: 700 } }, b.gb + b.unit)
-            ),
-            createElement("div", { style: { position: "relative", height: 8, background: "rgba(255,255,255,0.05)", borderRadius: 4 } },
-              // SaaS median marker
-              createElement("div", {
-                style: {
-                  position: "absolute",
-                  left: medPct + "%",
-                  top: -2,
-                  width: 2,
-                  height: 12,
-                  background: COLORS.textDim,
-                  borderRadius: 1
-                }
-              }),
-              // Greenbay bar
-              createElement("div", {
-                style: {
-                  width: Math.min(gbPct, 100) + "%",
-                  height: "100%",
-                  borderRadius: 4,
-                  background: b.inverted
-                    ? "linear-gradient(90deg, " + COLORS.primary + ", " + COLORS.success + ")"
-                    : "linear-gradient(90deg, " + COLORS.primary + ", " + COLORS.secondary + ")"
-                }
-              })
-            ),
-            createElement("div", { style: { display: "flex", justifyContent: "space-between", marginTop: 4 } },
-              createElement("span", { style: { fontSize: 10, color: COLORS.textDim } }, ""),
-              createElement("span", { style: { fontSize: 10, color: COLORS.textDim } }, "SaaS median: " + b.med + b.unit)
-            )
-          );
-        })
-      )
-    )
-  );
-}
-
-// ============ SLIDE 6: GROWTH TRAJECTORY ============
-function SlideGrowth() {
-  var arrSeries = (arr.tam_based_scenarios || {}).series || [];
-  var custScenarios = (arr.customer_based_scenarios || {}).scenarios || {};
-  var baseCustomers = custScenarios.base || [];
-
-  return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "Growth Trajectory"),
-    createElement("p", { style: S.slideSubtitle },
-      "All scenarios anchored at 2026=$0.8M and 2027=$3.0M. Divergence from 2028 based on SAM penetration and sales velocity."
-    ),
     // ARR Chart
-    createElement("div", { style: Object.assign({}, S.chartCard, { marginBottom: 28 }) },
+    createElement("div", { style: S.chartCard },
       createElement("div", { style: S.chartTitle }, "ARR Trajectory \u2014 5 Scenarios (2025\u20132030)"),
       createElement("div", { style: S.chartSubtitle }, "Anchored: 2026=$0.8M, 2027=$3.0M | TAM-based penetration models"),
-      createElement(ResponsiveContainer, { width: "100%", height: 340 },
+      createElement(ResponsiveContainer, { width: "100%", height: 300 },
         createElement(LineChart, { data: arrSeries, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
           createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
           createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
@@ -1138,366 +1215,194 @@ function SlideGrowth() {
           createElement(Line, { type: "monotone", dataKey: "tam_upside", stroke: COLORS.success, strokeWidth: 2, dot: false, name: "TAM Upside" })
         )
       )
-    ),
-    // Customer model table
-    createElement("div", { style: S.chartCard },
-      createElement("div", { style: S.chartTitle }, "Customer-Based Model (Base Case)"),
-      createElement("div", { style: S.chartSubtitle }, "Avg ACV: $375K | 5-10% annual churn | 6-12mo enterprise sales cycle"),
-      createElement("div", { style: { overflowX: "auto" } },
-        createElement("table", {
-          style: {
-            width: "100%",
-            borderCollapse: "collapse",
-            fontSize: 13,
-            fontFamily: "'DM Mono', monospace"
-          }
-        },
-          createElement("thead", null,
-            createElement("tr", null,
-              ["Year", "New Customers", "Churn", "Total Customers", "ARR ($M)", "Growth"].map(function(h, i) {
-                return createElement("th", {
-                  key: i,
-                  style: {
-                    textAlign: i === 0 ? "left" : "right",
-                    padding: "10px 16px",
-                    borderBottom: "1px solid " + COLORS.border,
-                    color: COLORS.textMuted,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px"
-                  }
-                }, h);
-              })
-            )
-          ),
-          createElement("tbody", null,
-            baseCustomers.map(function(row, i) {
-              var isHighlight = row.year === 2030;
-              return createElement("tr", {
-                key: i,
-                style: {
-                  background: isHighlight ? "rgba(0,212,170,0.06)" : "transparent"
-                }
-              },
-                createElement("td", { style: { padding: "10px 16px", fontWeight: 600, color: COLORS.text } }, row.year),
-                createElement("td", { style: { padding: "10px 16px", textAlign: "right", color: COLORS.success } }, "+" + row.new_customers),
-                createElement("td", { style: { padding: "10px 16px", textAlign: "right", color: row.churn > 0 ? COLORS.danger : COLORS.textDim } }, "-" + row.churn),
-                createElement("td", { style: { padding: "10px 16px", textAlign: "right", color: COLORS.text, fontWeight: 600 } }, row.customers),
-                createElement("td", { style: { padding: "10px 16px", textAlign: "right", color: COLORS.primary, fontWeight: 700 } }, "$" + row.arr + "M"),
-                createElement("td", { style: { padding: "10px 16px", textAlign: "right", color: row.growth_pct ? COLORS.accent : COLORS.textDim } },
-                  row.growth_pct ? row.growth_pct + "%" : "\u2014"
-                )
-              );
-            })
-          )
-        )
-      )
     )
   );
 }
 
-// ============ SLIDE 7: VALIDATION & TAILWINDS ============
-function SlideValidation() {
-  var spas = gartner.spas || [];
-  var ahvData = gartner.ahv_fleet_baseline || [];
+// ============ SLIDE 10: THE ASK ============
+function SlideAsk() {
+  var investmentAlloc = [
+    { label: "R&D & Product", pct: 65, color: COLORS.primary },
+    { label: "Operations & Overhead", pct: 18, color: COLORS.secondary },
+    { label: "Buffer", pct: 9, color: COLORS.textDim },
+    { label: "Sales & BD", pct: 8, color: COLORS.accent }
+  ];
 
-  // Build SPA chart data
-  var spaYears = [];
-  spas.forEach(function(spa) {
-    (spa.series || []).forEach(function(pt) {
-      if (spaYears.indexOf(pt.year) === -1) spaYears.push(pt.year);
-    });
-  });
-  spaYears.sort();
-
-  var spaChartData = spaYears.map(function(year) {
-    var row = { year: year };
-    spas.forEach(function(spa) {
-      var pt = (spa.series || []).find(function(p) { return p.year === year; });
-      row[spa.id] = pt ? pt.value_pct : null;
-    });
-    return row;
-  });
-
-  var tailwinds = [
-    { icon: "\u{1F1EA}\u{1F1FA}", title: "EU Clean Vehicle Directive", description: "Mandates zero-emission vehicle procurement for public fleets. Creates forced adoption timeline." },
-    { icon: "\u{1F1FA}\u{1F1F8}", title: "NA ZEV Mandates", description: "California, New York, and 15+ states require zero-emission truck sales targets by 2035." },
-    { icon: "\u{1F916}", title: "Agentic AI (25% by 2030)", description: "Gartner: 25% of T&L firms will use agentic AI for operations. Greenbay is the agentic layer for EV depots." },
-    { icon: "\u{1F69B}", title: "AV Fleet Scale (475K by 2030)", description: "Autonomous vehicle fleets require the same depot orchestration infrastructure. 475K L4+ vehicles by 2030." }
+  var milestones = [
+    { period: "Q1 2026", event: "2 paid pilots kickoff", status: "active" },
+    { period: "Q2 2026", event: "First US pilot, commercial agreements", status: "upcoming" },
+    { period: "Q3\u2013Q4 2026", event: "First recurring revenue, 7 POs secured", status: "upcoming" },
+    { period: "2027", event: "$3M ARR milestone, Series A readiness", status: "future" }
   ];
 
   return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "Validation & Tailwinds"),
+    createElement("h2", { style: S.slideTitle }, "The Ask"),
     createElement("p", { style: S.slideSubtitle },
-      "Gartner validates that Greenbay\u2019s product categories are not speculative \u2014 they\u2019re official analyst predictions with quantified adoption curves."
+      "Raising $3M seed to convert pipeline into revenue, expand platform capabilities, and reach Series A milestone of $3M ARR by 2027."
     ),
-    // Tailwind cards
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 } },
-      tailwinds.map(function(t, i) {
-        return createElement("div", {
-          key: i,
-          style: Object.assign({}, S.card, { padding: 20, borderTop: "3px solid " + CHART_COLORS[i] })
-        },
-          createElement("div", { style: { fontSize: 24, marginBottom: 8 } }, t.icon),
-          createElement("div", { style: { fontSize: 13, fontWeight: 700, color: COLORS.text, marginBottom: 6 } }, t.title),
-          createElement("div", { style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 } }, t.description)
-        );
-      })
-    ),
-    // Charts side by side
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 } },
-      // Gartner SPAs
-      createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "Gartner Strategic Planning Assumptions"),
-        createElement("div", { style: S.chartSubtitle }, "Adoption curves \u2014 Predicts 2026: Transportation"),
-        createElement(ResponsiveContainer, { width: "100%", height: 280 },
-          createElement(LineChart, { data: spaChartData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
-            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
-            createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
-            createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + '%'; } }),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return [v + '%']; } }),
-            createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
-            spas.map(function(spa, i) {
-              return createElement(Line, {
-                key: spa.id,
-                type: "monotone",
-                dataKey: spa.id,
-                stroke: CHART_COLORS[i % CHART_COLORS.length],
-                strokeWidth: 2,
-                dot: false,
-                name: spa.title.length > 25 ? spa.title.substring(0, 23) + '...' : spa.title,
-                connectNulls: true
-              });
-            })
-          )
-        )
-      ),
-      // AHV Fleet Projection
-      createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "Autonomous Fleet Projection (2024\u20132035)"),
-        createElement("div", { style: S.chartSubtitle }, "L4+ commercially deployed vehicles (thousands) by region"),
-        createElement(ResponsiveContainer, { width: "100%", height: 280 },
-          createElement(AreaChart, { data: ahvData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
-            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
-            createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
-            createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + 'K'; } }),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return [v + 'K']; } }),
-            createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
-            createElement(Area, { type: "monotone", dataKey: "na_eu_k", stackId: "1", stroke: COLORS.primary, fill: COLORS.primary, fillOpacity: 0.3, name: "NA + EU" }),
-            createElement(Area, { type: "monotone", dataKey: "apac_k", stackId: "1", stroke: COLORS.accent, fill: COLORS.accent, fillOpacity: 0.3, name: "APAC" }),
-            createElement(Area, { type: "monotone", dataKey: "china_k", stackId: "1", stroke: COLORS.danger, fill: COLORS.danger, fillOpacity: 0.3, name: "China" })
-          )
-        )
-      )
-    )
-  );
-}
-
-// ============ SLIDE 8: DASHBOARDS & SOURCES ============
-function SlideSources() {
-  var categories = sources.categories || [];
-  var expandedState = useState({});
-  var expanded = expandedState[0];
-  var setExpanded = expandedState[1];
-
-  var statusColors = {
-    "200": { bg: "rgba(34,197,94,0.15)", color: COLORS.success, label: "Verified" },
-    "202": { bg: "rgba(34,197,94,0.15)", color: COLORS.success, label: "Verified" },
-    "503_bot_protected": { bg: "rgba(245,158,11,0.15)", color: COLORS.accent, label: "Bot-Protected" }
-  };
-
-  var dashboards = [
-    {
-      name: "Market Intelligence",
-      path: "../greenbay-market-dashboard/",
-      description: "TAM/SAM/SOM, segment sizing, ARR scenarios, fleet time series",
-      color: COLORS.primary,
-      metrics: [
-        { label: "TAM", value: fmtM(bottomUp.tam_2030_usd_m) },
-        { label: "SAM", value: fmtM(bottomUp.sam_2030_usd_m) },
-        { label: "SOM", value: fmtM(bottomUp.som_base_2030_usd_m) }
-      ]
-    },
-    {
-      name: "Fleet Orchestration",
-      path: "../greenbay-fleet-orchestration/",
-      description: "Competitive landscape, unit economics, customer-based ARR model",
-      color: COLORS.secondary,
-      metrics: [
-        { label: "Fleet TAM", value: fmtB(topDown.tam_2030_usd_b) },
-        { label: "ACV", value: "$" + ((ue.core_metrics || {}).acv_usd || 0).toLocaleString() },
-        { label: "LTV:CAC", value: ((ue.core_metrics || {}).ltv_cac_ratio || 0) + "x" }
-      ]
-    },
-    {
-      name: "Electrification Intel",
-      path: "../fleet-electrification-intel/",
-      description: "EV trajectories, regional breakdowns, regulatory drivers, AV projections",
-      color: COLORS.accent,
-      metrics: [
-        { label: "EV Buses", value: fmt((fleet.global_series || [])[3] ? fleet.global_series[3].ev_bus_stock_k : null) + "K" },
-        { label: "Trucks 2030", value: fmt((fleet.global_series || [])[9] ? fleet.global_series[9].ev_truck_sales_k : null) + "K" },
-        { label: "AHV 2030", value: fmt((fleet.global_series || [])[9] ? fleet.global_series[9].ahv_commercial_k : null) + "K" }
-      ]
-    }
-  ];
-
-  var methodologies = [
-    { title: "Bottom-Up TAM ($5.6B)", description: "6 segments \u00D7 ARPU, validated vs IEA/ACEA", tag: "Canonical", tagStyle: S.tagGreen },
-    { title: "Top-Down Fleet Mgmt ($70B)", description: "MarketsandMarkets total market, HD trucking SAM = $32B", tag: "Reference", tagStyle: S.tagBlue },
-    { title: "ARR Anchoring", description: "2026=$0.8M, 2027=$3.0M, diverges per scenario from 2028", tag: "Assumption", tagStyle: S.tagYellow }
-  ];
-
-  function toggleCategory(ci) {
-    setExpanded(function(prev) {
-      var next = Object.assign({}, prev);
-      next[ci] = !next[ci];
-      return next;
-    });
-  }
-
-  return createElement("div", { style: Object.assign({}, S.slide, { justifyContent: "flex-start", paddingTop: 48 }) },
-    createElement("h2", { style: S.slideTitle }, "Dashboards & Sources"),
-
-    // Dashboard cards
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 } },
-      dashboards.map(function(d, i) {
-        return createElement("div", {
-          key: i,
-          style: Object.assign({}, S.card, {
-            borderTop: "3px solid " + d.color,
-            padding: 20
-          })
-        },
-          createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 } },
-            createElement("h3", { style: { fontSize: 14, fontWeight: 700, color: d.color, margin: 0 } }, d.name),
-            createElement("a", {
-              href: d.path,
-              target: "_blank",
-              rel: "noopener noreferrer",
-              style: {
-                fontSize: 11,
-                color: d.color,
-                textDecoration: "none",
-                padding: "4px 10px",
-                borderRadius: 6,
-                border: "1px solid " + d.color + "44",
-                fontWeight: 600
-              }
-            }, "Open \u2192")
-          ),
-          createElement("p", { style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.5, marginBottom: 12 } }, d.description),
-          createElement("div", { style: { display: "flex", gap: 8 } },
-            d.metrics.map(function(m, j) {
-              return createElement("div", { key: j, style: { flex: 1, textAlign: "center", padding: "6px 4px", background: "rgba(255,255,255,0.03)", borderRadius: 6 } },
-                createElement("div", { style: { fontSize: 13, fontWeight: 700, color: COLORS.text } }, m.value),
-                createElement("div", { style: { fontSize: 8, color: COLORS.textDim, textTransform: "uppercase", marginTop: 2 } }, m.label)
-              );
-            })
-          )
-        );
-      })
-    ),
-
-    // Methodology cards
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 28 } },
-      methodologies.map(function(m, i) {
-        return createElement("div", { key: i, style: Object.assign({}, S.card, { padding: 16 }) },
-          createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 } },
-            createElement("span", { style: { fontSize: 12, fontWeight: 700, color: COLORS.text } }, m.title),
-            createElement("span", { style: Object.assign({}, S.tag, m.tagStyle) }, m.tag)
-          ),
-          createElement("p", { style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.5, margin: 0 } }, m.description)
-        );
-      })
-    ),
-
-    // Source registry (collapsible)
+    // Raise headline
     createElement("div", {
       style: {
-        fontSize: 14,
-        fontWeight: 600,
-        color: COLORS.text,
-        marginBottom: 12,
-        display: "flex",
-        alignItems: "center",
-        gap: 10
+        textAlign: "center",
+        marginBottom: 36,
+        padding: "36px 40px",
+        background: "linear-gradient(135deg, rgba(0,212,170,0.08), rgba(99,102,241,0.08))",
+        border: "2px solid " + COLORS.primary + "44",
+        borderRadius: 20
       }
     },
-      createElement("span", { style: Object.assign({}, S.sectionDot, { background: COLORS.primary }) }),
-      "Source Registry \u2014 " + (sources.total_sources || 0) + " Sources",
-      createElement("span", { style: { fontSize: 11, color: COLORS.textDim, fontFamily: "'DM Mono', monospace", marginLeft: 8 } },
-        "Last verified: " + (sources.last_verified || 'unknown')
+      createElement("div", {
+        style: { fontSize: 14, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "2px", marginBottom: 12 }
+      }, "Seed Round"),
+      createElement("div", {
+        style: {
+          fontSize: 64,
+          fontWeight: 700,
+          fontFamily: "'DM Serif Display', serif",
+          color: COLORS.primary,
+          lineHeight: 1.1,
+          marginBottom: 12
+        }
+      }, "$3M"),
+      createElement("div", {
+        style: { fontSize: 16, color: COLORS.textMuted }
+      }, "18-month runway to $3M ARR and Series A")
+    ),
+    // Two columns: Use of Funds + Milestones
+    createElement("div", {
+      style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }
+    },
+      // Left: Use of Funds
+      createElement("div", {
+        style: {
+          background: COLORS.card,
+          borderRadius: 14,
+          padding: "24px 28px"
+        }
+      },
+        createElement("div", {
+          style: { fontSize: 14, fontWeight: 600, color: COLORS.text, marginBottom: 20 }
+        }, "Use of Funds"),
+        // Stacked bar
+        createElement("div", {
+          style: { display: "flex", borderRadius: 8, overflow: "hidden", height: 36, marginBottom: 24 }
+        },
+          investmentAlloc.map(function(a, i) {
+            return createElement("div", {
+              key: i,
+              style: {
+                width: a.pct + "%",
+                background: a.color,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#fff",
+                transition: "opacity 0.2s"
+              },
+              title: a.label + ": " + a.pct + "%"
+            }, a.pct >= 12 ? a.pct + "%" : "");
+          })
+        ),
+        // Legend
+        investmentAlloc.map(function(a, i) {
+          return createElement("div", {
+            key: i,
+            style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }
+          },
+            createElement("div", {
+              style: { width: 12, height: 12, borderRadius: 3, background: a.color, flexShrink: 0 }
+            }),
+            createElement("span", {
+              style: { fontSize: 13, color: COLORS.text, flex: 1 }
+            }, a.label),
+            createElement("span", {
+              style: { fontSize: 14, color: COLORS.textMuted, fontWeight: 700, fontFamily: "'DM Mono', monospace" }
+            }, a.pct + "% \u2014 $" + Math.round(3000 * a.pct / 100) + "K")
+          );
+        })
+      ),
+      // Right: Milestones
+      createElement("div", {
+        style: {
+          background: COLORS.card,
+          borderRadius: 14,
+          padding: "24px 28px"
+        }
+      },
+        createElement("div", {
+          style: { fontSize: 14, fontWeight: 600, color: COLORS.text, marginBottom: 20 }
+        }, "Key Milestones"),
+        milestones.map(function(m, i) {
+          var isActive = m.status === "active";
+          var dotColor = isActive ? COLORS.primary : m.status === "upcoming" ? COLORS.secondary : COLORS.textDim;
+          return createElement("div", {
+            key: i,
+            style: {
+              display: "flex",
+              gap: 16,
+              alignItems: "flex-start",
+              marginBottom: 20,
+              paddingLeft: 4,
+              position: "relative"
+            }
+          },
+            // Dot + line
+            createElement("div", {
+              style: { display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }
+            },
+              createElement("div", {
+                style: {
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  background: isActive ? dotColor : "transparent",
+                  border: "2px solid " + dotColor,
+                  flexShrink: 0,
+                  boxShadow: isActive ? "0 0 10px " + dotColor + "66" : "none"
+                }
+              }),
+              i < milestones.length - 1 ? createElement("div", {
+                style: {
+                  width: 2,
+                  height: 32,
+                  background: COLORS.border,
+                  marginTop: 4
+                }
+              }) : null
+            ),
+            // Content
+            createElement("div", { style: { flex: 1, paddingTop: 0 } },
+              createElement("div", {
+                style: {
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: isActive ? COLORS.primary : COLORS.text,
+                  fontFamily: "'DM Mono', monospace",
+                  marginBottom: 3
+                }
+              }, m.period),
+              createElement("div", {
+                style: { fontSize: 13, color: COLORS.textMuted }
+              }, m.event)
+            )
+          );
+        })
       )
     ),
-    createElement("div", { style: { maxHeight: 280, overflowY: "auto", paddingRight: 8 } },
-      categories.map(function(cat, ci) {
-        var isExpanded = expanded[ci];
-        return createElement("div", { key: ci, style: { marginBottom: 8 } },
-          createElement("button", {
-            onClick: function() { toggleCategory(ci); },
-            style: {
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "10px 14px",
-              background: COLORS.card,
-              border: "1px solid " + COLORS.border,
-              borderRadius: isExpanded ? "10px 10px 0 0" : 10,
-              cursor: "pointer",
-              color: CHART_COLORS[ci % CHART_COLORS.length],
-              fontSize: 12,
-              fontWeight: 600,
-              fontFamily: "'Plus Jakarta Sans', sans-serif"
-            }
-          },
-            createElement("span", null, cat.category + " (" + cat.items.length + ")"),
-            createElement("span", { style: { color: COLORS.textDim, fontSize: 10 } }, isExpanded ? "\u25B2" : "\u25BC")
-          ),
-          isExpanded ? createElement("div", {
-            style: {
-              background: COLORS.card,
-              border: "1px solid " + COLORS.border,
-              borderTop: "none",
-              borderRadius: "0 0 10px 10px",
-              padding: "8px 14px 14px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))",
-              gap: 8
-            }
-          },
-            cat.items.map(function(item, ii) {
-              var statusInfo = statusColors[item.status] || { bg: "rgba(107,114,128,0.15)", color: COLORS.textDim, label: item.status || "No URL" };
-              return createElement("div", {
-                key: ii,
-                style: {
-                  padding: "8px 12px",
-                  background: "rgba(255,255,255,0.02)",
-                  borderRadius: 6,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10
-                }
-              },
-                createElement("div", { style: { flex: 1, minWidth: 0 } },
-                  item.url
-                    ? createElement("a", {
-                        href: item.url,
-                        target: "_blank",
-                        rel: "noopener noreferrer",
-                        style: { color: COLORS.text, fontSize: 11, fontWeight: 600, textDecoration: "none" }
-                      }, item.name)
-                    : createElement("span", { style: { color: COLORS.text, fontSize: 11, fontWeight: 600 } }, item.name),
-                  createElement("span", { style: { color: COLORS.textDim, fontSize: 10, marginLeft: 6 } }, item.org || '')
-                ),
-                createElement("span", { style: Object.assign({}, S.tag, { background: statusInfo.bg, color: statusInfo.color, whiteSpace: "nowrap", fontSize: 9 }) }, statusInfo.label)
-              );
-            })
-          ) : null
-        );
-      })
+    // Contact footer
+    createElement("div", {
+      style: {
+        textAlign: "center",
+        marginTop: 32,
+        padding: "16px 0",
+        borderTop: "1px solid " + COLORS.border
+      }
+    },
+      createElement("span", { style: { fontSize: 14, color: COLORS.textMuted } }, "oren@greenbay.tech"),
+      createElement("span", { style: { margin: "0 16px", color: COLORS.border } }, "|"),
+      createElement("span", { style: { fontSize: 14, color: COLORS.textMuted } }, "greenbay.tech")
     )
   );
 }
@@ -1573,14 +1478,14 @@ function App() {
   var slides = [
     SlideTitle,
     SlideProblem,
+    SlideSolution,
+    SlideWhyNow,
     SlideMarket,
     SlideCompetitive,
     SlideTraction,
     SlideTeam,
-    SlideUnitEcon,
-    SlideGrowth,
-    SlideValidation,
-    SlideSources
+    SlideBusinessModel,
+    SlideAsk
   ];
 
   return createElement("div", { style: S.app },
