@@ -323,21 +323,17 @@ function SlideTitle() {
       textAlign: "center"
     })
   },
-    createElement("div", {
+    createElement("img", {
+      src: "assets/greenbay-logo.png",
+      alt: "Greenbay",
       style: {
-        width: 64,
-        height: 64,
-        borderRadius: 16,
-        background: "linear-gradient(135deg, " + COLORS.primary + ", " + COLORS.secondary + ")",
+        width: 80,
+        height: 80,
+        objectFit: "contain",
         marginBottom: 32,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 28,
-        fontWeight: 700,
-        color: COLORS.background
+        filter: "drop-shadow(0 0 20px rgba(0,212,170,0.3))"
       }
-    }, "G"),
+    }),
     createElement("h1", {
       style: {
         fontFamily: "'DM Serif Display', serif",
@@ -540,30 +536,66 @@ function SlideSolution() {
         );
       })
     ),
-    // Capability cards
+    // Product UI + Capability cards side by side
     createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }
+      style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, alignItems: "start" }
     },
-      capabilities.map(function(c, i) {
-        return createElement("div", {
-          key: i,
+      // Left: Product UI screenshot
+      createElement("div", {
+        style: {
+          background: COLORS.card,
+          borderRadius: 16,
+          border: "1px solid " + COLORS.border,
+          padding: 16,
+          position: "relative",
+          overflow: "hidden"
+        }
+      },
+        createElement("div", {
           style: {
-            background: COLORS.card,
-            borderRadius: 14,
-            border: "1px solid " + COLORS.border,
-            padding: "24px 20px",
-            borderTop: "3px solid " + c.color
+            fontSize: 11,
+            fontWeight: 600,
+            color: COLORS.primary,
+            textTransform: "uppercase",
+            letterSpacing: "1.5px",
+            marginBottom: 10
           }
-        },
-          createElement("div", { style: { fontSize: 28, marginBottom: 12 } }, c.icon),
-          createElement("div", {
-            style: { fontSize: 14, fontWeight: 700, color: c.color, marginBottom: 8 }
-          }, c.title),
-          createElement("div", {
-            style: { fontSize: 12, color: COLORS.textMuted, lineHeight: 1.7 }
-          }, c.description)
-        );
-      })
+        }, "Product Interface"),
+        createElement("img", {
+          src: "assets/product-ui.png",
+          alt: "Greenbay Platform UI",
+          style: {
+            width: "100%",
+            borderRadius: 10,
+            border: "1px solid " + COLORS.border
+          }
+        })
+      ),
+      // Right: Capability cards in 2x2 grid
+      createElement("div", {
+        style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }
+      },
+        capabilities.map(function(c, i) {
+          return createElement("div", {
+            key: i,
+            style: {
+              background: COLORS.card,
+              borderRadius: 14,
+              border: "1px solid " + COLORS.border,
+              padding: "20px 16px",
+              borderTop: "3px solid " + c.color
+            }
+          },
+            createElement("div", { style: { fontSize: 24, marginBottom: 8 } }, c.icon),
+            createElement("div", {
+              style: { fontSize: 13, fontWeight: 700, color: c.color, marginBottom: 6 }
+            }, c.title),
+            createElement("div", {
+              style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 }
+            }, c.description)
+          );
+        })
+      )
     )
   );
 }
@@ -958,9 +990,87 @@ function SlideTraction() {
         );
       })
     ),
+    // Partner logos section
+    createElement("div", {
+      style: {
+        background: COLORS.card,
+        borderRadius: 16,
+        border: "1px solid " + COLORS.border,
+        padding: "20px 28px",
+        marginBottom: 20
+      }
+    },
+      createElement("div", {
+        style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, alignItems: "center" }
+      },
+        // Design Partner
+        createElement("div", { style: { textAlign: "center" } },
+          createElement("div", {
+            style: { fontSize: 10, fontWeight: 600, color: COLORS.primary, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10 }
+          }, "Design Partner"),
+          createElement("img", {
+            src: "assets/logo-transport-uk.png",
+            alt: "Transport UK",
+            style: { height: 44, objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.85 }
+          })
+        ),
+        // LOIs
+        createElement("div", { style: { textAlign: "center" } },
+          createElement("div", {
+            style: { fontSize: 10, fontWeight: 600, color: COLORS.accent, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10 }
+          }, "2 LOIs \u2014 Q1 2026"),
+          createElement("img", {
+            src: "assets/logo-alvarada.png",
+            alt: "Alvarada",
+            style: { height: 44, objectFit: "contain" }
+          })
+        ),
+        // Channel Partner
+        createElement("div", { style: { textAlign: "center" } },
+          createElement("div", {
+            style: { fontSize: 10, fontWeight: 600, color: COLORS.info, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10 }
+          }, "Channel Partner"),
+          createElement("img", {
+            src: "assets/logo-solaredge.png",
+            alt: "SolarEdge",
+            style: { height: 36, objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.85 }
+          })
+        )
+      )
+    ),
+    // Engaged Pipeline logos
+    createElement("div", {
+      style: {
+        background: COLORS.card,
+        borderRadius: 16,
+        border: "1px solid " + COLORS.border,
+        padding: "16px 28px"
+      }
+    },
+      createElement("div", {
+        style: { fontSize: 10, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 14, textAlign: "center" }
+      }, "Engaged Pipeline \u2014 12 Accounts, 19,000 Buses"),
+      createElement("div", {
+        style: { display: "flex", justifyContent: "center", alignItems: "center", gap: 36 }
+      },
+        [
+          { src: "assets/logo-stagecoach.png", alt: "Stagecoach", h: 36 },
+          { src: "assets/logo-kcata.png", alt: "KC ATA", h: 32 },
+          { src: "assets/logo-bvg.png", alt: "BVG", h: 36 },
+          { src: "assets/logo-firstbus.png", alt: "First Bus", h: 32 }
+        ].map(function(logo, i) {
+          return createElement("img", {
+            key: i,
+            src: logo.src,
+            alt: logo.alt,
+            style: { height: logo.h, objectFit: "contain" }
+          });
+        })
+      )
+    ),
     // Testimonials
     createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginTop: 20 }
     },
       testimonials.map(function(t, i) {
         return createElement("div", {
@@ -1014,6 +1124,7 @@ function SlideTeam() {
       name: "Oren Arieli",
       role: "CEO",
       initials: "OA",
+      photo: "assets/oren-arieli.jpg",
       color: COLORS.primary,
       background: "10+ years in mobility operations software",
       prev: "Ex-Optibus & Via",
@@ -1023,6 +1134,7 @@ function SlideTeam() {
       name: "Shira Golan",
       role: "Co-CEO",
       initials: "SG",
+      photo: null,
       color: COLORS.secondary,
       background: "2 successful exits, R&D scaling expert",
       prev: "Fortune 500 partnerships",
@@ -1032,6 +1144,7 @@ function SlideTeam() {
       name: "Daniel Odesser",
       role: "CTO",
       initials: "DO",
+      photo: "assets/daniel-odesser.jpg",
       color: COLORS.accent,
       background: "Second-time founder, high-reliability platforms",
       prev: "Ex-Optibus & Auto Fleet",
@@ -1078,24 +1191,38 @@ function SlideTeam() {
               background: "linear-gradient(90deg, transparent, " + t.color + ", transparent)"
             }
           }),
-          // Avatar circle with initials
-          createElement("div", {
-            style: {
-              width: 64,
-              height: 64,
-              borderRadius: "50%",
-              background: t.color + "22",
-              border: "2px solid " + t.color,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 14px",
-              fontSize: 22,
-              fontWeight: 700,
-              fontFamily: "'DM Serif Display', serif",
-              color: t.color
-            }
-          }, t.initials),
+          // Avatar: photo or initials fallback
+          t.photo ?
+            createElement("img", {
+              src: t.photo,
+              alt: t.name,
+              style: {
+                width: 72,
+                height: 72,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "3px solid " + t.color,
+                margin: "0 auto 14px",
+                display: "block"
+              }
+            }) :
+            createElement("div", {
+              style: {
+                width: 72,
+                height: 72,
+                borderRadius: "50%",
+                background: t.color + "22",
+                border: "3px solid " + t.color,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 14px",
+                fontSize: 22,
+                fontWeight: 700,
+                fontFamily: "'DM Serif Display', serif",
+                color: t.color
+              }
+            }, t.initials),
           createElement("div", {
             style: { fontSize: 18, fontWeight: 700, color: COLORS.text, marginBottom: 4 }
           }, t.name),
