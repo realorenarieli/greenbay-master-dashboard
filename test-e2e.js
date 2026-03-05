@@ -284,6 +284,32 @@ async function run() {
     var mktSvgs = await page.$$('svg.recharts-surface');
     assert(mktSvgs.length >= 2, 'Market slide renders 2+ charts (' + mktSvgs.length + ' svg found)');
 
+    // ── 8d. Why Greenbay Wins slide content ──
+    console.log('\n=== 8d. Why Greenbay Wins Slide ===');
+    await clickDot(page, 'Why Greenbay Wins');
+    var compText = await page.textContent('#root');
+
+    // Layer names
+    assert(compText.includes('Strategy & Planning'), 'Competitive slide has "Strategy & Planning" layer');
+    assert(compText.includes('Orchestration'), 'Competitive slide has "Orchestration" layer');
+    assert(compText.includes('Execution & Operations'), 'Competitive slide has "Execution & Operations" layer');
+    assert(compText.includes('Assets & Infrastructure'), 'Competitive slide has "Assets & Infrastructure" layer');
+
+    // GREENBAY label
+    assert(compText.includes('GREENBAY'), 'Competitive slide has "GREENBAY" label on L2');
+
+    // Competitor chart renders
+    var compSvgs = await page.$$('svg.recharts-surface');
+    assert(compSvgs.length >= 1, 'Competitive slide renders competitor chart (' + compSvgs.length + ' svg found)');
+
+    // Differentiator labels
+    assert(compText.includes('EV-Native'), 'Competitive slide has "EV-Native" differentiator');
+    assert(compText.includes('Hardware-Agnostic'), 'Competitive slide has "Hardware-Agnostic" differentiator');
+    assert(compText.includes('Full Orchestration'), 'Competitive slide has "Full Orchestration" differentiator');
+
+    // Execution layer examples include Samsara
+    assert(compText.includes('Samsara'), 'Competitive slide has "Samsara" in execution layer examples');
+
     // ── 9. Charts rendered ──
     console.log('\n=== 9. Chart Rendering ===');
 

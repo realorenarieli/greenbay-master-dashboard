@@ -1635,106 +1635,216 @@ function SlideCompetitive() {
   var gbPos = comp.greenbay_positioning || {};
   var advantages = gbPos.competitive_advantages || {};
 
-  return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "Why Greenbay Wins"),
-    createElement("p", { style: S.slideSubtitle },
-      "Greenbay owns Layer 2 \u2014 the only orchestration layer in a 4-layer stack. Competitors are point-solutions or legacy platforms."
-    ),
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, marginBottom: 32 } },
-      // Left: Tech stack layers
-      createElement("div", null,
-        createElement("div", { style: { fontSize: 14, fontWeight: 600, color: COLORS.text, marginBottom: 16 } }, "Fleet Technology Stack"),
-        techLayers.map(function(layer, i) {
-          var isGB = layer.is_greenbay_layer;
-          return createElement("div", {
-            key: i,
+  // Layer color mapping
+  var layerMeta = [
+    { color: COLORS.info, rgb: "59,130,246", borderW: 1 },
+    { color: COLORS.primary, rgb: "0,212,170", borderW: 2 },
+    { color: COLORS.secondary, rgb: "99,102,241", borderW: 1 },
+    { color: COLORS.accent, rgb: "245,158,11", borderW: 1 }
+  ];
+
+  // ── Keyframes ──
+  var styleTag = createElement("style", null,
+    "@keyframes compLayerGlow { 0%, 100% { box-shadow: 0 0 25px rgba(0,212,170,0.1), 0 0 50px rgba(0,212,170,0.05); } 50% { box-shadow: 0 0 45px rgba(0,212,170,0.3), 0 0 90px rgba(0,212,170,0.12); } } " +
+    "@keyframes compStreamDown { 0% { top: -4px; opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.8; } 100% { top: calc(100% + 4px); opacity: 0; } } " +
+    "@keyframes compDrift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } } " +
+    "@keyframes compChartGlow { 0%, 100% { border-color: " + COLORS.border + "; box-shadow: none; } 50% { border-color: rgba(0,212,170,0.2); box-shadow: 0 0 10px rgba(0,212,170,0.05); } } " +
+    "@keyframes compPillGlow { 0%, 100% { border-color: rgba(255,255,255,0.06); box-shadow: none; } 50% { border-color: var(--glow-color, rgba(0,212,170,0.3)); box-shadow: 0 0 12px var(--glow-color, rgba(0,212,170,0.1)); } } " +
+    "@keyframes compLabelPulse { 0%, 100% { text-shadow: 0 0 8px rgba(0,212,170,0.3); } 50% { text-shadow: 0 0 18px rgba(0,212,170,0.7), 0 0 30px rgba(0,212,170,0.3); } }"
+  );
+
+  // ── Zone B: Tech stack rows with streaming connectors ──
+  var stackRows = [];
+  techLayers.forEach(function(layer, i) {
+    var isGB = layer.is_greenbay_layer;
+    var meta = layerMeta[i] || layerMeta[0];
+
+    stackRows.push(
+      createElement("div", {
+        key: "layer-" + i,
+        style: {
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          padding: "12px 20px",
+          borderRadius: 12,
+          background: COLORS.card,
+          border: meta.borderW + "px solid rgba(" + meta.rgb + "," + (isGB ? "0.4" : "0.2") + ")",
+          overflow: "hidden",
+          animation: isGB
+            ? "compLayerGlow 3s ease-in-out infinite"
+            : "compDrift 4.5s ease-in-out infinite",
+          animationDelay: isGB ? "0s" : (i * 0.3) + "s"
+        }
+      },
+        // L2 inner gradient bar
+        isGB ? createElement("div", {
+          style: {
+            position: "absolute",
+            top: 0, left: 0, bottom: 0, right: 0,
+            background: "linear-gradient(90deg, rgba(0,212,170,0.08) 0%, rgba(0,212,170,0.02) 100%)",
+            borderRadius: 12,
+            pointerEvents: "none"
+          }
+        }) : null,
+        // Badge
+        createElement("div", {
+          style: {
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            background: isGB ? COLORS.primary : COLORS.border,
+            color: isGB ? COLORS.background : COLORS.textDim,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: 700,
+            fontSize: 13,
+            marginRight: 16,
+            flexShrink: 0,
+            position: "relative",
+            zIndex: 1
+          }
+        }, "L" + layer.layer),
+        // Name + examples
+        createElement("div", { style: { flex: 1, position: "relative", zIndex: 1 } },
+          createElement("div", {
             style: {
-              display: "flex",
-              alignItems: "center",
-              padding: "16px 20px",
-              marginBottom: 8,
-              borderRadius: 12,
-              background: isGB ? "rgba(0,212,170,0.08)" : COLORS.card,
-              border: isGB ? "2px solid " + COLORS.primary : "1px solid " + COLORS.border,
-              transition: "all 0.2s"
+              fontWeight: isGB ? 700 : 500,
+              fontSize: 14,
+              color: isGB ? COLORS.primary : COLORS.text,
+              marginBottom: 2
             }
-          },
-            createElement("div", {
+          }, layer.name + (isGB ? " \u2190 " : ""),
+            isGB ? createElement("span", {
               style: {
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                background: isGB ? COLORS.primary : COLORS.border,
-                color: isGB ? COLORS.background : COLORS.textDim,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 700,
-                fontSize: 13,
-                marginRight: 16,
-                flexShrink: 0
+                fontWeight: 800,
+                letterSpacing: "1px",
+                animation: "compLabelPulse 2.5s ease-in-out infinite"
               }
-            }, "L" + layer.layer),
-            createElement("div", { style: { flex: 1 } },
+            }, "GREENBAY") : null
+          ),
+          createElement("div", {
+            style: { fontSize: 11, color: COLORS.textDim }
+          }, layer.examples.join(", "))
+        ),
+        // Right context for L2
+        isGB ? createElement("div", {
+          style: {
+            fontSize: 11,
+            fontWeight: 600,
+            color: COLORS.primary,
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            position: "relative",
+            zIndex: 1,
+            whiteSpace: "nowrap"
+          }
+        }, "Orchestration Layer") : null
+      )
+    );
+
+    // Streaming connectors between layers (not after last)
+    if (i < techLayers.length - 1) {
+      var connColor = (i < 2) ? COLORS.primary : COLORS.textDim;
+      var connRgb = (i < 2) ? "0,212,170" : "107,114,128";
+      stackRows.push(
+        createElement("div", {
+          key: "conn-" + i,
+          style: { display: "flex", justifyContent: "center", gap: 32, height: 18 }
+        },
+          [0, 1].map(function(d) {
+            return createElement("div", {
+              key: "dl-" + d,
+              style: { position: "relative", width: 1, height: "100%", background: "rgba(" + connRgb + ",0.12)" }
+            },
               createElement("div", {
                 style: {
-                  fontWeight: isGB ? 700 : 500,
-                  fontSize: 14,
-                  color: isGB ? COLORS.primary : COLORS.text,
-                  marginBottom: 2
+                  position: "absolute", left: -2, width: 5, height: 5, borderRadius: "50%",
+                  background: connColor, opacity: 0.6,
+                  animation: "compStreamDown 1.8s linear infinite",
+                  animationDelay: (d * 0.9) + "s"
                 }
-              }, layer.name + (isGB ? " \u2190 GREENBAY" : "")),
-              createElement("div", {
-                style: { fontSize: 11, color: COLORS.textDim }
-              }, layer.examples.join(", "))
-            )
-          );
-        }),
-        // Differentiator callouts
-        createElement("div", { style: { display: "flex", gap: 12, marginTop: 20 } },
-          [
-            { label: "EV-Native", desc: advantages.vs_samsara },
-            { label: "Hardware-Agnostic", desc: advantages.vs_einride },
-            { label: "Full Orchestration", desc: advantages.vs_driivz }
-          ].map(function(d, i) {
-            return createElement("div", {
-              key: i,
-              style: {
-                flex: 1,
-                padding: "12px 14px",
-                borderRadius: 10,
-                background: "rgba(0,212,170,0.06)",
-                border: "1px solid rgba(0,212,170,0.2)"
-              }
-            },
-              createElement("div", { style: { fontSize: 12, fontWeight: 700, color: COLORS.primary, marginBottom: 4 } }, d.label),
-              createElement("div", { style: { fontSize: 10, color: COLORS.textMuted, lineHeight: 1.5 } }, d.desc || '')
+              })
             );
           })
         )
-      ),
-      // Right: Competitive revenue chart
-      createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "Competitor Revenue ($M)"),
-        createElement("div", { style: S.chartSubtitle }, "Annual revenue \u2014 latest reported | All execution-layer players"),
-        createElement(ResponsiveContainer, { width: "100%", height: 320 },
-          createElement(BarChart, {
-            data: competitors,
-            layout: "vertical",
-            margin: { top: 10, right: 30, left: 80, bottom: 0 }
-          },
-            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5, horizontal: false }),
-            createElement(XAxis, { type: "number", stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return '$' + v + 'M'; } }),
-            createElement(YAxis, { type: "category", dataKey: "name", stroke: COLORS.textDim, fontSize: 11, width: 75 }),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return ['$' + v + 'M']; } }),
-            createElement(Bar, { dataKey: "revenue_usd_m", fill: COLORS.secondary, radius: [0, 4, 4, 0], name: "Revenue" },
-              competitors.map(function(c, i) {
-                return createElement(Cell, { key: i, fill: CHART_COLORS[i % CHART_COLORS.length] });
-              })
-            )
-          )
+      );
+    }
+  });
+
+  // ── Zone C: Evidence layer ──
+  var diffCards = [
+    { label: "EV-Native", desc: advantages.vs_samsara, rgb: "0,212,170" },
+    { label: "Hardware-Agnostic", desc: advantages.vs_einride, rgb: "0,212,170" },
+    { label: "Full Orchestration", desc: advantages.vs_driivz, rgb: "0,212,170" }
+  ];
+
+  var chartCard = createElement("div", {
+    style: Object.assign({}, S.chartCard, { animation: "compChartGlow 5s ease-in-out infinite" })
+  },
+    createElement("div", { style: S.chartTitle }, "Competitor Revenue ($M)"),
+    createElement("div", { style: S.chartSubtitle }, "Annual revenue \u2014 latest reported | All execution-layer players"),
+    createElement(ResponsiveContainer, { width: "100%", height: 200 },
+      createElement(BarChart, {
+        data: competitors,
+        layout: "vertical",
+        margin: { top: 10, right: 30, left: 80, bottom: 0 }
+      },
+        createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5, horizontal: false }),
+        createElement(XAxis, { type: "number", stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return '$' + v + 'M'; } }),
+        createElement(YAxis, { type: "category", dataKey: "name", stroke: COLORS.textDim, fontSize: 11, width: 75 }),
+        createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return ['$' + v + 'M']; } }),
+        createElement(Bar, { dataKey: "revenue_usd_m", fill: COLORS.secondary, radius: [0, 4, 4, 0], name: "Revenue" },
+          competitors.map(function(c, i) {
+            return createElement(Cell, { key: i, fill: CHART_COLORS[i % CHART_COLORS.length] });
+          })
         )
       )
+    )
+  );
+
+  var diffColumn = createElement("div", {
+    style: { display: "flex", flexDirection: "column", gap: 10 }
+  },
+    diffCards.map(function(d, i) {
+      return createElement("div", {
+        key: "diff-" + i,
+        style: {
+          flex: 1,
+          padding: "12px 14px",
+          borderRadius: 10,
+          background: COLORS.card,
+          border: "1px solid rgba(" + d.rgb + ",0.15)",
+          animation: "compPillGlow 4s ease-in-out infinite, compDrift 4.5s ease-in-out infinite",
+          animationDelay: (i * 0.4) + "s",
+          "--glow-color": "rgba(" + d.rgb + ",0.3)"
+        }
+      },
+        createElement("div", {
+          style: { fontSize: 12, fontWeight: 700, color: COLORS.primary, marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.5px" }
+        }, d.label),
+        createElement("div", {
+          style: { fontSize: 10, color: COLORS.textMuted, lineHeight: 1.5 }
+        }, d.desc || '')
+      );
+    })
+  );
+
+  // ── Assemble slide ──
+  return createElement("div", { style: S.slide },
+    styleTag,
+    // Zone A: Title
+    createElement("h2", { style: S.slideTitle }, "Why Greenbay Wins"),
+    createElement("p", { style: Object.assign({}, S.slideSubtitle, { marginBottom: 24 }) },
+      "Greenbay owns Layer 2 \u2014 the only orchestration layer in a 4-layer stack. Competitors are point-solutions or legacy platforms."
+    ),
+    // Zone B: Tech stack hero
+    createElement("div", { style: { marginBottom: 20 } }, stackRows),
+    // Zone C: Evidence layer
+    createElement("div", { style: { display: "grid", gridTemplateColumns: "3fr 2fr", gap: 20 } },
+      chartCard,
+      diffColumn
     )
   );
 }
