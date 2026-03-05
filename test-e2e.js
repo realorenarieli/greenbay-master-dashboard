@@ -6,6 +6,8 @@
  */
 
 const { chromium } = require('playwright');
+const { execSync } = require('child_process');
+const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -239,11 +241,11 @@ async function run() {
     // ── 9. Charts rendered ──
     console.log('\n=== 9. Chart Rendering ===');
 
-    // Go to Problem slide (has AreaChart)
+    // Go to Problem slide (chaos visual, no chart)
     await clickDot(page, 'The Problem');
-    await page.waitForTimeout(300); // Extra time for chart animation
-    var svgs = await page.$$('svg.recharts-surface');
-    assert(svgs.length > 0, 'Problem slide renders Recharts SVG chart(s) (' + svgs.length + ' found)');
+    await page.waitForTimeout(300);
+    var problemText = await page.evaluate(() => document.body.innerText.toLowerCase());
+    assert(problemText.includes('siloed tools'), 'Problem slide contains "Siloed Tools" metric');
 
     // Go to Market slide (has BarChart + PieChart)
     await clickDot(page, 'Market Opportunity');
@@ -262,6 +264,84 @@ async function run() {
     assert(consoleErrors.length === 0, 'No console errors (found ' + consoleErrors.length + ')');
     if (consoleErrors.length > 0) {
       consoleErrors.forEach(function(e) { console.log('    error: ' + e); });
+    }
+
+    // ── 11. Deployment checks ──
+    console.log('\n=== 11. Deployment Checks ===');
+
+    // 11a. gh-pages branch must be in sync with main
+    try {
+      var mainSha = execSync('git rev-parse main', { cwd: BASE, encoding: 'utf8' }).trim();
+      var ghPagesSha = execSync('git rev-parse gh-pages', { cwd: BASE, encoding: 'utf8' }).trim();
+      assert(mainSha === ghPagesSha, 'gh-pages is in sync with main (' + mainSha.slice(0, 7) + ')');
+      if (mainSha !== ghPagesSha) {
+        var mainShort = mainSha.slice(0, 7);
+        var ghShort = ghPagesSha.slice(0, 7);
+        console.log('    main: ' + mainShort + ', gh-pages: ' + ghShort);
+        var behindCount = execSync('git rev-list --count gh-pages..main', { cwd: BASE, encoding: 'utf8' }).trim();
+        console.log('    gh-pages is ' + behindCount + ' commit(s) behind main');
+      }
+    } catch (gitErr) {
+      assert(false, 'gh-pages branch sync check (git error: ' + gitErr.message + ')');
+    }
+
+    // 11b. Critical files exist on gh-pages branch
+    try {
+      var criticalFiles = ['index.html', 'dashboard.js', 'data/canonical-bundle.json'];
+      criticalFiles.forEach(function(file) {
+        try {
+          execSync('git show gh-pages:' + file + ' > /dev/null 2>&1', { cwd: BASE });
+          assert(true, 'gh-pages has ' + file);
+        } catch (e) {
+          assert(false, 'gh-pages has ' + file + ' (MISSING)');
+        }
+      });
+    } catch (fileErr) {
+      assert(false, 'gh-pages file check (error: ' + fileErr.message + ')');
+    }
+
+    // 11c. gh-pages dashboard.js matches working copy (no uncommitted drift)
+    try {
+      var ghPagesDash = execSync('git show gh-pages:dashboard.js', { cwd: BASE, encoding: 'utf8' });
+      var localDash = fs.readFileSync(path.join(BASE, 'dashboard.js'), 'utf8');
+      assert(ghPagesDash === localDash, 'gh-pages dashboard.js matches local working copy');
+    } catch (diffErr) {
+      assert(false, 'gh-pages dashboard.js content match (error: ' + diffErr.message + ')');
+    }
+
+    // 11d. Live GitHub Pages serves current content
+    try {
+      var liveContent = await new Promise(function(resolve, reject) {
+        var url = 'https://realorenarieli.github.io/greenbay-master-dashboard/dashboard.js';
+        https.get(url, { headers: { 'Cache-Control': 'no-cache' } }, function(res) {
+          if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+            https.get(res.headers.location, function(res2) {
+              var body = '';
+              res2.on('data', function(chunk) { body += chunk; });
+              res2.on('end', function() { resolve({ status: res2.statusCode, body: body }); });
+            }).on('error', reject);
+          } else {
+            var body = '';
+            res.on('data', function(chunk) { body += chunk; });
+            res.on('end', function() { resolve({ status: res.statusCode, body: body }); });
+          }
+        }).on('error', reject);
+      });
+
+      assert(liveContent.status === 200, 'GitHub Pages returns 200 for dashboard.js (got ' + liveContent.status + ')');
+      if (liveContent.status === 200) {
+        // Check that key content from current version exists in live file
+        var hasCurrentSubtitle = liveContent.body.includes('disconnected tools');
+        assert(hasCurrentSubtitle, 'Live dashboard.js has current subtitle ("disconnected tools")');
+
+        var hasSiloedMetric = liveContent.body.includes('Siloed Tools Per Operator');
+        assert(hasSiloedMetric, 'Live dashboard.js has current metric ("Siloed Tools Per Operator")');
+
+        var hasStaleChart = liveContent.body.includes('Fleet Electrification Trajectory');
+        assert(!hasStaleChart, 'Live dashboard.js does NOT have removed chart ("Fleet Electrification Trajectory")');
+      }
+    } catch (liveErr) {
+      console.log('    (Live URL check skipped: ' + liveErr.message + ')');
     }
 
   } catch (err) {

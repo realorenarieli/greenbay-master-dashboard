@@ -392,38 +392,36 @@ function SlideTitle() {
 
 // ============ SLIDE 2: THE PROBLEM ============
 function SlideProblem() {
-  var fleetSeries = fleet.global_series || [];
-
   // Alarm metric cards data
   var alarmMetrics = [
-    { value: "33x", label: "EV Truck Sales Growth", context: "11K \u2192 370K units, 2021\u20132030" },
-    { value: "5\u20138", label: "Siloed Tools Per Operator", context: "No single pane of glass" },
-    { value: "0", label: "Purpose-Built Platforms", context: "No EV-native fleet orchestration exists" }
+    { value: "5\u20138", label: "Siloed Tools Per Operator", context: "Telematics, charging, routing, maintenance, compliance \u2014 none connected" },
+    { value: "40%", label: "Time Lost to Manual Bridging", context: "Operators re-key data across disconnected systems daily" },
+    { value: "0", label: "Unified Platforms", context: "No single pane of glass for fleet orchestration exists" }
   ];
 
-  // Tool chaos chips
+  // Tool chaos chips (spread across full width)
   var chaosTools = [
-    { label: "Telematics", top: 10, left: 8, rot: -6 },
-    { label: "Charging Mgmt", top: 4, left: 52, rot: 4 },
-    { label: "Routing", top: 32, left: 2, rot: -8 },
-    { label: "Maintenance", top: 28, left: 56, rot: 5 },
-    { label: "Compliance", top: 56, left: 14, rot: -3 },
-    { label: "ELD", top: 54, left: 62, rot: 6 },
-    { label: "Billing", top: 76, left: 34, rot: -4 }
+    { label: "Telematics", top: 10, left: 5, rot: -6 },
+    { label: "Charging Mgmt", top: 6, left: 38, rot: 4 },
+    { label: "Routing", top: 8, left: 72, rot: -5 },
+    { label: "Maintenance", top: 38, left: 15, rot: 5 },
+    { label: "Compliance", top: 40, left: 55, rot: -3 },
+    { label: "ELD", top: 36, left: 82, rot: 6 },
+    { label: "Billing", top: 70, left: 35, rot: -4 }
   ];
   var chaosColors = ["#ef4444", "#f97316", "#d97706", "#b45309", "#dc2626", "#c2410c", "#ef4444"];
 
-  // Tangled lines between tool chips
+  // Tangled lines between tool chips (wider spread)
   var tangledLines = [
-    { x1: 14, y1: 16, x2: 58, y2: 10, color: "rgba(239,68,68,0.15)" },
-    { x1: 8, y1: 38, x2: 62, y2: 34, color: "rgba(249,115,22,0.12)" },
-    { x1: 20, y1: 62, x2: 68, y2: 60, color: "rgba(217,119,6,0.12)" },
-    { x1: 58, y1: 10, x2: 8, y2: 38, color: "rgba(239,68,68,0.1)" },
-    { x1: 62, y1: 34, x2: 20, y2: 62, color: "rgba(249,115,22,0.1)" },
-    { x1: 14, y1: 16, x2: 20, y2: 62, color: "rgba(220,38,38,0.08)" },
-    { x1: 58, y1: 10, x2: 68, y2: 60, color: "rgba(194,65,12,0.08)" },
-    { x1: 40, y1: 82, x2: 8, y2: 38, color: "rgba(239,68,68,0.08)" },
-    { x1: 40, y1: 82, x2: 68, y2: 60, color: "rgba(217,119,6,0.06)" }
+    { x1: 10, y1: 16, x2: 44, y2: 12, color: "rgba(239,68,68,0.15)" },
+    { x1: 44, y1: 12, x2: 78, y2: 14, color: "rgba(249,115,22,0.15)" },
+    { x1: 20, y1: 44, x2: 60, y2: 46, color: "rgba(249,115,22,0.12)" },
+    { x1: 60, y1: 46, x2: 88, y2: 42, color: "rgba(217,119,6,0.12)" },
+    { x1: 10, y1: 16, x2: 20, y2: 44, color: "rgba(239,68,68,0.1)" },
+    { x1: 78, y1: 14, x2: 88, y2: 42, color: "rgba(220,38,38,0.1)" },
+    { x1: 20, y1: 44, x2: 78, y2: 14, color: "rgba(194,65,12,0.08)" },
+    { x1: 40, y1: 76, x2: 20, y2: 44, color: "rgba(239,68,68,0.08)" },
+    { x1: 40, y1: 76, x2: 60, y2: 46, color: "rgba(217,119,6,0.08)" }
   ];
 
   // Inject keyframes
@@ -487,12 +485,11 @@ function SlideProblem() {
     })
   );
 
-  // Tool Chaos visual (left 60%)
+  // Tool Chaos visual (full width)
   var chaosVisual = createElement("div", {
     style: {
-      flex: 1.2,
       position: "relative",
-      height: 260,
+      height: 320,
       background: "radial-gradient(ellipse at 50% 50%, rgba(239,68,68,0.05) 0%, transparent 70%)",
       borderRadius: 16,
       border: "1px solid rgba(239,68,68,0.1)",
@@ -578,50 +575,14 @@ function SlideProblem() {
     })
   );
 
-  // Fleet Growth Chart (right 40%, compressed)
-  var chartSection = createElement("div", {
-    style: {
-      flex: 1,
-      background: COLORS.card,
-      borderRadius: 16,
-      border: "1px solid " + COLORS.border,
-      padding: "20px 18px"
-    }
-  },
-    createElement("div", { style: { fontSize: 13, fontWeight: 600, color: COLORS.text, marginBottom: 2 } },
-      "Fleet Electrification Trajectory"
-    ),
-    createElement("div", { style: { fontSize: 10, color: COLORS.textDim, marginBottom: 14, fontFamily: "'DM Mono', monospace" } },
-      "EV bus stock, truck sales, AHV, managed LCVs (thousands)"
-    ),
-    createElement(ResponsiveContainer, { width: "100%", height: 220 },
-      createElement(AreaChart, { data: fleetSeries, margin: { top: 5, right: 20, left: 5, bottom: 0 } },
-        createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
-        createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 10 }),
-        createElement(YAxis, { stroke: COLORS.textDim, fontSize: 10, tickFormatter: function(v) { return v + 'K'; } }),
-        createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v, name) { return [v + 'K', name]; } }),
-        createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
-        createElement(Area, { type: "monotone", dataKey: "ev_bus_stock_k", stroke: COLORS.primary, fill: COLORS.primary, fillOpacity: 0.2, strokeWidth: 2, name: "EV Bus Stock" }),
-        createElement(Area, { type: "monotone", dataKey: "ev_truck_sales_k", stroke: COLORS.secondary, fill: COLORS.secondary, fillOpacity: 0.2, strokeWidth: 2, name: "EV Truck Sales" }),
-        createElement(Area, { type: "monotone", dataKey: "ahv_commercial_k", stroke: COLORS.accent, fill: COLORS.accent, fillOpacity: 0.2, strokeWidth: 2, name: "AHV (L4+)" }),
-        createElement(Area, { type: "monotone", dataKey: "lcv_managed_stock_k", stroke: COLORS.cyan, fill: COLORS.cyan, fillOpacity: 0.2, strokeWidth: 2, name: "Managed LCVs" })
-      )
-    )
-  );
-
-  // Bottom split layout
-  var bottomSection = createElement("div", {
-    style: { display: "flex", gap: 24, alignItems: "stretch" }
-  }, chaosVisual, chartSection);
-
   return createElement("div", { style: S.slide },
     styleTag,
     createElement("h2", { style: S.slideTitle }, "The Problem"),
     createElement("p", { style: S.slideSubtitle },
-      "Fleet electrification is exploding. The tools managing it were built for diesel."
+      "Fleet operators juggle disconnected tools that don\u2019t talk to each other. Accelerated by the shift to electric."
     ),
     metricCards,
-    bottomSection
+    chaosVisual
   );
 }
 
