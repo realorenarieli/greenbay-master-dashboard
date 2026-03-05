@@ -454,238 +454,377 @@ function SlideProblem() {
 // ============ SLIDE 3: THE SOLUTION ============
 function SlideSolution() {
   var inputs = [
-    { icon: "\uD83D\uDCE1", label: "Telematics & GPS", desc: "Vehicle position, speed, diagnostics" },
-    { icon: "\uD83D\uDD0C", label: "EV Chargers", desc: "Status, availability, power rates" },
-    { icon: "\u26A1", label: "Grid & Energy", desc: "Tariffs, demand-response, solar" },
-    { icon: "\uD83C\uDF24\uFE0F", label: "Weather & Traffic", desc: "Forecasts, road conditions" },
-    { icon: "\uD83D\uDCCB", label: "Fleet Schedules", desc: "Routes, windows, assignments" },
-    { icon: "\uD83D\uDD27", label: "Vehicle Health", desc: "Battery SoC, maintenance, tires" }
+    { icon: "\uD83D\uDCE1", label: "Telematics & GPS" },
+    { icon: "\uD83D\uDD0C", label: "EV Chargers" },
+    { icon: "\u26A1", label: "Grid & Energy" },
+    { icon: "\uD83C\uDF24\uFE0F", label: "Weather & Traffic" },
+    { icon: "\uD83D\uDCCB", label: "Fleet Schedules" },
+    { icon: "\uD83D\uDD27", label: "Vehicle Health" }
   ];
 
   var capabilities = [
-    { title: "Charge Orchestration", desc: "When, where & how much to charge", color: COLORS.primary },
-    { title: "Route Intelligence", desc: "EV-aware multi-stop optimization", color: COLORS.secondary },
-    { title: "Energy Management", desc: "Peak shaving & demand response", color: COLORS.accent },
-    { title: "Fleet Analytics", desc: "Unified cross-fleet insights", color: COLORS.info }
+    { title: "Charge Orchestration", color: COLORS.primary },
+    { title: "Route Intelligence", color: COLORS.secondary },
+    { title: "Energy Management", color: COLORS.accent },
+    { title: "Fleet Analytics", color: COLORS.info }
   ];
 
   var outputs = [
-    { icon: "\uD83D\uDCCA", label: "Real-time Dashboards", desc: "Single pane of glass for ops" },
-    { icon: "\uD83D\uDD14", label: "Automated Alerts", desc: "Proactive notifications" },
-    { icon: "\uD83D\uDDFA\uFE0F", label: "Route Recommendations", desc: "Optimized dispatch plans" },
-    { icon: "\uD83D\uDCA1", label: "Energy Optimization", desc: "Cost savings via smart scheduling" },
-    { icon: "\uD83D\uDCC8", label: "Performance Reports", desc: "KPIs, trends, compliance" },
-    { icon: "\uD83D\uDD17", label: "API Integrations", desc: "TMS, ERP, billing connectors" }
+    { icon: "\uD83D\uDCCA", label: "Real-time Dashboards" },
+    { icon: "\uD83D\uDD14", label: "Automated Alerts" },
+    { icon: "\uD83D\uDDFA\uFE0F", label: "Route Recommendations" },
+    { icon: "\uD83D\uDCA1", label: "Energy Optimization" },
+    { icon: "\uD83D\uDCC8", label: "Performance Reports" },
+    { icon: "\uD83D\uDD17", label: "API Integrations" }
   ];
 
-  // Column label style
-  var colLabel = {
-    fontSize: 10,
-    fontWeight: 700,
-    textTransform: "uppercase",
-    letterSpacing: "2px",
-    marginBottom: 14,
-    textAlign: "center"
-  };
+  // Scattered positions for chaos particles (left zone, percentages of zone)
+  var chaosPositions = [
+    { top: 8, left: 12, rot: -6 },
+    { top: 2, left: 58, rot: 4 },
+    { top: 30, left: 4, rot: -8 },
+    { top: 26, left: 52, rot: 5 },
+    { top: 52, left: 18, rot: -3 },
+    { top: 56, left: 60, rot: 6 }
+  ];
 
-  // Input/output item style
-  var itemStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "8px 12px",
-    background: COLORS.card,
-    borderRadius: 10,
-    border: "1px solid " + COLORS.border,
-    marginBottom: 6
-  };
+  // Muted chaos colors
+  var chaosColors = ["#ef4444", "#f97316", "#d97706", "#b45309", "#dc2626", "#c2410c"];
 
-  // Flow arrow connector between columns
-  function flowArrow() {
-    return createElement("div", {
+  // Container height for the visual area
+  var vizHeight = 420;
+
+  // Inject keyframes for prism glow pulse
+  var styleTag = createElement("style", null,
+    "@keyframes prismPulse { 0%, 100% { box-shadow: 0 0 30px rgba(0,212,170,0.12), 0 0 60px rgba(0,212,170,0.06); } 50% { box-shadow: 0 0 50px rgba(0,212,170,0.25), 0 0 90px rgba(0,212,170,0.1); } }"
+  );
+
+  // ── ZONE 1: CHAOS (left) ──
+  var chaosZone = createElement("div", {
+    style: {
+      position: "relative",
+      width: "28%",
+      height: vizHeight,
+      flexShrink: 0
+    }
+  },
+    // Zone label
+    createElement("div", {
       style: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 48,
-        flexShrink: 0,
-        alignSelf: "stretch",
-        paddingTop: 30
+        fontSize: 10,
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: "2px",
+        color: "#ef4444",
+        opacity: 0.5,
+        textAlign: "center",
+        marginBottom: 4
       }
-    },
-      // Dashed line with arrowhead
-      createElement("div", {
+    }, "Raw Data"),
+    // Background tint
+    createElement("div", {
+      style: {
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: "radial-gradient(ellipse at 50% 50%, rgba(239,68,68,0.04) 0%, transparent 70%)",
+        borderRadius: 16,
+        pointerEvents: "none"
+      }
+    }),
+    // Tangled lines between particles (decorative crossing lines)
+    [
+      { x1: 18, y1: 14, x2: 64, y2: 8, color: "rgba(239,68,68,0.12)" },
+      { x1: 10, y1: 36, x2: 58, y2: 32, color: "rgba(249,115,22,0.1)" },
+      { x1: 24, y1: 58, x2: 66, y2: 62, color: "rgba(217,119,6,0.1)" },
+      { x1: 64, y1: 8, x2: 10, y2: 36, color: "rgba(239,68,68,0.08)" },
+      { x1: 58, y1: 32, x2: 24, y2: 58, color: "rgba(249,115,22,0.08)" },
+      { x1: 18, y1: 14, x2: 24, y2: 58, color: "rgba(220,38,38,0.06)" },
+      { x1: 64, y1: 8, x2: 66, y2: 62, color: "rgba(194,65,12,0.06)" }
+    ].map(function(line, i) {
+      var dx = line.x2 - line.x1;
+      var dy = line.y2 - line.y1;
+      var len = Math.sqrt(dx * dx + dy * dy);
+      var angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      return createElement("div", {
+        key: "tl-" + i,
         style: {
-          flex: 1,
-          width: 2,
-          background: "repeating-linear-gradient(to bottom, " + COLORS.primary + " 0px, " + COLORS.primary + " 6px, transparent 6px, transparent 12px)",
-          opacity: 0.4,
-          display: "none"
+          position: "absolute",
+          top: line.y1 + "%",
+          left: line.x1 + "%",
+          width: len + "%",
+          height: 1,
+          background: line.color,
+          transformOrigin: "0 0",
+          transform: "rotate(" + angle + "deg)",
+          pointerEvents: "none"
         }
-      }),
-      // Horizontal arrow
-      createElement("div", {
+      });
+    }),
+    // Scattered particles
+    inputs.map(function(item, i) {
+      var pos = chaosPositions[i];
+      return createElement("div", {
+        key: "chaos-" + i,
         style: {
+          position: "absolute",
+          top: pos.top + "%",
+          left: pos.left + "%",
+          transform: "rotate(" + pos.rot + "deg)",
+          background: "rgba(30,20,15,0.7)",
+          border: "1px solid " + chaosColors[i] + "44",
+          borderRadius: 10,
+          padding: "7px 12px",
           display: "flex",
           alignItems: "center",
-          gap: 0,
-          width: "100%"
+          gap: 7,
+          whiteSpace: "nowrap",
+          zIndex: 2
+        }
+      },
+        createElement("span", { style: { fontSize: 14 } }, item.icon),
+        createElement("span", {
+          style: { fontSize: 10, fontWeight: 600, color: chaosColors[i], opacity: 0.8 }
+        }, item.label)
+      );
+    })
+  );
+
+  // ── CONVERGENCE LINES (chaos → prism) ──
+  // These connect from each particle's right edge toward the prism's left vertex
+  var convergenceLines = createElement("div", {
+    style: {
+      position: "relative",
+      width: "6%",
+      height: vizHeight,
+      flexShrink: 0
+    }
+  },
+    inputs.map(function(item, i) {
+      var pos = chaosPositions[i];
+      // Map particle vertical position to line start, converge to center
+      var startY = pos.top + 5; // center of particle roughly
+      var endY = 42; // prism center-ish
+      var dy = endY - startY;
+      var angle = Math.atan2(dy, 100) * 180 / Math.PI;
+      var len = Math.sqrt(dy * dy + 100 * 100);
+      return createElement("div", {
+        key: "conv-" + i,
+        style: {
+          position: "absolute",
+          top: startY + "%",
+          left: 0,
+          width: "100%",
+          height: 1,
+          background: "linear-gradient(to right, " + chaosColors[i] + "33, " + COLORS.primary + "22)",
+          transformOrigin: "0 50%",
+          transform: "rotate(" + (angle * 0.5) + "deg)",
+          pointerEvents: "none"
+        }
+      });
+    })
+  );
+
+  // ── ZONE 2: THE PRISM (center) ──
+  var prismZone = createElement("div", {
+    style: {
+      position: "relative",
+      width: "30%",
+      height: vizHeight,
+      flexShrink: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  },
+    // Prism diamond shape
+    createElement("div", {
+      style: {
+        position: "relative",
+        width: 220,
+        height: 260,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }
+    },
+      // Diamond background
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "linear-gradient(135deg, rgba(0,212,170,0.08) 0%, rgba(0,212,170,0.02) 50%, rgba(99,102,241,0.04) 100%)",
+          border: "2px solid rgba(0,212,170,0.3)",
+          borderRadius: 20,
+          clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
+          animation: "prismPulse 3s ease-in-out infinite"
+        }
+      }),
+      // Inner glow ring
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: 20, left: 20, right: 20, bottom: 20,
+          border: "1px solid rgba(0,212,170,0.15)",
+          borderRadius: 14,
+          clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
+          pointerEvents: "none"
+        }
+      }),
+      // Content inside prism
+      createElement("div", {
+        style: {
+          position: "relative",
+          zIndex: 2,
+          textAlign: "center",
+          padding: "0 10px"
         }
       },
         createElement("div", {
           style: {
-            flex: 1,
-            height: 2,
-            background: "linear-gradient(to right, transparent, " + COLORS.primary + ")",
-            opacity: 0.5
+            fontSize: 18,
+            fontWeight: 700,
+            color: COLORS.primary,
+            letterSpacing: "-0.3px",
+            marginBottom: 14
           }
-        }),
-        createElement("div", {
-          style: {
-            width: 0, height: 0,
-            borderTop: "6px solid transparent",
-            borderBottom: "6px solid transparent",
-            borderLeft: "10px solid " + COLORS.primary,
-            opacity: 0.6
-          }
+        }, "Greenbay"),
+        // Capability items stacked
+        capabilities.map(function(c, i) {
+          return createElement("div", {
+            key: "prism-cap-" + i,
+            style: {
+              fontSize: 9,
+              fontWeight: 600,
+              color: c.color,
+              padding: "3px 0",
+              letterSpacing: "0.3px",
+              opacity: 0.9
+            }
+          }, c.title);
         })
       )
-    );
-  }
+    )
+  );
+
+  // ── DIVERGENCE LINES (prism → harmony) ──
+  var divergenceLines = createElement("div", {
+    style: {
+      position: "relative",
+      width: "6%",
+      height: vizHeight,
+      flexShrink: 0
+    }
+  },
+    outputs.map(function(item, i) {
+      // Evenly spaced output positions
+      var endY = 8 + i * 14.5;
+      var startY = 42; // prism center
+      var dy = endY - startY;
+      var angle = Math.atan2(dy, 100) * 180 / Math.PI;
+      return createElement("div", {
+        key: "div-" + i,
+        style: {
+          position: "absolute",
+          top: startY + "%",
+          left: 0,
+          width: "100%",
+          height: 2,
+          background: "linear-gradient(to right, " + COLORS.primary + "44, " + COLORS.primary + "18)",
+          transformOrigin: "0 50%",
+          transform: "rotate(" + (angle * 0.5) + "deg)",
+          borderRadius: 1,
+          pointerEvents: "none"
+        }
+      });
+    })
+  );
+
+  // ── ZONE 3: HARMONY (right) ──
+  var harmonyZone = createElement("div", {
+    style: {
+      position: "relative",
+      width: "28%",
+      height: vizHeight,
+      flexShrink: 0,
+      display: "flex",
+      flexDirection: "column",
+      paddingTop: 20
+    }
+  },
+    // Zone label
+    createElement("div", {
+      style: {
+        fontSize: 10,
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: "2px",
+        color: COLORS.primary,
+        textAlign: "center",
+        marginBottom: 10
+      }
+    }, "Actionable Intelligence"),
+    // Background tint
+    createElement("div", {
+      style: {
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: "radial-gradient(ellipse at 50% 50%, rgba(0,212,170,0.03) 0%, transparent 70%)",
+        borderRadius: 16,
+        pointerEvents: "none"
+      }
+    }),
+    // Clean aligned output cards
+    outputs.map(function(item, i) {
+      return createElement("div", {
+        key: "harmony-" + i,
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "9px 14px",
+          background: "rgba(0,212,170,0.04)",
+          border: "1px solid rgba(0,212,170,0.12)",
+          borderRadius: 10,
+          marginBottom: 7
+        }
+      },
+        createElement("span", {
+          style: { fontSize: 16, width: 24, textAlign: "center", flexShrink: 0 }
+        }, item.icon),
+        createElement("span", {
+          style: { fontSize: 11, fontWeight: 600, color: COLORS.text }
+        }, item.label)
+      );
+    })
+  );
 
   return createElement("div", { style: S.slide },
+    styleTag,
     createElement("h2", { style: S.slideTitle }, "The Solution"),
-    createElement("p", { style: Object.assign({}, S.slideSubtitle, { marginBottom: 28 }) },
-      "Greenbay sits between fleet assets and fleet strategy \u2014 a single orchestration layer that ingests data from every source, optimizes in real-time, and delivers actionable intelligence."
+    createElement("p", { style: Object.assign({}, S.slideSubtitle, { marginBottom: 20 }) },
+      "Raw, fragmented fleet data enters the Greenbay engine \u2014 and exits as unified, actionable intelligence."
     ),
-    // 3-column architecture flow
+    // Main visual: Chaos → Prism → Harmony
     createElement("div", {
       style: {
         display: "flex",
         alignItems: "stretch",
-        gap: 0
+        justifyContent: "center",
+        gap: 0,
+        position: "relative"
       }
     },
-      // ── LEFT COLUMN: INPUTS ──
-      createElement("div", { style: { flex: 1 } },
-        createElement("div", { style: Object.assign({}, colLabel, { color: COLORS.textMuted }) }, "Data Inputs"),
-        inputs.map(function(item, i) {
-          return createElement("div", { key: "in-" + i, style: itemStyle },
-            createElement("div", {
-              style: { fontSize: 18, width: 28, textAlign: "center", flexShrink: 0 }
-            }, item.icon),
-            createElement("div", { style: { minWidth: 0 } },
-              createElement("div", {
-                style: { fontSize: 12, fontWeight: 600, color: COLORS.text, lineHeight: 1.3 }
-              }, item.label),
-              createElement("div", {
-                style: { fontSize: 10, color: COLORS.textDim, lineHeight: 1.3, marginTop: 1 }
-              }, item.desc)
-            )
-          );
-        })
-      ),
-
-      // ── ARROW: INPUT → ORCHESTRATION ──
-      flowArrow(),
-
-      // ── CENTER COLUMN: GREENBAY ORCHESTRATION ──
-      createElement("div", { style: { flex: 1.3 } },
-        createElement("div", {
-          style: Object.assign({}, colLabel, { color: COLORS.primary })
-        }, "Greenbay Orchestration"),
-        createElement("div", {
-          style: {
-            background: "linear-gradient(135deg, rgba(0,212,170,0.06) 0%, rgba(0,212,170,0.02) 100%)",
-            border: "2px solid " + COLORS.primary,
-            borderRadius: 16,
-            padding: "20px 18px",
-            position: "relative",
-            boxShadow: "0 0 40px rgba(0,212,170,0.08), inset 0 1px 0 rgba(0,212,170,0.1)"
-          }
-        },
-          // Engine label
-          createElement("div", {
-            style: {
-              textAlign: "center",
-              marginBottom: 16
-            }
-          },
-            createElement("div", {
-              style: {
-                fontSize: 18,
-                fontWeight: 700,
-                color: COLORS.primary,
-                letterSpacing: "-0.3px"
-              }
-            }, "AI-Powered Engine"),
-            createElement("div", {
-              style: {
-                fontSize: 11,
-                color: COLORS.textMuted,
-                marginTop: 4
-              }
-            }, "Real-time optimization across mixed EV/ICE/AV fleets")
-          ),
-          // 4 capability cards in 2x2 grid
-          createElement("div", {
-            style: {
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 10
-            }
-          },
-            capabilities.map(function(c, i) {
-              return createElement("div", {
-                key: "cap-" + i,
-                style: {
-                  background: "rgba(0,0,0,0.3)",
-                  borderRadius: 10,
-                  padding: "14px 12px",
-                  borderLeft: "3px solid " + c.color
-                }
-              },
-                createElement("div", {
-                  style: { fontSize: 12, fontWeight: 700, color: c.color, marginBottom: 3 }
-                }, c.title),
-                createElement("div", {
-                  style: { fontSize: 10, color: COLORS.textMuted, lineHeight: 1.4 }
-                }, c.desc)
-              );
-            })
-          )
-        )
-      ),
-
-      // ── ARROW: ORCHESTRATION → OUTPUT ──
-      flowArrow(),
-
-      // ── RIGHT COLUMN: OUTPUTS ──
-      createElement("div", { style: { flex: 1 } },
-        createElement("div", { style: Object.assign({}, colLabel, { color: COLORS.textMuted }) }, "Operator Interface"),
-        outputs.map(function(item, i) {
-          return createElement("div", { key: "out-" + i, style: itemStyle },
-            createElement("div", {
-              style: { fontSize: 18, width: 28, textAlign: "center", flexShrink: 0 }
-            }, item.icon),
-            createElement("div", { style: { minWidth: 0 } },
-              createElement("div", {
-                style: { fontSize: 12, fontWeight: 600, color: COLORS.text, lineHeight: 1.3 }
-              }, item.label),
-              createElement("div", {
-                style: { fontSize: 10, color: COLORS.textDim, lineHeight: 1.3, marginTop: 1 }
-              }, item.desc)
-            )
-          );
-        })
-      )
+      chaosZone,
+      convergenceLines,
+      prismZone,
+      divergenceLines,
+      harmonyZone
     ),
-
     // Bottom tagline
     createElement("div", {
       style: {
-        marginTop: 24,
+        marginTop: 16,
         textAlign: "center",
         fontSize: 13,
         color: COLORS.textMuted,
