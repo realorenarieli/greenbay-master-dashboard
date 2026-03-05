@@ -372,7 +372,7 @@ function SlideTitle() {
           fontSize: 12,
           fontFamily: "'DM Mono', monospace"
         }
-      }, "Seed Round \u2014 $3M"),
+      }, "Pre-Seed Round \u2014 $3M"),
       createElement("span", {
         style: { color: COLORS.textDim, fontSize: 13 }
       }, "Data as of " + (meta.data_as_of || ''))
@@ -381,7 +381,7 @@ function SlideTitle() {
       style: {
         color: COLORS.textDim,
         fontSize: 12,
-        animation: "pulse 2s ease-in-out infinite"
+        opacity: 0.6
       }
     },
       createElement("span", { style: { marginRight: 8 } }, "\u2192"),
@@ -763,7 +763,7 @@ function SlideMarket() {
       ),
       // Regional SAM
       createElement("div", { style: S.chartCard },
-        createElement("div", { style: S.chartTitle }, "SAM by Region \u2014 $4.6B Total"),
+        createElement("div", { style: S.chartTitle }, "SAM by Region \u2014 " + fmtM(bottomUp.sam_2030_usd_m) + " Total"),
         createElement("div", { style: S.chartSubtitle }, "EU + NA primary | APAC emerging | China 30% accessible"),
         createElement(ResponsiveContainer, { width: "100%", height: 280 },
           createElement(PieChart, null,
@@ -906,9 +906,9 @@ function SlideCompetitive() {
 // ============ SLIDE 7: TRACTION ============
 function SlideTraction() {
   var tractionMetrics = [
-    { label: "Revenue Impact", value: "+13%", desc: "Revenue increase for pilot operators", color: COLORS.primary, icon: "\u2197" },
+    { label: "Revenue Impact", value: "+13%", desc: "Revenue uplift in product trials", color: COLORS.primary, icon: "\u2197" },
     { label: "On-Time Performance", value: "+21%", desc: "Improvement in schedule adherence", color: COLORS.success, icon: "\u2713" },
-    { label: "Issue Awareness", value: "54 min", desc: "Earlier detection of operational issues", color: COLORS.accent, icon: "\u26A1" }
+    { label: "Issue Detection", value: "54 min", desc: "Earlier awareness of operational issues", color: COLORS.accent, icon: "\u26A1" }
   ];
 
   var testimonials = [
@@ -1025,25 +1025,6 @@ function SlideTraction() {
         })
       )
     ),
-    // Engaged Pipeline summary
-    createElement("div", {
-      style: {
-        background: COLORS.card,
-        borderRadius: 16,
-        border: "1px solid " + COLORS.border,
-        padding: "18px 28px",
-        textAlign: "center"
-      }
-    },
-      createElement("span", {
-        style: { fontSize: 14, color: COLORS.text }
-      },
-        createElement("span", { style: { fontWeight: 700, color: COLORS.primary, fontSize: 16 } }, "200+"),
-        " qualified accounts identified \u00B7 ",
-        createElement("span", { style: { fontWeight: 700, color: COLORS.accent, fontSize: 16 } }, "20"),
-        " already engaged"
-      )
-    ),
     // Testimonials
     createElement("div", {
       style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginTop: 20 }
@@ -1059,18 +1040,6 @@ function SlideTraction() {
             position: "relative"
           }
         },
-          createElement("div", {
-            style: {
-              fontSize: 32,
-              color: COLORS.primary,
-              opacity: 0.3,
-              position: "absolute",
-              top: 8,
-              left: 14,
-              fontFamily: "Georgia, serif",
-              lineHeight: 1
-            }
-          }, "\u201C"),
           createElement("div", {
             style: {
               fontSize: 13,
@@ -1286,7 +1255,7 @@ function SlideBusinessModel() {
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "Business Model"),
     createElement("p", { style: S.slideSubtitle },
-      "Enterprise SaaS with $375K ACV. Land-and-expand model: start with one depot, grow across the fleet. 5.6-month CAC payback."
+      "Enterprise SaaS with $" + ((ue.core_metrics || {}).acv_usd || 375000).toLocaleString() + " ACV. Land-and-expand model: start with one depot, grow across the fleet. " + ((ue.core_metrics || {}).cac_payback_months || 5.6) + "-month CAC payback."
     ),
     // Key metrics row
     createElement("div", { style: S.grid5 },
@@ -1342,7 +1311,7 @@ function SlideAsk() {
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "The Ask"),
     createElement("p", { style: S.slideSubtitle },
-      "Raising $3M seed to convert pipeline into revenue, expand platform capabilities, and reach Series A milestone of $3M ARR by 2027."
+      "Raising $3M pre-seed to convert pipeline into revenue, expand platform capabilities, and reach Series A milestone of $3M ARR by 2027."
     ),
     // Raise headline
     createElement("div", {
@@ -1357,7 +1326,7 @@ function SlideAsk() {
     },
       createElement("div", {
         style: { fontSize: 14, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "2px", marginBottom: 12 }
-      }, "Seed Round"),
+      }, "Pre-Seed Round"),
       createElement("div", {
         style: {
           fontSize: 64,
