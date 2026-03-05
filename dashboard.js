@@ -991,7 +991,7 @@ function SlideTraction() {
         );
       })
     ),
-    // Partner logos section — CSS text logos for crisp rendering
+    // Partner logos section — uniform 240x80 images on white canvas
     createElement("div", {
       style: {
         background: COLORS.card,
@@ -1004,57 +1004,28 @@ function SlideTraction() {
       createElement("div", {
         style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, alignItems: "start" }
       },
-        // Design Partner — Transport UK
-        createElement("div", { style: { textAlign: "center" } },
-          createElement("div", {
-            style: { fontSize: 10, fontWeight: 600, color: COLORS.primary, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 12 }
-          }, "Design Partner"),
-          createElement("div", {
-            style: { display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #1a2856, #2a3c6e)", borderRadius: 12, padding: "16px 24px", height: 64 }
-          },
-            createElement("span", {
-              style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 18, color: "#ffffff", letterSpacing: "0.5px" }
-            }, "TRANSPORT"),
-            createElement("span", {
-              style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 18, color: "#4a9eff", marginLeft: 6, letterSpacing: "0.5px" }
-            }, "UK")
-          )
-        ),
-        // LOIs — Alvorada
-        createElement("div", { style: { textAlign: "center" } },
-          createElement("div", {
-            style: { fontSize: 10, fontWeight: 600, color: COLORS.accent, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 12 }
-          }, "2 LOIs \u2014 Q1 2026"),
-          createElement("div", {
-            style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 12, padding: "16px 24px", height: 64, gap: 10 }
-          },
+        [
+          { label: "Design Partner", color: COLORS.primary, src: "assets/logo-transport-uk.png", alt: "Transport UK" },
+          { label: "2 LOIs \u2014 Q1 2026", color: COLORS.accent, src: "assets/logo-alvarada.png", alt: "Alvorada" },
+          { label: "Channel Partner", color: COLORS.info, src: "assets/logo-solaredge.png", alt: "SolarEdge" }
+        ].map(function(p) {
+          return createElement("div", { key: p.alt, style: { textAlign: "center" } },
             createElement("div", {
-              style: { width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg, #e31e24, #c41018)", flexShrink: 0 }
-            }),
-            createElement("span", {
-              style: { fontFamily: "'DM Serif Display', serif", fontSize: 20, color: "#1a3a6e", letterSpacing: "0.5px" }
-            }, "Alvorada")
-          )
-        ),
-        // Channel Partner — SolarEdge
-        createElement("div", { style: { textAlign: "center" } },
-          createElement("div", {
-            style: { fontSize: 10, fontWeight: 600, color: COLORS.info, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 12 }
-          }, "Channel Partner"),
-          createElement("div", {
-            style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 12, padding: "16px 24px", height: 64 }
-          },
-            createElement("span", {
-              style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 400, fontSize: 20, color: "#1a1a1a", letterSpacing: "-0.5px" }
-            }, "solar"),
-            createElement("span", {
-              style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 20, color: "#ffffff", background: "#e31e24", borderRadius: 4, padding: "2px 6px", marginLeft: 1, letterSpacing: "-0.5px" }
-            }, "edge")
-          )
-        )
+              style: { fontSize: 10, fontWeight: 600, color: p.color, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 12 }
+            }, p.label),
+            createElement("div", {
+              style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 12, padding: "8px 16px", height: 64 }
+            },
+              createElement("img", {
+                src: p.src, alt: p.alt,
+                style: { maxWidth: 180, maxHeight: 48, objectFit: "contain" }
+              })
+            )
+          );
+        })
       )
     ),
-    // Engaged Pipeline logos — CSS text logos
+    // Engaged Pipeline logos
     createElement("div", {
       style: {
         background: COLORS.card,
@@ -1069,57 +1040,22 @@ function SlideTraction() {
       createElement("div", {
         style: { display: "flex", justifyContent: "center", alignItems: "center", gap: 20, flexWrap: "wrap" }
       },
-        // Stagecoach
-        createElement("div", {
-          style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 10, padding: "10px 18px", height: 48 }
-        },
-          createElement("span", {
-            style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, color: "#1a4d8f", letterSpacing: "0.5px" }
-          }, "STAGECOACH"),
-          createElement("span", {
-            style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 400, fontSize: 14, color: "#5a8abf", marginLeft: 4 }
-          }, "GROUP")
-        ),
-        // KC ATA
-        createElement("div", {
-          style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 10, padding: "10px 18px", height: 48, gap: 6 }
-        },
-          createElement("div", {
-            style: { width: 4, height: 28, background: "#0077c8", borderRadius: 2 }
-          }),
-          createElement("div", { style: { lineHeight: 1.1 } },
-            createElement("div", {
-              style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 13, color: "#1a1a1a", letterSpacing: "0.5px" }
-            }, "KC"),
-            createElement("div", {
-              style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 13, color: "#1a1a1a", letterSpacing: "0.5px" }
-            }, "ATA")
-          ),
-          createElement("span", {
-            style: { fontSize: 14, color: "#cc2229", marginLeft: 2 }
-          }, "\u279E")
-        ),
-        // BVG
-        createElement("div", {
-          style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffdd00", borderRadius: 10, padding: "10px 18px", height: 48, position: "relative", overflow: "hidden" }
-        },
-          createElement("span", {
-            style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 16, color: "#1a1a1a", letterSpacing: "1px", position: "relative", zIndex: 1 }
-          }, "\u2665 BVG")
-        ),
-        // First Bus
-        createElement("div", {
-          style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 10, padding: "10px 18px", height: 48 }
-        },
-          createElement("span", {
-            style: { fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 16, color: "#0a1e5c", letterSpacing: "-0.5px" }
-          }, "First"),
-          createElement("div", {
-            style: { width: 24, height: 24, borderRadius: "50%", background: "linear-gradient(135deg, #e81f76, #d4145a)", marginLeft: 6, display: "flex", alignItems: "center", justifyContent: "center" }
+        [
+          { src: "assets/logo-stagecoach.png", alt: "Stagecoach" },
+          { src: "assets/logo-kcata.png", alt: "KC ATA" },
+          { src: "assets/logo-bvg.png", alt: "BVG" },
+          { src: "assets/logo-firstbus.png", alt: "First Bus" }
+        ].map(function(p) {
+          return createElement("div", {
+            key: p.alt,
+            style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 10, padding: "6px 14px", height: 48 }
           },
-            createElement("span", { style: { color: "#fff", fontSize: 12, fontWeight: 700 } }, "f")
-          )
-        )
+            createElement("img", {
+              src: p.src, alt: p.alt,
+              style: { maxWidth: 140, maxHeight: 36, objectFit: "contain" }
+            })
+          );
+        })
       )
     ),
     // Testimonials
