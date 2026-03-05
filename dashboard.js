@@ -453,151 +453,245 @@ function SlideProblem() {
 
 // ============ SLIDE 3: THE SOLUTION ============
 function SlideSolution() {
+  var inputs = [
+    { icon: "\uD83D\uDCE1", label: "Telematics & GPS", desc: "Vehicle position, speed, diagnostics" },
+    { icon: "\uD83D\uDD0C", label: "EV Chargers", desc: "Status, availability, power rates" },
+    { icon: "\u26A1", label: "Grid & Energy", desc: "Tariffs, demand-response, solar" },
+    { icon: "\uD83C\uDF24\uFE0F", label: "Weather & Traffic", desc: "Forecasts, road conditions" },
+    { icon: "\uD83D\uDCCB", label: "Fleet Schedules", desc: "Routes, windows, assignments" },
+    { icon: "\uD83D\uDD27", label: "Vehicle Health", desc: "Battery SoC, maintenance, tires" }
+  ];
+
   var capabilities = [
-    {
-      icon: "\uD83D\uDD0B",
-      title: "Smart Charge Orchestration",
-      description: "Optimizes when, where, and how much each vehicle charges based on route demand, grid tariffs, and battery health.",
-      color: COLORS.primary
-    },
-    {
-      icon: "\uD83D\uDDFA\uFE0F",
-      title: "Route & Dispatch Intelligence",
-      description: "EV-aware routing that accounts for state-of-charge, charging stops, payload weight, and real-time depot constraints.",
-      color: COLORS.secondary
-    },
-    {
-      icon: "\u26A1",
-      title: "Grid & Energy Management",
-      description: "Demand-response integration, peak shaving, and energy cost optimization across depot infrastructure.",
-      color: COLORS.accent
-    },
-    {
-      icon: "\uD83D\uDCCA",
-      title: "Unified Fleet Analytics",
-      description: "Single pane of glass across mixed EV/ICE/AV fleets. Real-time operational insights replacing 5-8 fragmented tools.",
-      color: COLORS.info
-    }
+    { title: "Charge Orchestration", desc: "When, where & how much to charge", color: COLORS.primary },
+    { title: "Route Intelligence", desc: "EV-aware multi-stop optimization", color: COLORS.secondary },
+    { title: "Energy Management", desc: "Peak shaving & demand response", color: COLORS.accent },
+    { title: "Fleet Analytics", desc: "Unified cross-fleet insights", color: COLORS.info }
   ];
 
-  var productFlow = [
-    { label: "Data Ingestion", sub: "Telematics, chargers, grid, weather", icon: "\u2193" },
-    { label: "Orchestration Engine", sub: "AI-powered optimization layer", icon: "\u2699\uFE0F" },
-    { label: "Operator Interface", sub: "Dashboards, alerts, recommendations", icon: "\u2191" }
+  var outputs = [
+    { icon: "\uD83D\uDCCA", label: "Real-time Dashboards", desc: "Single pane of glass for ops" },
+    { icon: "\uD83D\uDD14", label: "Automated Alerts", desc: "Proactive notifications" },
+    { icon: "\uD83D\uDDFA\uFE0F", label: "Route Recommendations", desc: "Optimized dispatch plans" },
+    { icon: "\uD83D\uDCA1", label: "Energy Optimization", desc: "Cost savings via smart scheduling" },
+    { icon: "\uD83D\uDCC8", label: "Performance Reports", desc: "KPIs, trends, compliance" },
+    { icon: "\uD83D\uDD17", label: "API Integrations", desc: "TMS, ERP, billing connectors" }
   ];
 
-  return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "The Solution"),
-    createElement("p", { style: S.slideSubtitle },
-      "Greenbay is a software platform that sits between fleet assets and fleet strategy \u2014 orchestrating charging, routing, and energy across electric and autonomous fleets."
-    ),
-    // Product architecture flow
-    createElement("div", {
+  // Column label style
+  var colLabel = {
+    fontSize: 10,
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "2px",
+    marginBottom: 14,
+    textAlign: "center"
+  };
+
+  // Input/output item style
+  var itemStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "8px 12px",
+    background: COLORS.card,
+    borderRadius: 10,
+    border: "1px solid " + COLORS.border,
+    marginBottom: 6
+  };
+
+  // Flow arrow connector between columns
+  function flowArrow() {
+    return createElement("div", {
       style: {
         display: "flex",
-        gap: 0,
-        marginBottom: 36,
-        alignItems: "stretch"
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 48,
+        flexShrink: 0,
+        alignSelf: "stretch",
+        paddingTop: 30
       }
     },
-      productFlow.map(function(step, i) {
-        return createElement("div", { key: i, style: { display: "flex", alignItems: "center", flex: 1 } },
-          createElement("div", {
-            style: {
-              flex: 1,
-              background: i === 1 ? "rgba(0,212,170,0.08)" : COLORS.card,
-              border: i === 1 ? "2px solid " + COLORS.primary : "1px solid " + COLORS.border,
-              borderRadius: 14,
-              padding: "28px 24px",
-              textAlign: "center"
-            }
-          },
-            createElement("div", {
-              style: { fontSize: 24, marginBottom: 8 }
-            }, step.icon),
-            createElement("div", {
-              style: {
-                fontSize: 15,
-                fontWeight: 700,
-                color: i === 1 ? COLORS.primary : COLORS.text,
-                marginBottom: 6
-              }
-            }, step.label),
-            createElement("div", {
-              style: { fontSize: 12, color: COLORS.textMuted }
-            }, step.sub)
-          ),
-          i < productFlow.length - 1 ? createElement("div", {
-            style: {
-              padding: "0 12px",
-              fontSize: 20,
-              color: COLORS.primary
-            }
-          }, "\u2192") : null
-        );
-      })
-    ),
-    // Product UI + Capability cards side by side
-    createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, alignItems: "start" }
-    },
-      // Left: Product UI screenshot
+      // Dashed line with arrowhead
       createElement("div", {
         style: {
-          background: COLORS.card,
-          borderRadius: 16,
-          border: "1px solid " + COLORS.border,
-          padding: 16,
-          position: "relative",
-          overflow: "hidden"
+          flex: 1,
+          width: 2,
+          background: "repeating-linear-gradient(to bottom, " + COLORS.primary + " 0px, " + COLORS.primary + " 6px, transparent 6px, transparent 12px)",
+          opacity: 0.4,
+          display: "none"
+        }
+      }),
+      // Horizontal arrow
+      createElement("div", {
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: 0,
+          width: "100%"
         }
       },
         createElement("div", {
           style: {
-            fontSize: 11,
-            fontWeight: 600,
-            color: COLORS.primary,
-            textTransform: "uppercase",
-            letterSpacing: "1.5px",
-            marginBottom: 10
+            flex: 1,
+            height: 2,
+            background: "linear-gradient(to right, transparent, " + COLORS.primary + ")",
+            opacity: 0.5
           }
-        }, "Product Interface"),
-        createElement("img", {
-          src: "assets/product-ui.png",
-          alt: "Greenbay Platform UI",
+        }),
+        createElement("div", {
           style: {
-            width: "100%",
-            borderRadius: 10,
-            border: "1px solid " + COLORS.border
+            width: 0, height: 0,
+            borderTop: "6px solid transparent",
+            borderBottom: "6px solid transparent",
+            borderLeft: "10px solid " + COLORS.primary,
+            opacity: 0.6
           }
         })
+      )
+    );
+  }
+
+  return createElement("div", { style: S.slide },
+    createElement("h2", { style: S.slideTitle }, "The Solution"),
+    createElement("p", { style: Object.assign({}, S.slideSubtitle, { marginBottom: 28 }) },
+      "Greenbay sits between fleet assets and fleet strategy \u2014 a single orchestration layer that ingests data from every source, optimizes in real-time, and delivers actionable intelligence."
+    ),
+    // 3-column architecture flow
+    createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "stretch",
+        gap: 0
+      }
+    },
+      // ── LEFT COLUMN: INPUTS ──
+      createElement("div", { style: { flex: 1 } },
+        createElement("div", { style: Object.assign({}, colLabel, { color: COLORS.textMuted }) }, "Data Inputs"),
+        inputs.map(function(item, i) {
+          return createElement("div", { key: "in-" + i, style: itemStyle },
+            createElement("div", {
+              style: { fontSize: 18, width: 28, textAlign: "center", flexShrink: 0 }
+            }, item.icon),
+            createElement("div", { style: { minWidth: 0 } },
+              createElement("div", {
+                style: { fontSize: 12, fontWeight: 600, color: COLORS.text, lineHeight: 1.3 }
+              }, item.label),
+              createElement("div", {
+                style: { fontSize: 10, color: COLORS.textDim, lineHeight: 1.3, marginTop: 1 }
+              }, item.desc)
+            )
+          );
+        })
       ),
-      // Right: Capability cards in 2x2 grid
-      createElement("div", {
-        style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }
-      },
-        capabilities.map(function(c, i) {
-          return createElement("div", {
-            key: i,
+
+      // ── ARROW: INPUT → ORCHESTRATION ──
+      flowArrow(),
+
+      // ── CENTER COLUMN: GREENBAY ORCHESTRATION ──
+      createElement("div", { style: { flex: 1.3 } },
+        createElement("div", {
+          style: Object.assign({}, colLabel, { color: COLORS.primary })
+        }, "Greenbay Orchestration"),
+        createElement("div", {
+          style: {
+            background: "linear-gradient(135deg, rgba(0,212,170,0.06) 0%, rgba(0,212,170,0.02) 100%)",
+            border: "2px solid " + COLORS.primary,
+            borderRadius: 16,
+            padding: "20px 18px",
+            position: "relative",
+            boxShadow: "0 0 40px rgba(0,212,170,0.08), inset 0 1px 0 rgba(0,212,170,0.1)"
+          }
+        },
+          // Engine label
+          createElement("div", {
             style: {
-              background: COLORS.card,
-              borderRadius: 14,
-              border: "1px solid " + COLORS.border,
-              padding: "20px 16px",
-              borderTop: "3px solid " + c.color
+              textAlign: "center",
+              marginBottom: 16
             }
           },
-            createElement("div", { style: { fontSize: 24, marginBottom: 8 } }, c.icon),
             createElement("div", {
-              style: { fontSize: 13, fontWeight: 700, color: c.color, marginBottom: 6 }
-            }, c.title),
+              style: {
+                fontSize: 18,
+                fontWeight: 700,
+                color: COLORS.primary,
+                letterSpacing: "-0.3px"
+              }
+            }, "AI-Powered Engine"),
             createElement("div", {
-              style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 }
-            }, c.description)
+              style: {
+                fontSize: 11,
+                color: COLORS.textMuted,
+                marginTop: 4
+              }
+            }, "Real-time optimization across mixed EV/ICE/AV fleets")
+          ),
+          // 4 capability cards in 2x2 grid
+          createElement("div", {
+            style: {
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 10
+            }
+          },
+            capabilities.map(function(c, i) {
+              return createElement("div", {
+                key: "cap-" + i,
+                style: {
+                  background: "rgba(0,0,0,0.3)",
+                  borderRadius: 10,
+                  padding: "14px 12px",
+                  borderLeft: "3px solid " + c.color
+                }
+              },
+                createElement("div", {
+                  style: { fontSize: 12, fontWeight: 700, color: c.color, marginBottom: 3 }
+                }, c.title),
+                createElement("div", {
+                  style: { fontSize: 10, color: COLORS.textMuted, lineHeight: 1.4 }
+                }, c.desc)
+              );
+            })
+          )
+        )
+      ),
+
+      // ── ARROW: ORCHESTRATION → OUTPUT ──
+      flowArrow(),
+
+      // ── RIGHT COLUMN: OUTPUTS ──
+      createElement("div", { style: { flex: 1 } },
+        createElement("div", { style: Object.assign({}, colLabel, { color: COLORS.textMuted }) }, "Operator Interface"),
+        outputs.map(function(item, i) {
+          return createElement("div", { key: "out-" + i, style: itemStyle },
+            createElement("div", {
+              style: { fontSize: 18, width: 28, textAlign: "center", flexShrink: 0 }
+            }, item.icon),
+            createElement("div", { style: { minWidth: 0 } },
+              createElement("div", {
+                style: { fontSize: 12, fontWeight: 600, color: COLORS.text, lineHeight: 1.3 }
+              }, item.label),
+              createElement("div", {
+                style: { fontSize: 10, color: COLORS.textDim, lineHeight: 1.3, marginTop: 1 }
+              }, item.desc)
+            )
           );
         })
       )
-    )
+    ),
+
+    // Bottom tagline
+    createElement("div", {
+      style: {
+        marginTop: 24,
+        textAlign: "center",
+        fontSize: 13,
+        color: COLORS.textMuted,
+        fontStyle: "italic"
+      }
+    }, "One platform replacing 5\u20138 fragmented tools \u2014 hardware-agnostic, EV-native, built for autonomy")
   );
 }
 
@@ -772,18 +866,20 @@ function SlideMarket() {
               dataKey: "sam_usd_m",
               nameKey: "region",
               cx: "50%",
-              cy: "50%",
-              outerRadius: 100,
-              innerRadius: 45,
+              cy: "45%",
+              outerRadius: 85,
+              innerRadius: 40,
               paddingAngle: 2,
-              label: function(entry) { return entry.region + ' $' + entry.sam_usd_m + 'M'; },
-              labelLine: true
+              label: function(entry) { return '$' + entry.sam_usd_m + 'M'; },
+              labelLine: true,
+              isAnimationActive: false
             },
               samRegions.map(function(r, i) {
                 return createElement(Cell, { key: i, fill: CHART_COLORS[i % CHART_COLORS.length] });
               })
             ),
-            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return ['$' + v + 'M']; } })
+            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v, name) { return ['$' + v + 'M', name]; } }),
+            createElement(Legend, { wrapperStyle: { fontSize: 10, paddingTop: 4 }, formatter: function(value) { return value; } })
           )
         )
       )
