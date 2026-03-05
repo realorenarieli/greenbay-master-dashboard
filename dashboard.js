@@ -1011,7 +1011,7 @@ function SlideTraction() {
           createElement("img", {
             src: "assets/logo-transport-uk.png",
             alt: "Transport UK",
-            style: { height: 44, objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.85 }
+            style: { height: 44, objectFit: "contain" }
           })
         ),
         // LOIs
@@ -1033,7 +1033,7 @@ function SlideTraction() {
           createElement("img", {
             src: "assets/logo-solaredge.png",
             alt: "SolarEdge",
-            style: { height: 36, objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.85 }
+            style: { height: 36, objectFit: "contain" }
           })
         )
       )
