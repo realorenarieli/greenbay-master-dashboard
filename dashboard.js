@@ -494,9 +494,23 @@ function SlideSolution() {
   // Container height for the visual area
   var vizHeight = 420;
 
-  // Inject keyframes for prism glow pulse
+  // Inject keyframes for all animations
   var styleTag = createElement("style", null,
-    "@keyframes prismPulse { 0%, 100% { box-shadow: 0 0 30px rgba(0,212,170,0.12), 0 0 60px rgba(0,212,170,0.06); } 50% { box-shadow: 0 0 50px rgba(0,212,170,0.25), 0 0 90px rgba(0,212,170,0.1); } }"
+    // Prism glow breathing
+    "@keyframes prismPulse { 0%, 100% { box-shadow: 0 0 30px rgba(0,212,170,0.12), 0 0 60px rgba(0,212,170,0.06); } 50% { box-shadow: 0 0 50px rgba(0,212,170,0.25), 0 0 90px rgba(0,212,170,0.1); } } " +
+    // Chaos particle drift — subtle floating wobble
+    "@keyframes chaosDrift0 { 0%,100% { transform: translate(0,0) rotate(-6deg); } 33% { transform: translate(3px,-4px) rotate(-5deg); } 66% { transform: translate(-2px,3px) rotate(-7deg); } } " +
+    "@keyframes chaosDrift1 { 0%,100% { transform: translate(0,0) rotate(4deg); } 33% { transform: translate(-3px,3px) rotate(5deg); } 66% { transform: translate(4px,-2px) rotate(3deg); } } " +
+    "@keyframes chaosDrift2 { 0%,100% { transform: translate(0,0) rotate(-8deg); } 33% { transform: translate(2px,4px) rotate(-7deg); } 66% { transform: translate(-3px,-2px) rotate(-9deg); } } " +
+    "@keyframes chaosDrift3 { 0%,100% { transform: translate(0,0) rotate(5deg); } 33% { transform: translate(-4px,-3px) rotate(6deg); } 66% { transform: translate(3px,2px) rotate(4deg); } } " +
+    "@keyframes chaosDrift4 { 0%,100% { transform: translate(0,0) rotate(-3deg); } 33% { transform: translate(3px,3px) rotate(-2deg); } 66% { transform: translate(-2px,-4px) rotate(-4deg); } } " +
+    "@keyframes chaosDrift5 { 0%,100% { transform: translate(0,0) rotate(6deg); } 33% { transform: translate(-3px,4px) rotate(7deg); } 66% { transform: translate(4px,-3px) rotate(5deg); } } " +
+    // Streaming dots flowing along lines
+    "@keyframes streamFlow { 0% { left: -4px; opacity: 0; } 10% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% + 4px); opacity: 0; } } " +
+    // Prism inner orbit rotation
+    "@keyframes prismOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } " +
+    // Output card pulse — staggered glow
+    "@keyframes outputPulse { 0%, 100% { border-color: rgba(0,212,170,0.12); box-shadow: none; } 50% { border-color: rgba(0,212,170,0.35); box-shadow: 0 0 12px rgba(0,212,170,0.08); } }"
   );
 
   // ── ZONE 1: CHAOS (left) ──
@@ -560,16 +574,17 @@ function SlideSolution() {
         }
       });
     }),
-    // Scattered particles
+    // Scattered particles with drift animation
     inputs.map(function(item, i) {
       var pos = chaosPositions[i];
+      var driftDuration = [4.5, 5.2, 3.8, 4.8, 5.5, 4.1][i];
       return createElement("div", {
         key: "chaos-" + i,
         style: {
           position: "absolute",
           top: pos.top + "%",
           left: pos.left + "%",
-          transform: "rotate(" + pos.rot + "deg)",
+          animation: "chaosDrift" + i + " " + driftDuration + "s ease-in-out infinite",
           background: "rgba(30,20,15,0.7)",
           border: "1px solid " + chaosColors[i] + "44",
           borderRadius: 10,
@@ -589,24 +604,23 @@ function SlideSolution() {
     })
   );
 
-  // ── CONVERGENCE LINES (chaos → prism) ──
-  // These connect from each particle's right edge toward the prism's left vertex
+  // ── CONVERGENCE LINES (chaos → prism) with streaming dots ──
   var convergenceLines = createElement("div", {
     style: {
       position: "relative",
       width: "6%",
       height: vizHeight,
-      flexShrink: 0
+      flexShrink: 0,
+      overflow: "hidden"
     }
   },
+    // Static lines
     inputs.map(function(item, i) {
       var pos = chaosPositions[i];
-      // Map particle vertical position to line start, converge to center
-      var startY = pos.top + 5; // center of particle roughly
-      var endY = 42; // prism center-ish
+      var startY = pos.top + 5;
+      var endY = 42;
       var dy = endY - startY;
       var angle = Math.atan2(dy, 100) * 180 / Math.PI;
-      var len = Math.sqrt(dy * dy + 100 * 100);
       return createElement("div", {
         key: "conv-" + i,
         style: {
@@ -620,6 +634,37 @@ function SlideSolution() {
           transform: "rotate(" + (angle * 0.5) + "deg)",
           pointerEvents: "none"
         }
+      });
+    }),
+    // Streaming dots along convergence lines
+    inputs.map(function(item, i) {
+      var pos = chaosPositions[i];
+      var startY = pos.top + 5;
+      var endY = 42;
+      var dy = endY - startY;
+      var angle = Math.atan2(dy, 100) * 180 / Math.PI;
+      // 2 dots per line, staggered
+      return [0, 1].map(function(d) {
+        var delay = (i * 0.6 + d * 1.8).toFixed(1);
+        var duration = (2.5 + i * 0.2).toFixed(1);
+        return createElement("div", {
+          key: "cdot-" + i + "-" + d,
+          style: {
+            position: "absolute",
+            top: "calc(" + startY + "% - 2px)",
+            left: -4,
+            width: 4,
+            height: 4,
+            borderRadius: "50%",
+            background: chaosColors[i],
+            opacity: 0.7,
+            transformOrigin: "0 50%",
+            transform: "rotate(" + (angle * 0.5) + "deg)",
+            animation: "streamFlow " + duration + "s " + delay + "s linear infinite",
+            pointerEvents: "none",
+            boxShadow: "0 0 6px " + chaosColors[i] + "88"
+          }
+        });
       });
     })
   );
@@ -671,6 +716,44 @@ function SlideSolution() {
           pointerEvents: "none"
         }
       }),
+      // Rotating orbit ring — processing indicator
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: 160,
+          height: 160,
+          marginTop: -80,
+          marginLeft: -80,
+          borderRadius: "50%",
+          border: "1px solid transparent",
+          borderTopColor: "rgba(0,212,170,0.25)",
+          borderRightColor: "rgba(99,102,241,0.15)",
+          animation: "prismOrbit 8s linear infinite",
+          pointerEvents: "none",
+          zIndex: 1
+        }
+      }),
+      // Second counter-rotating orbit (smaller, slower)
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: 120,
+          height: 120,
+          marginTop: -60,
+          marginLeft: -60,
+          borderRadius: "50%",
+          border: "1px solid transparent",
+          borderBottomColor: "rgba(245,158,11,0.15)",
+          borderLeftColor: "rgba(0,212,170,0.1)",
+          animation: "prismOrbit 12s linear infinite reverse",
+          pointerEvents: "none",
+          zIndex: 1
+        }
+      }),
       // Content inside prism
       createElement("div", {
         style: {
@@ -707,19 +790,20 @@ function SlideSolution() {
     )
   );
 
-  // ── DIVERGENCE LINES (prism → harmony) ──
+  // ── DIVERGENCE LINES (prism → harmony) with streaming dots ──
   var divergenceLines = createElement("div", {
     style: {
       position: "relative",
       width: "6%",
       height: vizHeight,
-      flexShrink: 0
+      flexShrink: 0,
+      overflow: "hidden"
     }
   },
+    // Static lines
     outputs.map(function(item, i) {
-      // Evenly spaced output positions
       var endY = 8 + i * 14.5;
-      var startY = 42; // prism center
+      var startY = 42;
       var dy = endY - startY;
       var angle = Math.atan2(dy, 100) * 180 / Math.PI;
       return createElement("div", {
@@ -736,6 +820,35 @@ function SlideSolution() {
           borderRadius: 1,
           pointerEvents: "none"
         }
+      });
+    }),
+    // Streaming green dots along divergence lines
+    outputs.map(function(item, i) {
+      var endY = 8 + i * 14.5;
+      var startY = 42;
+      var dy = endY - startY;
+      var angle = Math.atan2(dy, 100) * 180 / Math.PI;
+      return [0, 1].map(function(d) {
+        var delay = (i * 0.5 + d * 2.0).toFixed(1);
+        var duration = (2.2 + i * 0.15).toFixed(1);
+        return createElement("div", {
+          key: "ddot-" + i + "-" + d,
+          style: {
+            position: "absolute",
+            top: "calc(" + startY + "% - 3px)",
+            left: -5,
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            background: COLORS.primary,
+            opacity: 0.8,
+            transformOrigin: "0 50%",
+            transform: "rotate(" + (angle * 0.5) + "deg)",
+            animation: "streamFlow " + duration + "s " + delay + "s linear infinite",
+            pointerEvents: "none",
+            boxShadow: "0 0 8px " + COLORS.primary + "66"
+          }
+        });
       });
     })
   );
@@ -774,8 +887,9 @@ function SlideSolution() {
         pointerEvents: "none"
       }
     }),
-    // Clean aligned output cards
+    // Clean aligned output cards with staggered pulse
     outputs.map(function(item, i) {
+      var pulseDelay = (i * 0.8).toFixed(1);
       return createElement("div", {
         key: "harmony-" + i,
         style: {
@@ -786,7 +900,8 @@ function SlideSolution() {
           background: "rgba(0,212,170,0.04)",
           border: "1px solid rgba(0,212,170,0.12)",
           borderRadius: 10,
-          marginBottom: 7
+          marginBottom: 7,
+          animation: "outputPulse 4.8s " + pulseDelay + "s ease-in-out infinite"
         }
       },
         createElement("span", {
