@@ -1009,33 +1009,45 @@ function SlideTraction() {
           createElement("div", {
             style: { fontSize: 10, fontWeight: 600, color: COLORS.primary, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10 }
           }, "Design Partner"),
-          createElement("img", {
-            src: "assets/logo-transport-uk.png",
-            alt: "Transport UK",
-            style: { height: 44, objectFit: "contain" }
-          })
+          createElement("div", {
+            style: { display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff", borderRadius: 12, padding: "12px 20px", minHeight: 56 }
+          },
+            createElement("img", {
+              src: "assets/logo-transport-uk.png",
+              alt: "Transport UK",
+              style: { height: 32, objectFit: "contain", maxWidth: 160 }
+            })
+          )
         ),
         // LOIs
         createElement("div", { style: { textAlign: "center" } },
           createElement("div", {
             style: { fontSize: 10, fontWeight: 600, color: COLORS.accent, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10 }
           }, "2 LOIs \u2014 Q1 2026"),
-          createElement("img", {
-            src: "assets/logo-alvarada.png",
-            alt: "Alvarada",
-            style: { height: 44, objectFit: "contain" }
-          })
+          createElement("div", {
+            style: { display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff", borderRadius: 12, padding: "12px 20px", minHeight: 56 }
+          },
+            createElement("img", {
+              src: "assets/logo-alvarada.png",
+              alt: "Alvarada",
+              style: { height: 32, objectFit: "contain", maxWidth: 160 }
+            })
+          )
         ),
         // Channel Partner
         createElement("div", { style: { textAlign: "center" } },
           createElement("div", {
             style: { fontSize: 10, fontWeight: 600, color: COLORS.info, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10 }
           }, "Channel Partner"),
-          createElement("img", {
-            src: "assets/logo-solaredge.png",
-            alt: "SolarEdge",
-            style: { height: 36, objectFit: "contain" }
-          })
+          createElement("div", {
+            style: { display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff", borderRadius: 12, padding: "12px 20px", minHeight: 56 }
+          },
+            createElement("img", {
+              src: "assets/logo-solaredge.png",
+              alt: "SolarEdge",
+              style: { height: 28, objectFit: "contain", maxWidth: 160 }
+            })
+          )
         )
       )
     ),
@@ -1055,17 +1067,21 @@ function SlideTraction() {
         style: { display: "flex", justifyContent: "center", alignItems: "center", gap: 36 }
       },
         [
-          { src: "assets/logo-stagecoach.png", alt: "Stagecoach", h: 36 },
-          { src: "assets/logo-kcata.png", alt: "KC ATA", h: 32 },
-          { src: "assets/logo-bvg.png", alt: "BVG", h: 36 },
-          { src: "assets/logo-firstbus.png", alt: "First Bus", h: 32 }
+          { src: "assets/logo-stagecoach.png", alt: "Stagecoach", h: 28 },
+          { src: "assets/logo-kcata.png", alt: "KC ATA", h: 24 },
+          { src: "assets/logo-bvg.png", alt: "BVG", h: 28 },
+          { src: "assets/logo-firstbus.png", alt: "First Bus", h: 24 }
         ].map(function(logo, i) {
-          return createElement("img", {
+          return createElement("div", {
             key: i,
-            src: logo.src,
-            alt: logo.alt,
-            style: { height: logo.h, objectFit: "contain" }
-          });
+            style: { display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff", borderRadius: 10, padding: "10px 16px", minHeight: 44 }
+          },
+            createElement("img", {
+              src: logo.src,
+              alt: logo.alt,
+              style: { height: logo.h, objectFit: "contain", maxWidth: 100 }
+            })
+          );
         })
       )
     ),
@@ -1202,6 +1218,7 @@ function SlideTeam() {
                 height: 72,
                 borderRadius: "50%",
                 objectFit: "cover",
+                objectPosition: "center 20%",
                 border: "3px solid " + t.color,
                 margin: "0 auto 14px",
                 display: "block"
