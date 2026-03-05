@@ -394,60 +394,234 @@ function SlideTitle() {
 function SlideProblem() {
   var fleetSeries = fleet.global_series || [];
 
-  var painPoints = [
-    {
-      icon: "\u26A1",
-      title: "5M+ Commercial EVs by 2030",
-      description: "Electric bus stock growing 12x. Truck electrification accelerating. No unified system to orchestrate charging, routing, and grid costs across mixed depots."
-    },
-    {
-      icon: "\uD83D\uDD0C",
-      title: "Fragmented Tool Chaos",
-      description: "Fleet operators juggle 5-8 separate tools for telematics, charging, routing, maintenance, and compliance. Data silos create blind spots and inefficiency."
-    },
-    {
-      icon: "\uD83D\uDEE2\uFE0F",
-      title: "Incumbents Built for Diesel",
-      description: "Samsara, Geotab, and Trimble were built for ICE fleets. They're adding EV as a feature \u2014 not building EV-native orchestration from the ground up."
-    }
+  // Alarm metric cards data
+  var alarmMetrics = [
+    { value: "33x", label: "EV Truck Sales Growth", context: "11K \u2192 370K units, 2021\u20132030" },
+    { value: "5\u20138", label: "Siloed Tools Per Operator", context: "No single pane of glass" },
+    { value: "0", label: "Purpose-Built Platforms", context: "No EV-native fleet orchestration exists" }
   ];
 
-  return createElement("div", { style: S.slide },
-    createElement("h2", { style: S.slideTitle }, "The Problem"),
-    createElement("p", { style: S.slideSubtitle },
-      "The commercial fleet industry is in the middle of the largest technology transition since GPS tracking \u2014 and there's no orchestration layer."
+  // Tool chaos chips
+  var chaosTools = [
+    { label: "Telematics", top: 10, left: 8, rot: -6 },
+    { label: "Charging Mgmt", top: 4, left: 52, rot: 4 },
+    { label: "Routing", top: 32, left: 2, rot: -8 },
+    { label: "Maintenance", top: 28, left: 56, rot: 5 },
+    { label: "Compliance", top: 56, left: 14, rot: -3 },
+    { label: "ELD", top: 54, left: 62, rot: 6 },
+    { label: "Billing", top: 76, left: 34, rot: -4 }
+  ];
+  var chaosColors = ["#ef4444", "#f97316", "#d97706", "#b45309", "#dc2626", "#c2410c", "#ef4444"];
+
+  // Tangled lines between tool chips
+  var tangledLines = [
+    { x1: 14, y1: 16, x2: 58, y2: 10, color: "rgba(239,68,68,0.15)" },
+    { x1: 8, y1: 38, x2: 62, y2: 34, color: "rgba(249,115,22,0.12)" },
+    { x1: 20, y1: 62, x2: 68, y2: 60, color: "rgba(217,119,6,0.12)" },
+    { x1: 58, y1: 10, x2: 8, y2: 38, color: "rgba(239,68,68,0.1)" },
+    { x1: 62, y1: 34, x2: 20, y2: 62, color: "rgba(249,115,22,0.1)" },
+    { x1: 14, y1: 16, x2: 20, y2: 62, color: "rgba(220,38,38,0.08)" },
+    { x1: 58, y1: 10, x2: 68, y2: 60, color: "rgba(194,65,12,0.08)" },
+    { x1: 40, y1: 82, x2: 8, y2: 38, color: "rgba(239,68,68,0.08)" },
+    { x1: 40, y1: 82, x2: 68, y2: 60, color: "rgba(217,119,6,0.06)" }
+  ];
+
+  // Inject keyframes
+  var styleTag = createElement("style", null,
+    // Alarm pulse — red glow breathing on metric cards
+    "@keyframes alarmPulse { 0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.08), 0 0 40px rgba(239,68,68,0.04); } 50% { box-shadow: 0 0 35px rgba(239,68,68,0.2), 0 0 70px rgba(239,68,68,0.08); } } " +
+    // Chaos drift per tool chip
+    "@keyframes alarmDrift0 { 0%,100% { transform: translate(0,0) rotate(-6deg); } 33% { transform: translate(3px,-4px) rotate(-5deg); } 66% { transform: translate(-2px,3px) rotate(-7deg); } } " +
+    "@keyframes alarmDrift1 { 0%,100% { transform: translate(0,0) rotate(4deg); } 33% { transform: translate(-3px,3px) rotate(5deg); } 66% { transform: translate(4px,-2px) rotate(3deg); } } " +
+    "@keyframes alarmDrift2 { 0%,100% { transform: translate(0,0) rotate(-8deg); } 33% { transform: translate(2px,4px) rotate(-7deg); } 66% { transform: translate(-3px,-2px) rotate(-9deg); } } " +
+    "@keyframes alarmDrift3 { 0%,100% { transform: translate(0,0) rotate(5deg); } 33% { transform: translate(-4px,-3px) rotate(6deg); } 66% { transform: translate(3px,2px) rotate(4deg); } } " +
+    "@keyframes alarmDrift4 { 0%,100% { transform: translate(0,0) rotate(-3deg); } 33% { transform: translate(3px,3px) rotate(-2deg); } 66% { transform: translate(-2px,-4px) rotate(-4deg); } } " +
+    "@keyframes alarmDrift5 { 0%,100% { transform: translate(0,0) rotate(6deg); } 33% { transform: translate(-3px,4px) rotate(7deg); } 66% { transform: translate(4px,-3px) rotate(5deg); } } " +
+    "@keyframes alarmDrift6 { 0%,100% { transform: translate(0,0) rotate(-4deg); } 33% { transform: translate(2px,-3px) rotate(-3deg); } 66% { transform: translate(-3px,2px) rotate(-5deg); } } " +
+    // Red streaming dots along tangled lines
+    "@keyframes alarmStream { 0% { left: -4px; opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.8; } 100% { left: calc(100% + 4px); opacity: 0; } }"
+  );
+
+  // Alarm metric cards row
+  var metricCards = createElement("div", {
+    style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 32 }
+  },
+    alarmMetrics.map(function(m, i) {
+      return createElement("div", {
+        key: "alarm-" + i,
+        style: {
+          background: COLORS.card,
+          borderRadius: 16,
+          border: "1px solid rgba(239,68,68,0.25)",
+          padding: "28px 24px",
+          textAlign: "center",
+          animation: "alarmPulse 3s ease-in-out infinite",
+          animationDelay: (i * 0.4) + "s"
+        }
+      },
+        createElement("div", {
+          style: {
+            fontSize: 44,
+            fontWeight: 700,
+            color: COLORS.danger,
+            letterSpacing: "-2px",
+            lineHeight: 1,
+            marginBottom: 10,
+            fontFamily: "'DM Mono', monospace"
+          }
+        }, m.value),
+        createElement("div", {
+          style: {
+            fontSize: 13,
+            fontWeight: 700,
+            color: COLORS.text,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            marginBottom: 6
+          }
+        }, m.label),
+        createElement("div", {
+          style: { fontSize: 11, color: COLORS.textDim, fontFamily: "'DM Mono', monospace" }
+        }, m.context)
+      );
+    })
+  );
+
+  // Tool Chaos visual (left 60%)
+  var chaosVisual = createElement("div", {
+    style: {
+      flex: 1.2,
+      position: "relative",
+      height: 260,
+      background: "radial-gradient(ellipse at 50% 50%, rgba(239,68,68,0.05) 0%, transparent 70%)",
+      borderRadius: 16,
+      border: "1px solid rgba(239,68,68,0.1)",
+      overflow: "hidden"
+    }
+  },
+    // Zone label
+    createElement("div", {
+      style: {
+        position: "absolute",
+        top: 12,
+        left: 0,
+        right: 0,
+        fontSize: 10,
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: "2px",
+        color: COLORS.danger,
+        opacity: 0.4,
+        textAlign: "center",
+        zIndex: 3
+      }
+    }, "Today\u2019s Fleet Tech Stack"),
+    // Tangled lines
+    tangledLines.map(function(line, i) {
+      var dx = line.x2 - line.x1;
+      var dy = line.y2 - line.y1;
+      var len = Math.sqrt(dx * dx + dy * dy);
+      var angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      return createElement("div", {
+        key: "tl-" + i,
+        style: {
+          position: "absolute",
+          top: line.y1 + "%",
+          left: line.x1 + "%",
+          width: len + "%",
+          height: 1,
+          background: line.color,
+          transformOrigin: "0 0",
+          transform: "rotate(" + angle + "deg)",
+          pointerEvents: "none"
+        }
+      },
+        // Streaming dot
+        createElement("div", {
+          key: "adot-" + i,
+          style: {
+            position: "absolute",
+            top: -2,
+            width: 4,
+            height: 4,
+            borderRadius: "50%",
+            background: COLORS.danger,
+            opacity: 0.6,
+            animation: "alarmStream " + (2.2 + i * 0.15).toFixed(1) + "s linear infinite",
+            animationDelay: (i * 0.35).toFixed(1) + "s"
+          }
+        })
+      );
+    }),
+    // Scattered tool chips
+    chaosTools.map(function(tool, i) {
+      var driftDuration = [4.5, 5.2, 3.8, 4.8, 5.5, 4.1, 4.4][i];
+      return createElement("div", {
+        key: "tool-" + i,
+        style: {
+          position: "absolute",
+          top: tool.top + "%",
+          left: tool.left + "%",
+          animation: "alarmDrift" + i + " " + driftDuration + "s ease-in-out infinite",
+          background: "rgba(30,20,15,0.75)",
+          border: "1px solid " + chaosColors[i] + "44",
+          borderRadius: 10,
+          padding: "6px 12px",
+          fontSize: 10,
+          fontWeight: 600,
+          color: chaosColors[i],
+          opacity: 0.85,
+          whiteSpace: "nowrap",
+          zIndex: 2
+        }
+      }, tool.label);
+    })
+  );
+
+  // Fleet Growth Chart (right 40%, compressed)
+  var chartSection = createElement("div", {
+    style: {
+      flex: 1,
+      background: COLORS.card,
+      borderRadius: 16,
+      border: "1px solid " + COLORS.border,
+      padding: "20px 18px"
+    }
+  },
+    createElement("div", { style: { fontSize: 13, fontWeight: 600, color: COLORS.text, marginBottom: 2 } },
+      "Fleet Electrification Trajectory"
     ),
-    createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 36 } },
-      painPoints.map(function(p, i) {
-        return createElement("div", {
-          key: i,
-          style: Object.assign({}, S.card, {
-            borderTop: "3px solid " + CHART_COLORS[i]
-          })
-        },
-          createElement("div", { style: { fontSize: 28, marginBottom: 12 } }, p.icon),
-          createElement("h3", { style: { fontSize: 16, fontWeight: 700, color: COLORS.text, marginBottom: 10 } }, p.title),
-          createElement("p", { style: { fontSize: 13, color: COLORS.textMuted, lineHeight: 1.7 } }, p.description)
-        );
-      })
+    createElement("div", { style: { fontSize: 10, color: COLORS.textDim, marginBottom: 14, fontFamily: "'DM Mono', monospace" } },
+      "EV bus stock, truck sales, AHV, managed LCVs (thousands)"
     ),
-    createElement("div", { style: S.chartCard },
-      createElement("div", { style: S.chartTitle }, "Fleet Electrification Explosion (2021\u20132030)"),
-      createElement("div", { style: S.chartSubtitle }, "EV bus stock, truck sales, autonomous heavy vehicles, managed LCVs (thousands)"),
-      createElement(ResponsiveContainer, { width: "100%", height: 320 },
-        createElement(AreaChart, { data: fleetSeries, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
-          createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
-          createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
-          createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return v + 'K'; } }),
-          createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v, name) { return [v + 'K', name]; } }),
-          createElement(Legend, { wrapperStyle: { fontSize: 11 } }),
-          createElement(Area, { type: "monotone", dataKey: "ev_bus_stock_k", stroke: COLORS.primary, fill: COLORS.primary, fillOpacity: 0.2, strokeWidth: 2, name: "EV Bus Stock" }),
-          createElement(Area, { type: "monotone", dataKey: "ev_truck_sales_k", stroke: COLORS.secondary, fill: COLORS.secondary, fillOpacity: 0.2, strokeWidth: 2, name: "EV Truck Sales" }),
-          createElement(Area, { type: "monotone", dataKey: "ahv_commercial_k", stroke: COLORS.accent, fill: COLORS.accent, fillOpacity: 0.2, strokeWidth: 2, name: "AHV (L4+)" }),
-          createElement(Area, { type: "monotone", dataKey: "lcv_managed_stock_k", stroke: COLORS.cyan, fill: COLORS.cyan, fillOpacity: 0.2, strokeWidth: 2, name: "Managed LCVs" })
-        )
+    createElement(ResponsiveContainer, { width: "100%", height: 220 },
+      createElement(AreaChart, { data: fleetSeries, margin: { top: 5, right: 20, left: 5, bottom: 0 } },
+        createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
+        createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 10 }),
+        createElement(YAxis, { stroke: COLORS.textDim, fontSize: 10, tickFormatter: function(v) { return v + 'K'; } }),
+        createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v, name) { return [v + 'K', name]; } }),
+        createElement(Legend, { wrapperStyle: { fontSize: 10 } }),
+        createElement(Area, { type: "monotone", dataKey: "ev_bus_stock_k", stroke: COLORS.primary, fill: COLORS.primary, fillOpacity: 0.2, strokeWidth: 2, name: "EV Bus Stock" }),
+        createElement(Area, { type: "monotone", dataKey: "ev_truck_sales_k", stroke: COLORS.secondary, fill: COLORS.secondary, fillOpacity: 0.2, strokeWidth: 2, name: "EV Truck Sales" }),
+        createElement(Area, { type: "monotone", dataKey: "ahv_commercial_k", stroke: COLORS.accent, fill: COLORS.accent, fillOpacity: 0.2, strokeWidth: 2, name: "AHV (L4+)" }),
+        createElement(Area, { type: "monotone", dataKey: "lcv_managed_stock_k", stroke: COLORS.cyan, fill: COLORS.cyan, fillOpacity: 0.2, strokeWidth: 2, name: "Managed LCVs" })
       )
     )
+  );
+
+  // Bottom split layout
+  var bottomSection = createElement("div", {
+    style: { display: "flex", gap: 24, alignItems: "stretch" }
+  }, chaosVisual, chartSection);
+
+  return createElement("div", { style: S.slide },
+    styleTag,
+    createElement("h2", { style: S.slideTitle }, "The Problem"),
+    createElement("p", { style: S.slideSubtitle },
+      "Fleet electrification is exploding. The tools managing it were built for diesel."
+    ),
+    metricCards,
+    bottomSection
   );
 }
 
