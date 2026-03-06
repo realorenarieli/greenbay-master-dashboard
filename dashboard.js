@@ -1839,159 +1839,202 @@ function SlideCompetitive() {
 
 // ============ SLIDE 7: TRACTION ============
 function SlideTraction() {
-  var tractionMetrics = [
-    { label: "Revenue Impact", value: "+13%", desc: "Revenue uplift in product trials", color: COLORS.primary, icon: "\u2197" },
-    { label: "On-Time Performance", value: "+21%", desc: "Improvement in schedule adherence", color: COLORS.success, icon: "\u2713" },
-    { label: "Issue Detection", value: "54 min", desc: "Earlier awareness of operational issues", color: COLORS.accent, icon: "\u26A1" }
+  // 6 keyframe animations
+  var styleTag = createElement("style", null,
+    // Breathing glow on completed nodes
+    "@keyframes tractionNodeGlow { 0%, 100% { box-shadow: 0 0 12px rgba(0,212,170,0.25), 0 0 24px rgba(0,212,170,0.1); } 50% { box-shadow: 0 0 20px rgba(0,212,170,0.45), 0 0 40px rgba(0,212,170,0.2); } } " +
+    // Brighter pulse on active node
+    "@keyframes tractionActiveGlow { 0%, 100% { box-shadow: 0 0 16px rgba(0,212,170,0.4), 0 0 32px rgba(0,212,170,0.2), 0 0 60px rgba(0,212,170,0.08); } 50% { box-shadow: 0 0 28px rgba(0,212,170,0.7), 0 0 56px rgba(0,212,170,0.35), 0 0 90px rgba(0,212,170,0.12); } } " +
+    // Subtle secondary pulse on upcoming node
+    "@keyframes tractionUpcomingGlow { 0%, 100% { box-shadow: 0 0 8px rgba(99,102,241,0.2), 0 0 16px rgba(99,102,241,0.08); } 50% { box-shadow: 0 0 14px rgba(99,102,241,0.35), 0 0 28px rgba(99,102,241,0.15); } } " +
+    // Green dots streaming along connector
+    "@keyframes tractionStream { 0% { left: 3%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { left: 97%; opacity: 0; } } " +
+    // Subtle vertical float on detail cards
+    "@keyframes tractionDrift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } } " +
+    // Text-shadow pulse on active value
+    "@keyframes tractionValueGlow { 0%, 100% { text-shadow: 0 0 8px rgba(0,212,170,0.3); } 50% { text-shadow: 0 0 20px rgba(0,212,170,0.6), 0 0 40px rgba(0,212,170,0.2); } }"
+  );
+
+  // Milestone data — Q3 2025 through Q4 2026
+  var milestones = [
+    { period: "Q3 2025", label: "Design Partnership", value: "+13%", detail: "Revenue uplift with Transport UK", status: "completed" },
+    { period: "Q4 2025", label: "Qualified Accounts", value: "200+", detail: "Accounts identified across EU & UK", status: "completed" },
+    { period: "Q1 2026", label: "LOIs for Pilots", value: "20", detail: "Engaged in product trials", status: "active" },
+    { period: "Q2 2026", label: "First Deployments", value: "+21%", detail: "On-time performance target", status: "upcoming" },
+    { period: "Q3 2026", label: "US Expansion", value: "1st", detail: "First US pilot launch", status: "upcoming" },
+    { period: "Q4 2026", label: "Recurring Revenue", value: "ARR", detail: "First contracts from engaged accounts", status: "upcoming" }
   ];
 
-  var testimonials = [
-    { quote: "First time the screen shows something that makes sense", author: "Mark", role: "Depot Engineer" },
-    { quote: "After few minutes of use I managed to find issues that I had no chance identifying", author: "Ian", role: "Performance Manager" },
-    { quote: "This is what charging companies should give us if they ever listened", author: "Alistair", role: "Bus Operations Owner" }
-  ];
+  var nodePositions = [4, 22, 40, 58, 76, 94];
 
-  var pipeline = [
-    { label: "LOIs for Pilots", value: "2", color: COLORS.primary },
-    { label: "Qualified Accounts", value: "200+", color: COLORS.success },
-    { label: "Engaged Accounts", value: "20", color: COLORS.accent }
-  ];
+  // Node style per status
+  function nodeStyle(status) {
+    var base = {
+      width: 54, height: 54, borderRadius: "50%",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      position: "absolute", top: "50%", transform: "translateY(-50%)",
+      zIndex: 2, cursor: "default",
+      background: "radial-gradient(circle at 30% 30%, " + COLORS.cardHover + ", " + COLORS.card + ")"
+    };
+    if (status === "completed") {
+      base.border = "2px solid " + COLORS.primary;
+      base.animation = "tractionNodeGlow 3s ease-in-out infinite";
+    } else if (status === "active") {
+      base.border = "3px solid " + COLORS.primary;
+      base.animation = "tractionActiveGlow 3s ease-in-out infinite";
+    } else {
+      base.border = "2px solid " + COLORS.secondary + "66";
+      base.animation = "tractionUpcomingGlow 3s ease-in-out infinite";
+    }
+    return base;
+  }
 
   return createElement("div", { style: S.slide },
+    styleTag,
     createElement("h2", { style: S.slideTitle }, "Traction"),
     createElement("p", { style: S.slideSubtitle },
-      "2 LOIs signed for pilot deployments. 200+ qualified accounts identified, 20 already engaged."
+      "2 LOIs signed for pilot deployments. 200+ Qualified Accounts identified, 20 engaged in product trials."
     ),
-    // Pipeline badges
+
+    // Timeline container
     createElement("div", {
-      style: { display: "flex", gap: 16, marginBottom: 28 }
+      style: {
+        position: "relative",
+        height: 360,
+        margin: "20px 0 40px",
+        background: "radial-gradient(ellipse at 50% 50%, rgba(0,212,170,0.04) 0%, transparent 70%)"
+      }
     },
-      pipeline.map(function(p, i) {
+      // Horizontal connector line
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: "50%",
+          left: "3%",
+          right: "3%",
+          height: 2,
+          background: "linear-gradient(90deg, " + COLORS.primary + "33, " + COLORS.primary + " 35%, " + COLORS.primary + "88 55%, " + COLORS.secondary + "55 80%, " + COLORS.secondary + "33)",
+          transform: "translateY(-50%)",
+          zIndex: 1
+        }
+      }),
+
+      // Streaming dots (4 staggered)
+      [0, 1, 2, 3].map(function(i) {
         return createElement("div", {
-          key: i,
+          key: "dot-" + i,
           style: {
-            padding: "12px 24px",
-            borderRadius: 12,
-            background: p.color + "15",
-            border: "1px solid " + p.color + "44",
-            display: "flex",
-            alignItems: "center",
-            gap: 12
+            position: "absolute",
+            top: "50%",
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            background: COLORS.primary,
+            boxShadow: "0 0 6px " + COLORS.primary,
+            transform: "translateY(-50%)",
+            animation: "tractionStream 3.5s linear infinite",
+            animationDelay: (i * 0.8) + "s",
+            zIndex: 3,
+            opacity: 0
           }
-        },
-          createElement("span", {
-            style: { fontSize: 28, fontWeight: 700, color: p.color, fontFamily: "'DM Serif Display', serif" }
-          }, p.value),
-          createElement("span", {
-            style: { fontSize: 13, color: COLORS.textMuted }
-          }, p.label)
-        );
-      })
-    ),
-    // Traction metrics row
-    createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 28 }
-    },
-      tractionMetrics.map(function(m, i) {
-        return createElement("div", {
-          key: i,
-          style: {
-            background: "linear-gradient(135deg, " + COLORS.card + ", " + COLORS.cardHover + ")",
-            borderRadius: 16,
-            padding: "28px 24px",
-            textAlign: "center",
-            border: "1px solid " + m.color + "33"
-          }
-        },
+        });
+      }),
+
+      // Milestone nodes + detail cards
+      milestones.map(function(m, i) {
+        var left = nodePositions[i];
+        var isAbove = i % 2 === 0;
+        var valueColor = m.status === "active" ? COLORS.primary : m.status === "completed" ? COLORS.primary : COLORS.secondary;
+        var valueAnim = m.status === "active" ? "tractionValueGlow 3s ease-in-out infinite" : "none";
+
+        return createElement("div", { key: i },
+          // Node circle
           createElement("div", {
-            style: { fontSize: 24, marginBottom: 6 }
-          }, m.icon),
+            style: Object.assign({}, nodeStyle(m.status), { left: left + "%" })
+          },
+            createElement("span", {
+              style: {
+                fontFamily: "'DM Serif Display', serif",
+                fontSize: 18,
+                fontWeight: 700,
+                color: valueColor,
+                animation: valueAnim
+              }
+            }, m.value)
+          ),
+
+          // Detail card (zigzag above/below)
           createElement("div", {
             style: {
-              fontSize: 40,
-              fontWeight: 700,
-              fontFamily: "'DM Serif Display', serif",
-              color: m.color,
-              lineHeight: 1.1,
-              marginBottom: 6
+              position: "absolute",
+              left: left + "%",
+              transform: "translateX(-50%)",
+              top: isAbove ? 10 : "auto",
+              bottom: isAbove ? "auto" : 16,
+              width: 136,
+              textAlign: "center",
+              animation: "tractionDrift 4s ease-in-out infinite",
+              animationDelay: (i * 0.5) + "s",
+              zIndex: 2
             }
-          }, m.value),
-          createElement("div", {
-            style: { fontSize: 14, fontWeight: 600, color: COLORS.text, marginBottom: 4 }
-          }, m.label),
-          createElement("div", {
-            style: { fontSize: 12, color: COLORS.textMuted }
-          }, m.desc)
+          },
+            createElement("div", {
+              style: {
+                fontFamily: "'DM Mono', monospace",
+                fontSize: 11,
+                fontWeight: 600,
+                color: m.status === "upcoming" ? COLORS.secondary : COLORS.primary,
+                textTransform: "uppercase",
+                letterSpacing: "1.5px",
+                marginBottom: 4
+              }
+            }, m.period),
+            createElement("div", {
+              style: {
+                fontSize: 14,
+                fontWeight: 600,
+                color: COLORS.text,
+                marginBottom: 3
+              }
+            }, m.label),
+            createElement("div", {
+              style: {
+                fontSize: 11,
+                color: COLORS.textMuted,
+                lineHeight: 1.4
+              }
+            }, m.detail)
+          )
         );
       })
     ),
-    // Partner logos section — uniform 240x80 images on white canvas
+
+    // Standout testimonial
     createElement("div", {
       style: {
         background: COLORS.card,
-        borderRadius: 16,
-        border: "1px solid " + COLORS.border,
-        padding: "24px 28px",
-        marginBottom: 20
+        borderRadius: 14,
+        padding: "22px 28px",
+        borderLeft: "3px solid " + COLORS.primary,
+        maxWidth: 640,
+        margin: "0 auto"
       }
     },
       createElement("div", {
-        style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, alignItems: "start" }
-      },
-        [
-          { label: "Design Partner", color: COLORS.primary, src: "assets/logo-transport-uk.png", alt: "Transport UK" },
-          { label: "Pilot LOI \u2014 Q1 2026", color: COLORS.accent, src: "assets/logo-alvarada.png", alt: "Alvorada" },
-          { label: "Channel Partner", color: COLORS.info, src: "assets/logo-solaredge.png", alt: "SolarEdge" }
-        ].map(function(p) {
-          return createElement("div", { key: p.alt, style: { textAlign: "center" } },
-            createElement("div", {
-              style: { fontSize: 10, fontWeight: 600, color: p.color, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 12 }
-            }, p.label),
-            createElement("div", {
-              style: { display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: 12, padding: "8px 16px", height: 64 }
-            },
-              createElement("img", {
-                src: p.src, alt: p.alt,
-                style: { maxWidth: 180, maxHeight: 48, objectFit: "contain" }
-              })
-            )
-          );
-        })
-      )
-    ),
-    // Testimonials
-    createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginTop: 20 }
-    },
-      testimonials.map(function(t, i) {
-        return createElement("div", {
-          key: i,
-          style: {
-            background: COLORS.card,
-            borderRadius: 12,
-            padding: "20px 18px",
-            borderLeft: "3px solid " + COLORS.primary,
-            position: "relative"
-          }
-        },
-          createElement("div", {
-            style: {
-              fontSize: 13,
-              fontStyle: "italic",
-              color: COLORS.text,
-              lineHeight: 1.6,
-              marginBottom: 12,
-              paddingTop: 6
-            }
-          }, "\u201C" + t.quote + "\u201D"),
-          createElement("div", {
-            style: { fontSize: 12, fontWeight: 600, color: COLORS.primary }
-          }, t.author),
-          createElement("div", {
-            style: { fontSize: 11, color: COLORS.textMuted }
-          }, t.role)
-        );
-      })
+        style: {
+          fontSize: 15,
+          fontStyle: "italic",
+          color: COLORS.text,
+          lineHeight: 1.7,
+          marginBottom: 10
+        }
+      }, "\u201CAfter few minutes of use I managed to find issues that I had no chance identifying\u201D"),
+      createElement("div", {
+        style: { fontSize: 13, fontWeight: 600, color: COLORS.primary }
+      }, "Ian"),
+      createElement("div", {
+        style: { fontSize: 11, color: COLORS.textMuted }
+      }, "Performance Manager")
     )
   );
 }
