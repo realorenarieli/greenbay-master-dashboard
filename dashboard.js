@@ -432,43 +432,69 @@ function SlideProblem() {
 
   // Tool chaos chips (spread across full width)
   var chaosTools = [
-    { label: "Telematics", top: 10, left: 5, rot: -6 },
-    { label: "Charging Mgmt", top: 6, left: 38, rot: 4 },
-    { label: "Routing", top: 8, left: 72, rot: -5 },
-    { label: "Maintenance", top: 38, left: 15, rot: 5 },
-    { label: "Compliance", top: 40, left: 55, rot: -3 },
-    { label: "ELD", top: 36, left: 82, rot: 6 },
-    { label: "Billing", top: 70, left: 35, rot: -4 }
+    { label: "Telematics & GPS", svgIcon: "satellite", top: 14, left: 18 },
+    { label: "EV Chargers", svgIcon: "plug", top: 12, left: 62 },
+    { label: "Grid & Energy", svgIcon: "bolt", top: 44, left: 28 },
+    { label: "Weather & Traffic", svgIcon: "cloud-sun", top: 42, left: 66 },
+    { label: "Fleet Schedules", svgIcon: "calendar", top: 72, left: 22 },
+    { label: "Vehicle Health", svgIcon: "wrench", top: 70, left: 60 }
   ];
-  var chaosColors = ["#ef4444", "#f97316", "#d97706", "#b45309", "#dc2626", "#c2410c", "#ef4444"];
+  var chaosColors = ["#ef4444", "#f97316", "#d97706", "#b45309", "#dc2626", "#c2410c"];
 
   // Tangled lines between tool chips (wider spread)
   var tangledLines = [
-    { x1: 10, y1: 16, x2: 44, y2: 12, color: "rgba(239,68,68,0.15)" },
-    { x1: 44, y1: 12, x2: 78, y2: 14, color: "rgba(249,115,22,0.15)" },
-    { x1: 20, y1: 44, x2: 60, y2: 46, color: "rgba(249,115,22,0.12)" },
-    { x1: 60, y1: 46, x2: 88, y2: 42, color: "rgba(217,119,6,0.12)" },
-    { x1: 10, y1: 16, x2: 20, y2: 44, color: "rgba(239,68,68,0.1)" },
-    { x1: 78, y1: 14, x2: 88, y2: 42, color: "rgba(220,38,38,0.1)" },
-    { x1: 20, y1: 44, x2: 78, y2: 14, color: "rgba(194,65,12,0.08)" },
-    { x1: 40, y1: 76, x2: 20, y2: 44, color: "rgba(239,68,68,0.08)" },
-    { x1: 40, y1: 76, x2: 60, y2: 46, color: "rgba(217,119,6,0.08)" }
+    { x1: 22, y1: 20, x2: 66, y2: 18, color: "rgba(239,68,68,0.18)" },
+    { x1: 66, y1: 18, x2: 32, y2: 50, color: "rgba(249,115,22,0.14)" },
+    { x1: 32, y1: 50, x2: 70, y2: 48, color: "rgba(249,115,22,0.14)" },
+    { x1: 22, y1: 20, x2: 32, y2: 50, color: "rgba(239,68,68,0.12)" },
+    { x1: 66, y1: 18, x2: 70, y2: 48, color: "rgba(217,119,6,0.12)" },
+    { x1: 32, y1: 50, x2: 26, y2: 78, color: "rgba(220,38,38,0.1)" },
+    { x1: 70, y1: 48, x2: 64, y2: 76, color: "rgba(194,65,12,0.1)" },
+    { x1: 26, y1: 78, x2: 64, y2: 76, color: "rgba(239,68,68,0.1)" },
+    { x1: 22, y1: 20, x2: 70, y2: 48, color: "rgba(239,68,68,0.06)" },
+    { x1: 66, y1: 18, x2: 26, y2: 78, color: "rgba(249,115,22,0.06)" }
   ];
 
-  // Inject keyframes
+  // Inject keyframes — static interference / jittery chaos
   var styleTag = createElement("style", null,
     // Alarm pulse — red glow breathing on metric cards
     "@keyframes alarmPulse { 0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.08), 0 0 40px rgba(239,68,68,0.04); } 50% { box-shadow: 0 0 35px rgba(239,68,68,0.2), 0 0 70px rgba(239,68,68,0.08); } } " +
-    // Chaos drift per tool chip
-    "@keyframes alarmDrift0 { 0%,100% { transform: translate(0,0) rotate(-6deg); } 33% { transform: translate(3px,-4px) rotate(-5deg); } 66% { transform: translate(-2px,3px) rotate(-7deg); } } " +
-    "@keyframes alarmDrift1 { 0%,100% { transform: translate(0,0) rotate(4deg); } 33% { transform: translate(-3px,3px) rotate(5deg); } 66% { transform: translate(4px,-2px) rotate(3deg); } } " +
-    "@keyframes alarmDrift2 { 0%,100% { transform: translate(0,0) rotate(-8deg); } 33% { transform: translate(2px,4px) rotate(-7deg); } 66% { transform: translate(-3px,-2px) rotate(-9deg); } } " +
-    "@keyframes alarmDrift3 { 0%,100% { transform: translate(0,0) rotate(5deg); } 33% { transform: translate(-4px,-3px) rotate(6deg); } 66% { transform: translate(3px,2px) rotate(4deg); } } " +
-    "@keyframes alarmDrift4 { 0%,100% { transform: translate(0,0) rotate(-3deg); } 33% { transform: translate(3px,3px) rotate(-2deg); } 66% { transform: translate(-2px,-4px) rotate(-4deg); } } " +
-    "@keyframes alarmDrift5 { 0%,100% { transform: translate(0,0) rotate(6deg); } 33% { transform: translate(-3px,4px) rotate(7deg); } 66% { transform: translate(4px,-3px) rotate(5deg); } } " +
-    "@keyframes alarmDrift6 { 0%,100% { transform: translate(0,0) rotate(-4deg); } 33% { transform: translate(2px,-3px) rotate(-3deg); } 66% { transform: translate(-3px,2px) rotate(-5deg); } } " +
-    // Red streaming dots along tangled lines
-    "@keyframes alarmStream { 0% { left: -4px; opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.8; } 100% { left: calc(100% + 4px); opacity: 0; } }"
+    // Jitter drifts — rapid erratic movement like broken signal
+    "@keyframes jitter0 { 0% { transform: translate(0,0); } 10% { transform: translate(-7px,3px); } 20% { transform: translate(4px,-8px); } 30% { transform: translate(-2px,6px); } 40% { transform: translate(8px,1px); } 50% { transform: translate(-5px,-5px); } 60% { transform: translate(3px,7px); } 70% { transform: translate(-8px,-2px); } 80% { transform: translate(6px,-4px); } 90% { transform: translate(-1px,8px); } 100% { transform: translate(0,0); } } " +
+    "@keyframes jitter1 { 0% { transform: translate(0,0); } 10% { transform: translate(6px,-5px); } 20% { transform: translate(-8px,2px); } 30% { transform: translate(3px,7px); } 40% { transform: translate(-4px,-6px); } 50% { transform: translate(7px,4px); } 60% { transform: translate(-6px,-3px); } 70% { transform: translate(2px,8px); } 80% { transform: translate(-7px,-1px); } 90% { transform: translate(5px,-6px); } 100% { transform: translate(0,0); } } " +
+    "@keyframes jitter2 { 0% { transform: translate(0,0); } 10% { transform: translate(-3px,8px); } 20% { transform: translate(7px,-4px); } 30% { transform: translate(-6px,-3px); } 40% { transform: translate(2px,7px); } 50% { transform: translate(-8px,1px); } 60% { transform: translate(5px,-7px); } 70% { transform: translate(-1px,5px); } 80% { transform: translate(8px,-2px); } 90% { transform: translate(-4px,6px); } 100% { transform: translate(0,0); } } " +
+    "@keyframes jitter3 { 0% { transform: translate(0,0); } 10% { transform: translate(8px,2px); } 20% { transform: translate(-5px,-7px); } 30% { transform: translate(1px,6px); } 40% { transform: translate(-7px,3px); } 50% { transform: translate(4px,-8px); } 60% { transform: translate(-2px,4px); } 70% { transform: translate(6px,-5px); } 80% { transform: translate(-3px,7px); } 90% { transform: translate(7px,-1px); } 100% { transform: translate(0,0); } } " +
+    "@keyframes jitter4 { 0% { transform: translate(0,0); } 10% { transform: translate(-6px,-4px); } 20% { transform: translate(3px,8px); } 30% { transform: translate(-7px,1px); } 40% { transform: translate(5px,-5px); } 50% { transform: translate(-1px,7px); } 60% { transform: translate(8px,-3px); } 70% { transform: translate(-4px,2px); } 80% { transform: translate(2px,-8px); } 90% { transform: translate(-8px,5px); } 100% { transform: translate(0,0); } } " +
+    "@keyframes jitter5 { 0% { transform: translate(0,0); } 10% { transform: translate(5px,6px); } 20% { transform: translate(-4px,-7px); } 30% { transform: translate(8px,-1px); } 40% { transform: translate(-3px,5px); } 50% { transform: translate(6px,-6px); } 60% { transform: translate(-7px,3px); } 70% { transform: translate(1px,-8px); } 80% { transform: translate(-5px,4px); } 90% { transform: translate(3px,-3px); } 100% { transform: translate(0,0); } } " +
+    // Collision bump — sudden scale pop when circles "collide"
+    "@keyframes collide0 { 0%,40%,100% { transform: scale(1); } 45% { transform: scale(1.18) translate(3px,-2px); } 50% { transform: scale(0.92) translate(-2px,1px); } 55% { transform: scale(1.05); } } " +
+    "@keyframes collide1 { 0%,55%,100% { transform: scale(1); } 60% { transform: scale(1.2) translate(-2px,3px); } 65% { transform: scale(0.9) translate(2px,-1px); } 70% { transform: scale(1.06); } } " +
+    "@keyframes collide2 { 0%,25%,100% { transform: scale(1); } 30% { transform: scale(1.15) translate(2px,2px); } 35% { transform: scale(0.93) translate(-3px,-1px); } 40% { transform: scale(1.04); } } " +
+    // Static flicker — rapid border + shadow jitter like interference
+    "@keyframes staticFlicker { " +
+      "0% { box-shadow: 0 0 6px rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); } " +
+      "10% { box-shadow: 0 0 18px rgba(239,68,68,0.4), 0 0 30px rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.6); } " +
+      "15% { box-shadow: 0 0 3px rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.1); } " +
+      "25% { box-shadow: 0 0 12px rgba(239,68,68,0.25); border-color: rgba(239,68,68,0.35); } " +
+      "30% { box-shadow: 0 0 22px rgba(249,115,22,0.35), 0 0 40px rgba(239,68,68,0.1); border-color: rgba(249,115,22,0.5); } " +
+      "35% { box-shadow: 0 0 4px rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.12); } " +
+      "50% { box-shadow: 0 0 15px rgba(239,68,68,0.3); border-color: rgba(239,68,68,0.45); } " +
+      "55% { box-shadow: 0 0 2px rgba(239,68,68,0.03); border-color: rgba(239,68,68,0.08); } " +
+      "65% { box-shadow: 0 0 20px rgba(220,38,38,0.4), 0 0 35px rgba(239,68,68,0.12); border-color: rgba(220,38,38,0.55); } " +
+      "70% { box-shadow: 0 0 5px rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.15); } " +
+      "85% { box-shadow: 0 0 16px rgba(239,68,68,0.28); border-color: rgba(239,68,68,0.4); } " +
+      "90% { box-shadow: 0 0 3px rgba(239,68,68,0.04); border-color: rgba(239,68,68,0.1); } " +
+      "100% { box-shadow: 0 0 6px rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); } } " +
+    // Label glitch — rapid opacity flicker on text labels
+    "@keyframes labelGlitch { 0%,100% { opacity: 0.7; } 15% { opacity: 0.2; } 17% { opacity: 0.9; } 30% { opacity: 0.4; } 32% { opacity: 0.8; } 50% { opacity: 0.15; } 52% { opacity: 0.75; } 70% { opacity: 0.3; } 72% { opacity: 0.85; } 88% { opacity: 0.1; } 90% { opacity: 0.7; } } " +
+    // Red streaming dots — faster, erratic
+    "@keyframes alarmStream { 0% { left: -6px; opacity: 0; } 5% { opacity: 0.9; } 20% { opacity: 0.3; } 25% { opacity: 1; } 45% { opacity: 0.4; } 50% { opacity: 0.95; } 70% { opacity: 0.2; } 75% { opacity: 0.85; } 90% { opacity: 0.5; } 100% { left: calc(100% + 6px); opacity: 0; } } " +
+    // Line static — rapid flicker instead of smooth breathing
+    "@keyframes lineStatic { 0% { opacity: 0.5; } 8% { opacity: 1; } 12% { opacity: 0.15; } 20% { opacity: 0.8; } 25% { opacity: 0.1; } 33% { opacity: 0.9; } 40% { opacity: 0.3; } 48% { opacity: 1; } 55% { opacity: 0.2; } 60% { opacity: 0.7; } 68% { opacity: 0.1; } 75% { opacity: 0.85; } 80% { opacity: 0.25; } 88% { opacity: 0.95; } 92% { opacity: 0.15; } 100% { opacity: 0.5; } } " +
+    // Scanline overlay
+    "@keyframes scanline { 0% { top: -2px; } 100% { top: 100%; } } " +
+    // Noise grain flash
+    "@keyframes noiseFlash { 0%,100% { opacity: 0.03; } 25% { opacity: 0.08; } 50% { opacity: 0.02; } 75% { opacity: 0.06; } }"
   );
 
   // Alarm metric cards row
@@ -542,12 +568,17 @@ function SlideProblem() {
         zIndex: 3
       }
     }, "Today\u2019s Fleet Tech Stack"),
-    // Tangled lines
+    // Tangled lines — static interference
     tangledLines.map(function(line, i) {
       var dx = line.x2 - line.x1;
       var dy = line.y2 - line.y1;
       var len = Math.sqrt(dx * dx + dy * dy);
       var angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      var lineDur = (0.8 + i * 0.07).toFixed(2);
+      // Boost line opacity for static look
+      var boostedColor = line.color.replace(/[\d.]+\)$/, function(m) {
+        return Math.min(parseFloat(m) * 2.5, 0.45).toFixed(2) + ")";
+      });
       return createElement("div", {
         key: "tl-" + i,
         style: {
@@ -555,52 +586,139 @@ function SlideProblem() {
           top: line.y1 + "%",
           left: line.x1 + "%",
           width: len + "%",
-          height: 1,
-          background: line.color,
+          height: 1.5,
+          background: "transparent",
           transformOrigin: "0 0",
           transform: "rotate(" + angle + "deg)",
           pointerEvents: "none"
         }
       },
-        // Streaming dot
+        // Primary streaming dot — fast & erratic
         createElement("div", {
           key: "adot-" + i,
           style: {
             position: "absolute",
-            top: -2,
-            width: 4,
-            height: 4,
+            top: -2.5,
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            background: COLORS.danger,
+            opacity: 0.9,
+            boxShadow: "0 0 8px " + COLORS.danger + "aa, 0 0 20px " + COLORS.danger + "55",
+            animation: "alarmStream " + lineDur + "s linear infinite",
+            animationDelay: (i * 0.15).toFixed(2) + "s"
+          }
+        }),
+        // Secondary trailing dot
+        createElement("div", {
+          key: "adot2-" + i,
+          style: {
+            position: "absolute",
+            top: -1.5,
+            width: 3,
+            height: 3,
             borderRadius: "50%",
             background: COLORS.danger,
             opacity: 0.6,
-            animation: "alarmStream " + (2.2 + i * 0.15).toFixed(1) + "s linear infinite",
-            animationDelay: (i * 0.35).toFixed(1) + "s"
+            animation: "alarmStream " + lineDur + "s linear infinite",
+            animationDelay: (i * 0.15 + 0.25).toFixed(2) + "s"
+          }
+        }),
+        // Third erratic dot — reverse direction feel
+        createElement("div", {
+          key: "adot3-" + i,
+          style: {
+            position: "absolute",
+            top: -1,
+            width: 2,
+            height: 2,
+            borderRadius: "50%",
+            background: "#f97316",
+            opacity: 0.7,
+            animation: "alarmStream " + (parseFloat(lineDur) * 0.6).toFixed(2) + "s linear infinite",
+            animationDelay: (i * 0.1 + 0.4).toFixed(2) + "s"
           }
         })
       );
     }),
-    // Scattered tool chips
+    // Scanline overlay — CRT interference effect
+    createElement("div", {
+      style: {
+        position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+        pointerEvents: "none", zIndex: 4, overflow: "hidden"
+      }
+    },
+      createElement("div", {
+        style: {
+          position: "absolute", left: 0, width: "100%", height: 2,
+          background: "linear-gradient(90deg, transparent 0%, rgba(239,68,68,0.15) 30%, rgba(239,68,68,0.25) 50%, rgba(239,68,68,0.15) 70%, transparent 100%)",
+          animation: "scanline 2.5s linear infinite",
+          boxShadow: "0 0 12px rgba(239,68,68,0.2)"
+        }
+      }),
+      // Second scanline, offset
+      createElement("div", {
+        style: {
+          position: "absolute", left: 0, width: "100%", height: 1,
+          background: "linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.1) 40%, rgba(249,115,22,0.18) 50%, rgba(249,115,22,0.1) 60%, transparent 100%)",
+          animation: "scanline 1.8s linear infinite",
+          animationDelay: "0.7s"
+        }
+      })
+    ),
+    // Noise grain overlay
+    createElement("div", {
+      style: {
+        position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+        pointerEvents: "none", zIndex: 3,
+        backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
+        backgroundSize: "128px 128px",
+        opacity: 0.04,
+        animation: "noiseFlash 0.3s steps(4) infinite",
+        mixBlendMode: "screen"
+      }
+    }),
+    // Scattered tool chips — jittery with collisions
     chaosTools.map(function(tool, i) {
-      var driftDuration = [4.5, 5.2, 3.8, 4.8, 5.5, 4.1, 4.4][i];
+      var jitterDur = [3.2, 3.8, 2.8, 3.5, 4.0, 3.0][i];
+      var collideDur = [3.2, 2.8, 3.5, 3.0, 2.6, 3.3][i];
+      var collideIdx = i % 3;
       return createElement("div", {
         key: "tool-" + i,
         style: {
           position: "absolute",
           top: tool.top + "%",
           left: tool.left + "%",
-          animation: "alarmDrift" + i + " " + driftDuration + "s ease-in-out infinite",
-          background: "rgba(30,20,15,0.75)",
-          border: "1px solid " + chaosColors[i] + "44",
-          borderRadius: 10,
-          padding: "6px 12px",
-          fontSize: 10,
-          fontWeight: 600,
-          color: chaosColors[i],
-          opacity: 0.85,
-          whiteSpace: "nowrap",
+          animation: "jitter" + i + " " + jitterDur + "s steps(8) infinite",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 4,
           zIndex: 2
         }
-      }, tool.label);
+      },
+        createElement("div", {
+          style: {
+            width: 46,
+            height: 46,
+            borderRadius: "50%",
+            background: "rgba(30,20,15,0.75)",
+            border: "1.5px solid " + chaosColors[i] + "55",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            animation: "staticFlicker " + (2.0 + i * 0.4).toFixed(1) + "s steps(5) infinite, collide" + collideIdx + " " + collideDur + "s ease-out infinite",
+            animationDelay: "0s, " + (i * 0.5).toFixed(1) + "s"
+          }
+        }, Icon(tool.svgIcon, 20, chaosColors[i])),
+        createElement("span", {
+          style: {
+            fontSize: 8, fontWeight: 600, color: chaosColors[i], opacity: 0.7, whiteSpace: "nowrap",
+            animation: "labelGlitch " + (2.5 + i * 0.3).toFixed(1) + "s steps(3) infinite",
+            animationDelay: (i * 0.2).toFixed(1) + "s"
+          }
+        }, tool.label)
+      );
     })
   );
 
@@ -634,6 +752,7 @@ function SlideSolution() {
   ];
 
   var outputs = [
+    { svgIcon: "truck", label: "Fleet Allocation" },
     { svgIcon: "bar-chart", label: "Real-time Dashboards" },
     { svgIcon: "bell", label: "Automated Alerts" },
     { svgIcon: "map-pin", label: "Route Recommendations" },
@@ -644,12 +763,12 @@ function SlideSolution() {
 
   // Scattered positions for chaos particles (left zone, percentages of zone)
   var chaosPositions = [
-    { top: 8, left: 12, rot: -6 },
-    { top: 2, left: 58, rot: 4 },
-    { top: 30, left: 4, rot: -8 },
-    { top: 26, left: 52, rot: 5 },
-    { top: 52, left: 18, rot: -3 },
-    { top: 56, left: 60, rot: 6 }
+    { top: 18, left: 12, rot: -6 },
+    { top: 12, left: 58, rot: 4 },
+    { top: 40, left: 4, rot: -8 },
+    { top: 36, left: 52, rot: 5 },
+    { top: 62, left: 18, rot: -3 },
+    { top: 66, left: 60, rot: 6 }
   ];
 
   // Muted chaos colors
@@ -674,7 +793,9 @@ function SlideSolution() {
     // Prism inner orbit rotation
     "@keyframes prismOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } " +
     // Output card pulse — staggered glow
-    "@keyframes outputPulse { 0%, 100% { border-color: rgba(0,212,170,0.12); box-shadow: none; } 50% { border-color: rgba(0,212,170,0.35); box-shadow: 0 0 12px rgba(0,212,170,0.08); } }"
+    "@keyframes outputPulse { 0%, 100% { border-color: rgba(0,212,170,0.12); box-shadow: none; } 50% { border-color: rgba(0,212,170,0.35); box-shadow: 0 0 12px rgba(0,212,170,0.08); } } " +
+    // Flowing dashes along SVG paths (prism → cards)
+    "@keyframes dashFlow { 0% { stroke-dashoffset: 24; } 100% { stroke-dashoffset: 0; } }"
   );
 
   // ── ZONE 1: CHAOS (left) ──
@@ -683,7 +804,8 @@ function SlideSolution() {
       position: "relative",
       width: "28%",
       height: vizHeight,
-      flexShrink: 0
+      flexShrink: 0,
+      paddingTop: 20
     }
   },
     // Zone label
@@ -696,7 +818,7 @@ function SlideSolution() {
         color: "#ef4444",
         opacity: 0.5,
         textAlign: "center",
-        marginBottom: 4
+        marginBottom: 10
       }
     }, "IN"),
     // Background tint
@@ -711,13 +833,13 @@ function SlideSolution() {
     }),
     // Tangled lines between particles (decorative crossing lines)
     [
-      { x1: 18, y1: 14, x2: 64, y2: 8, color: "rgba(239,68,68,0.12)" },
-      { x1: 10, y1: 36, x2: 58, y2: 32, color: "rgba(249,115,22,0.1)" },
-      { x1: 24, y1: 58, x2: 66, y2: 62, color: "rgba(217,119,6,0.1)" },
-      { x1: 64, y1: 8, x2: 10, y2: 36, color: "rgba(239,68,68,0.08)" },
-      { x1: 58, y1: 32, x2: 24, y2: 58, color: "rgba(249,115,22,0.08)" },
-      { x1: 18, y1: 14, x2: 24, y2: 58, color: "rgba(220,38,38,0.06)" },
-      { x1: 64, y1: 8, x2: 66, y2: 62, color: "rgba(194,65,12,0.06)" }
+      { x1: 18, y1: 24, x2: 64, y2: 18, color: "rgba(239,68,68,0.12)" },
+      { x1: 10, y1: 46, x2: 58, y2: 42, color: "rgba(249,115,22,0.1)" },
+      { x1: 24, y1: 68, x2: 66, y2: 72, color: "rgba(217,119,6,0.1)" },
+      { x1: 64, y1: 18, x2: 10, y2: 46, color: "rgba(239,68,68,0.08)" },
+      { x1: 58, y1: 42, x2: 24, y2: 68, color: "rgba(249,115,22,0.08)" },
+      { x1: 18, y1: 24, x2: 24, y2: 68, color: "rgba(220,38,38,0.06)" },
+      { x1: 64, y1: 18, x2: 66, y2: 72, color: "rgba(194,65,12,0.06)" }
     ].map(function(line, i) {
       var dx = line.x2 - line.x1;
       var dy = line.y2 - line.y1;
@@ -954,66 +1076,74 @@ function SlideSolution() {
     )
   );
 
-  // ── DIVERGENCE LINES (prism → harmony) with streaming dots ──
-  var divergenceLines = createElement("div", {
+  // ── FLOW OVERLAY: Animated curved paths from prism → each output card ──
+  var flowCardY = [57, 91, 125, 159, 193, 227, 261];
+  var flowOverlay = createElement("svg", {
     style: {
-      position: "relative",
-      width: "6%",
-      height: vizHeight,
-      flexShrink: 0,
-      overflow: "hidden"
-    }
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      pointerEvents: "none",
+      zIndex: 5
+    },
+    viewBox: "0 0 1000 340",
+    preserveAspectRatio: "none",
+    fill: "none"
   },
-    // Static lines
     outputs.map(function(item, i) {
-      var endY = 8 + i * 14.5;
-      var startY = 42;
-      var dy = endY - startY;
-      var angle = Math.atan2(dy, 100) * 180 / Math.PI;
-      return createElement("div", {
-        key: "div-" + i,
-        style: {
-          position: "absolute",
-          top: startY + "%",
-          left: 0,
-          width: "100%",
-          height: 2,
-          background: "linear-gradient(to right, " + COLORS.primary + "44, " + COLORS.primary + "18)",
-          transformOrigin: "0 50%",
-          transform: "rotate(" + (angle * 0.5) + "deg)",
-          borderRadius: 1,
-          pointerEvents: "none"
-        }
-      });
-    }),
-    // Streaming green dots along divergence lines
-    outputs.map(function(item, i) {
-      var endY = 8 + i * 14.5;
-      var startY = 42;
-      var dy = endY - startY;
-      var angle = Math.atan2(dy, 100) * 180 / Math.PI;
-      return [0, 1].map(function(d) {
-        var delay = (i * 0.5 + d * 2.0).toFixed(1);
-        var duration = (2.2 + i * 0.15).toFixed(1);
-        return createElement("div", {
-          key: "ddot-" + i + "-" + d,
+      var cardY = flowCardY[i] || (57 + i * 34);
+      var pathD = "M608,170 C630,170 635," + cardY + " 642," + cardY;
+      var delay = (i * 0.25).toFixed(2);
+      var dur = (2.0 + i * 0.08).toFixed(1);
+      return [
+        // Faint static path
+        createElement("path", {
+          key: "fp-" + i,
+          d: pathD,
+          stroke: COLORS.primary,
+          strokeWidth: 1.5,
+          strokeOpacity: 0.12,
+          vectorEffect: "non-scaling-stroke"
+        }),
+        // Animated flowing dashes
+        createElement("path", {
+          key: "fa-" + i,
+          d: pathD,
+          stroke: COLORS.primary,
+          strokeWidth: 1.5,
+          strokeOpacity: 0.5,
+          strokeDasharray: "8 16",
+          vectorEffect: "non-scaling-stroke",
           style: {
-            position: "absolute",
-            top: "calc(" + startY + "% - 3px)",
-            left: -5,
-            width: 5,
-            height: 5,
-            borderRadius: "50%",
-            background: COLORS.primary,
-            opacity: 0.8,
-            transformOrigin: "0 50%",
-            transform: "rotate(" + (angle * 0.5) + "deg)",
-            animation: "streamFlow " + duration + "s " + delay + "s linear infinite",
-            pointerEvents: "none",
-            boxShadow: "0 0 8px " + COLORS.primary + "66"
+            animation: "dashFlow " + dur + "s " + delay + "s linear infinite"
           }
-        });
-      });
+        }),
+        // Flowing dot along path
+        createElement("circle", {
+          key: "fd-" + i,
+          r: 2.5,
+          fill: COLORS.primary,
+          opacity: 0.9
+        },
+          createElement("animateMotion", {
+            dur: dur + "s",
+            repeatCount: "indefinite",
+            begin: delay + "s",
+            path: pathD
+          })
+        ),
+        // Endpoint glow
+        createElement("circle", {
+          key: "fg-" + i,
+          cx: 642,
+          cy: cardY,
+          r: 3,
+          fill: COLORS.primary,
+          opacity: 0.15
+        })
+      ];
     })
   );
 
@@ -1021,7 +1151,7 @@ function SlideSolution() {
   var harmonyZone = createElement("div", {
     style: {
       position: "relative",
-      width: "28%",
+      width: "34%",
       height: vizHeight,
       flexShrink: 0,
       display: "flex",
@@ -1038,7 +1168,7 @@ function SlideSolution() {
         letterSpacing: "2px",
         color: COLORS.primary,
         textAlign: "center",
-        marginBottom: 10
+        marginBottom: 8
       }
     }, "OUT"),
     // Background tint
@@ -1059,12 +1189,12 @@ function SlideSolution() {
         style: {
           display: "flex",
           alignItems: "center",
-          gap: 10,
-          padding: "9px 14px",
+          gap: 8,
+          padding: "6px 12px",
           background: "rgba(0,212,170,0.04)",
           border: "1px solid rgba(0,212,170,0.12)",
-          borderRadius: 10,
-          marginBottom: 7,
+          borderRadius: 8,
+          marginBottom: 4,
           animation: "outputPulse 4.8s " + pulseDelay + "s ease-in-out infinite"
         }
       },
@@ -1092,8 +1222,8 @@ function SlideSolution() {
       chaosZone,
       convergenceLines,
       prismZone,
-      divergenceLines,
-      harmonyZone
+      harmonyZone,
+      flowOverlay
     ),
     null
   );
