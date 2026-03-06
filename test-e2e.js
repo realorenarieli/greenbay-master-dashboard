@@ -15,11 +15,11 @@ const path = require('path');
 const PORT = 9876;
 const BASE = __dirname;
 const SCREENSHOT_DIR = path.join(BASE, 'test-screenshots');
-const TOTAL_SLIDES = 11;
+const TOTAL_SLIDES = 12;
 
 const SLIDE_NAMES = [
   'Greenbay', 'The Problem', 'The Solution', 'Why Now', 'Market Opportunity',
-  'Why Greenbay Wins', 'Traction', 'Team', 'Business Model', 'The Ask', 'Appendix'
+  'Why Greenbay Wins', 'Traction', 'Team', 'Business Model', 'Vision', 'The Ask', 'Appendix'
 ];
 
 // Simple static file server
@@ -213,6 +213,23 @@ async function run() {
     assert(tractionText.includes('20'), 'Traction shows "20" engaged accounts');
     assert(!tractionText.includes('pilot operators'), 'No "pilot operators" in traction (only LOIs signed)');
     assert(tractionText.includes('product trials'), 'Traction says "product trials" not "pilot operators"');
+
+    // ── 6b. Vision slide ──
+    console.log('\n=== 6b. Vision Slide ===');
+    await clickDot(page, 'Vision');
+    var visionText = await page.textContent('#root');
+
+    assert(visionText.includes('The Vision'), 'Vision slide has "The Vision" title');
+    assert(visionText.includes('operating system') || visionText.includes('autonomous fleets'), 'Vision slide has subtitle');
+    assert(visionText.includes('AI'), 'Vision slide mentions AI');
+    assert(visionText.includes('Autonomous'), 'Vision slide mentions Autonomous');
+    assert(visionText.includes('Electrification'), 'Vision slide mentions Electrification');
+    assert(visionText.includes('GREENBAY'), 'Vision slide has GREENBAY nucleus');
+    assert(visionText.includes('2030'), 'Vision slide has 2030 closing statement');
+    assert(visionText.includes('$70B'), 'Vision slide shows $70B TAM (MarketsandMarkets)');
+    assert(visionText.includes('13.3%'), 'Vision slide shows 13.3% CAGR (MarketsandMarkets)');
+    assert(visionText.includes('10x'), 'Vision slide shows 10x EV truck growth (IEA GEO 2025)');
+    assert(visionText.includes('$12.2B'), 'Vision slide shows $12.2B orchestration TAM 2035');
 
     // ── 7. The Ask slide ──
     console.log('\n=== 7. The Ask Slide ===');

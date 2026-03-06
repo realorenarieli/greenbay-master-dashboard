@@ -108,6 +108,7 @@ var SLIDE_TITLES = [
   "Traction",
   "Team",
   "Business Model",
+  "Vision",
   "The Ask",
   "Appendix"
 ];
@@ -2439,7 +2440,559 @@ function SlideBusinessModel() {
   );
 }
 
-// ============ SLIDE 10: THE ASK ============
+// ============ SLIDE 10: VISION ============
+function SlideVision() {
+  // Vision pillars
+  var pillars = [
+    { icon: "\uD83E\uDD16", title: "AI-Native Intelligence", statement: "Every decision optimized by real-time ML \u2014 routing, charging, maintenance", color: COLORS.primary },
+    { icon: "\uD83D\uDE9B", title: "Autonomous-Ready", statement: "Built for L4+ from day one \u2014 the orchestration layer driverless fleets need", color: COLORS.purple },
+    { icon: "\u26A1", title: "Full Electrification", statement: "Manage mixed fleets through the EV transition \u2014 diesel to electric, seamlessly", color: COLORS.accent },
+    { icon: "\uD83C\uDF0D", title: "Sustainable Operations", statement: "Carbon-aware routing, energy optimization, regulatory compliance \u2014 built in", color: COLORS.success }
+  ];
+
+  // Card positions: NW, NE, SW, SE
+  var cardPos = [
+    { top: 6, left: 2 },
+    { top: 6, left: 72 },
+    { top: 62, left: 2 },
+    { top: 62, left: 72 }
+  ];
+
+  var vizHeight = 390;
+  var centerX = 50;
+  var centerY = 45;
+
+  // Style tag with AI chip keyframes
+  var styleTag = createElement("style", null,
+    // 1. Nucleus pulse — chip die glow
+    "@keyframes visionNucleusPulse { 0%, 100% { box-shadow: 0 0 20px rgba(0,212,170,0.12), 0 0 50px rgba(0,212,170,0.05), inset 0 0 15px rgba(0,212,170,0.06); } 50% { box-shadow: 0 0 35px rgba(0,212,170,0.35), 0 0 80px rgba(0,212,170,0.1), inset 0 0 25px rgba(0,212,170,0.1); } } " +
+    // 2. Data pulse traveling along traces
+    "@keyframes visionTracePulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } } " +
+    // 3. Pin glow cycle
+    "@keyframes visionPinGlow { 0%, 100% { opacity: 0.3; box-shadow: none; } 50% { opacity: 1; box-shadow: 0 0 6px var(--pin-color, rgba(0,212,170,0.6)); } } " +
+    // 4. Card drift (4 variants)
+    "@keyframes visionCardDrift0 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(2px,-3px); } 66% { transform: translate(-2px,2px); } } " +
+    "@keyframes visionCardDrift1 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(-3px,2px); } 66% { transform: translate(2px,-2px); } } " +
+    "@keyframes visionCardDrift2 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(3px,3px); } 66% { transform: translate(-2px,-3px); } } " +
+    "@keyframes visionCardDrift3 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(-2px,-2px); } 66% { transform: translate(3px,2px); } } " +
+    // 5. Tagline text-shadow glow
+    "@keyframes visionTaglineGlow { 0%, 100% { text-shadow: 0 0 8px rgba(0,212,170,0.1); } 50% { text-shadow: 0 0 20px rgba(0,212,170,0.35), 0 0 40px rgba(0,212,170,0.12); } } " +
+    //
+    // 7. Ring border shimmer
+    "@keyframes visionRingShimmer { 0% { border-color: rgba(0,212,170,0.08); } 50% { border-color: rgba(0,212,170,0.22); } 100% { border-color: rgba(0,212,170,0.08); } } "
+  );
+
+  // Central nucleus — chip die (square with rounded corners)
+  var centralNode = createElement("div", {
+    style: {
+      position: "absolute",
+      top: centerY + "%",
+      left: centerX + "%",
+      transform: "translate(-50%, -50%)",
+      width: 110,
+      height: 110,
+      borderRadius: 14,
+      background: "linear-gradient(135deg, rgba(0,212,170,0.12) 0%, rgba(5,11,24,0.95) 40%, rgba(0,212,170,0.08) 100%)",
+      border: "2px solid rgba(0,212,170,0.45)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      animation: "visionNucleusPulse 3s ease-in-out infinite",
+      zIndex: 10
+    }
+  },
+    // Die seal ring (outer)
+    createElement("div", {
+      style: {
+        position: "absolute", top: 4, left: 4, right: 4, bottom: 4,
+        borderRadius: 10,
+        border: "1px solid rgba(0,212,170,0.18)",
+        pointerEvents: "none"
+      }
+    }),
+    // Die seal ring (inner)
+    createElement("div", {
+      style: {
+        position: "absolute", top: 8, left: 8, right: 8, bottom: 8,
+        borderRadius: 8,
+        border: "1px solid rgba(0,212,170,0.08)",
+        pointerEvents: "none"
+      }
+    }),
+    // Cross-hair routing channels
+    createElement("div", {
+      style: {
+        position: "absolute", top: "50%", left: 14, right: 14, height: 1,
+        background: "rgba(0,212,170,0.06)", pointerEvents: "none"
+      }
+    }),
+    createElement("div", {
+      style: {
+        position: "absolute", left: "50%", top: 14, bottom: 14, width: 1,
+        background: "rgba(0,212,170,0.06)", pointerEvents: "none"
+      }
+    }),
+    // Corner bond pads
+    createElement("div", { style: { position: "absolute", top: 10, left: 10, width: 4, height: 4, borderRadius: 1, background: "rgba(0,212,170,0.12)" } }),
+    createElement("div", { style: { position: "absolute", top: 10, right: 10, width: 4, height: 4, borderRadius: 1, background: "rgba(0,212,170,0.12)" } }),
+    createElement("div", { style: { position: "absolute", bottom: 10, left: 10, width: 4, height: 4, borderRadius: 1, background: "rgba(0,212,170,0.12)" } }),
+    createElement("div", { style: { position: "absolute", bottom: 10, right: 10, width: 4, height: 4, borderRadius: 1, background: "rgba(0,212,170,0.12)" } }),
+    createElement("div", {
+      style: { fontFamily: "'DM Mono', monospace", fontSize: 14, fontWeight: 700, color: COLORS.primary, letterSpacing: "3px", lineHeight: 1, zIndex: 1 }
+    }, "GREENBAY"),
+    createElement("div", {
+      style: { fontSize: 9, fontWeight: 700, color: COLORS.primary, letterSpacing: "2px", textTransform: "uppercase", marginTop: 5, opacity: 0.6, fontFamily: "'DM Mono', monospace", zIndex: 1 }
+    }, "FLEET OS"),
+    // Die revision indicator
+    createElement("div", {
+      style: { position: "absolute", bottom: 3, right: 6, fontSize: 5, color: COLORS.primary, opacity: 0.2, fontFamily: "'DM Mono', monospace" }
+    }, "rev2.0")
+  );
+
+  // 3 concentric chip trace rings (rounded squares)
+  var rings = [
+    { size: 300, radius: 36, color: COLORS.primary, opacity: 0.12, label: "AI", shimDur: 6 },
+    { size: 224, radius: 26, color: COLORS.purple, opacity: 0.12, label: "AUTONOMOUS", shimDur: 4.5 },
+    { size: 158, radius: 18, color: COLORS.accent, opacity: 0.12, label: "ELECTRIC", shimDur: 3.5 }
+  ];
+
+  // Pin positions: 4 pins per ring (top, right, bottom, left) — small square "chip pins"
+  var pinPositions = [
+    { top: -3, left: "30%", ml: -3 },   // top-left
+    { top: -3, left: "50%", ml: -3 },   // top-center
+    { top: -3, left: "70%", ml: -3 },   // top-right
+    { top: "30%", right: -3, mt: -3 },  // right-top
+    { top: "50%", right: -3, mt: -3 },  // right-center
+    { top: "70%", right: -3, mt: -3 },  // right-bottom
+    { bottom: -3, left: "70%", ml: -3 },// bottom-right
+    { bottom: -3, left: "50%", ml: -3 },// bottom-center
+    { bottom: -3, left: "30%", ml: -3 },// bottom-left
+    { left: -3, top: "70%", mt: -3 },   // left-bottom
+    { left: -3, top: "50%", mt: -3 },   // left-center
+    { left: -3, top: "30%", mt: -3 }    // left-top
+  ];
+
+  var orbitElements = rings.map(function(r, i) {
+    var shimDelay = (i * 1.5).toFixed(1);
+    return createElement("div", { key: "ring-" + i },
+      // Static trace ring (rounded square)
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: centerY + "%",
+          left: centerX + "%",
+          width: r.size,
+          height: r.size,
+          marginTop: -(r.size / 2),
+          marginLeft: -(r.size / 2),
+          borderRadius: r.radius,
+          border: "1.5px solid " + r.color,
+          opacity: r.opacity,
+          animation: "visionRingShimmer " + r.shimDur + "s " + shimDelay + "s ease-in-out infinite",
+          pointerEvents: "none",
+          zIndex: 5
+        }
+      },
+        // 4 chip pins per ring
+        pinPositions.map(function(pp, pi) {
+          var pinStyle = {
+            position: "absolute",
+            width: 6,
+            height: 6,
+            borderRadius: 1,
+            background: r.color,
+            "--pin-color": r.color + "99",
+            animation: "visionPinGlow 3s " + (pi * 0.8 + i * 0.3).toFixed(1) + "s ease-in-out infinite"
+          };
+          if (pp.top !== undefined) pinStyle.top = pp.top;
+          if (pp.bottom !== undefined) pinStyle.bottom = pp.bottom;
+          if (pp.left !== undefined) pinStyle.left = pp.left;
+          if (pp.right !== undefined) pinStyle.right = pp.right;
+          if (pp.ml) pinStyle.marginLeft = pp.ml;
+          if (pp.mt) pinStyle.marginTop = pp.mt;
+          return createElement("div", { key: "pin-" + i + "-" + pi, style: pinStyle });
+        })
+      ),
+      // Data pulse trace overlay (animated gradient traveling along border)
+      createElement("div", {
+        style: {
+          position: "absolute",
+          top: centerY + "%",
+          left: centerX + "%",
+          width: r.size - 4,
+          height: r.size - 4,
+          marginTop: -((r.size - 4) / 2),
+          marginLeft: -((r.size - 4) / 2),
+          borderRadius: r.radius - 1,
+          border: "1px solid transparent",
+          backgroundImage: "linear-gradient(" + COLORS.background + ", " + COLORS.background + "), linear-gradient(90deg, transparent 0%, " + r.color + "44 30%, " + r.color + "88 50%, " + r.color + "44 70%, transparent 100%)",
+          backgroundOrigin: "border-box",
+          backgroundClip: "padding-box, border-box",
+          backgroundSize: "100% 100%, 300% 100%",
+          animation: "visionTracePulse " + (8 + i * 2) + "s " + shimDelay + "s linear infinite",
+          pointerEvents: "none",
+          zIndex: 5
+        }
+      }),
+      // Static label on ring edge
+      createElement("div", {
+        style: Object.assign({
+          position: "absolute",
+          top: centerY + "%",
+          left: centerX + "%",
+          fontSize: 8,
+          fontWeight: 700,
+          letterSpacing: "2px",
+          fontFamily: "'DM Mono', monospace",
+          color: r.color,
+          opacity: 0.5,
+          pointerEvents: "none",
+          zIndex: 6
+        }, (function() {
+          if (i === 0) return { marginTop: -(r.size / 2) - 14, marginLeft: -6 };
+          if (i === 1) return { marginTop: -5, marginLeft: (r.size / 2) + 8 };
+          return { marginTop: (r.size / 2) + 4, marginLeft: -18 };
+        })())
+      }, r.label)
+    );
+  });
+
+  // Circuit trace lines extending from outer ring edges (decorative short traces)
+  var traceLines = [];
+  var traceConfigs = [
+    // Horizontal traces extending from left/right of outer ring
+    { top: centerY, left: centerX - 22, width: 6, height: 0, color: COLORS.primary },
+    { top: centerY, left: centerX + 16, width: 6, height: 0, color: COLORS.primary },
+    // Vertical traces from top/bottom
+    { top: centerY - 20, left: centerX, width: 0, height: 5, color: COLORS.primary },
+    { top: centerY + 15, left: centerX, width: 0, height: 5, color: COLORS.primary },
+    // Diagonal accents at corners
+    { top: centerY - 15, left: centerX - 18, width: 4, height: 0, color: COLORS.purple },
+    { top: centerY - 15, left: centerX + 14, width: 4, height: 0, color: COLORS.purple },
+    { top: centerY + 10, left: centerX - 18, width: 4, height: 0, color: COLORS.accent },
+    { top: centerY + 10, left: centerX + 14, width: 4, height: 0, color: COLORS.accent }
+  ];
+  traceLines = traceConfigs.map(function(t, i) {
+    return createElement("div", {
+      key: "trace-" + i,
+      style: {
+        position: "absolute",
+        top: t.top + "%",
+        left: t.left + "%",
+        width: t.width + "%",
+        height: t.height > 0 ? t.height + "%" : "1px",
+        minHeight: t.height === 0 ? 1 : undefined,
+        minWidth: t.width === 0 ? 1 : undefined,
+        background: t.color,
+        opacity: 0.15,
+        pointerEvents: "none",
+        zIndex: 4
+      }
+    });
+  });
+
+  // SVG circuit traces with right-angle bends and flowing electrons
+  // Paths from each card edge to the center nucleus, with L-shaped bends
+  var tracePaths = [
+    // NW: right from card → bend down → bend right to center
+    { d: "M 26 16 H 37 V 45 H 50", color: pillars[0].color },
+    // NE: left from card → bend down → bend left to center
+    { d: "M 72 16 H 63 V 45 H 50", color: pillars[1].color },
+    // SW: right from card → bend up → bend right to center
+    { d: "M 26 68 H 37 V 45 H 50", color: pillars[2].color },
+    // SE: left from card → bend up → bend left to center
+    { d: "M 72 68 H 63 V 45 H 50", color: pillars[3].color }
+  ];
+
+  // Junction dot positions (at the bends)
+  var junctions = [
+    [{ x: 37, y: 16 }, { x: 37, y: 45 }],
+    [{ x: 63, y: 16 }, { x: 63, y: 45 }],
+    [{ x: 37, y: 68 }, { x: 37, y: 45 }],
+    [{ x: 63, y: 68 }, { x: 63, y: 45 }]
+  ];
+
+  var beams = createElement("svg", {
+    viewBox: "0 0 100 100",
+    preserveAspectRatio: "none",
+    style: {
+      position: "absolute",
+      top: 0, left: 0, width: "100%", height: "100%",
+      pointerEvents: "none",
+      zIndex: 3,
+      overflow: "visible"
+    }
+  },
+    // Render each trace path + electrons
+    tracePaths.map(function(tp, i) {
+      var dur1 = (2.5 + i * 0.2).toFixed(1);
+      var dur2 = (3.0 + i * 0.15).toFixed(1);
+      return createElement("g", { key: "trace-" + i },
+        // Static trace line
+        createElement("path", {
+          d: tp.d,
+          stroke: tp.color,
+          strokeWidth: 0.3,
+          strokeOpacity: 0.25,
+          fill: "none",
+          vectorEffect: "non-scaling-stroke"
+        }),
+        // Junction dots at each bend
+        junctions[i].map(function(j, ji) {
+          return createElement("rect", {
+            key: "junc-" + ji,
+            x: j.x - 0.5,
+            y: j.y - 0.5,
+            width: 1,
+            height: 1,
+            fill: tp.color,
+            opacity: 0.4,
+            rx: 0.15
+          });
+        }),
+        // Electron 1 — flowing toward center
+        createElement("circle", {
+          r: 0.6,
+          fill: tp.color,
+          opacity: 0.9,
+          filter: "url(#electronGlow" + i + ")"
+        },
+          createElement("animateMotion", {
+            dur: dur1 + "s",
+            repeatCount: "indefinite",
+            path: tp.d
+          })
+        ),
+        // Electron 2 — staggered
+        createElement("circle", {
+          r: 0.4,
+          fill: tp.color,
+          opacity: 0.7
+        },
+          createElement("animateMotion", {
+            dur: dur2 + "s",
+            begin: (i * 0.4 + 1.2).toFixed(1) + "s",
+            repeatCount: "indefinite",
+            path: tp.d
+          })
+        ),
+        // Electron 3 — slower, fainter
+        createElement("circle", {
+          r: 0.35,
+          fill: tp.color,
+          opacity: 0.5
+        },
+          createElement("animateMotion", {
+            dur: (parseFloat(dur2) + 0.8).toFixed(1) + "s",
+            begin: (i * 0.3 + 0.6).toFixed(1) + "s",
+            repeatCount: "indefinite",
+            path: tp.d
+          })
+        )
+      );
+    }),
+    // Trace bus labels (chip-style signal names)
+    createElement("text", { x: 31, y: 14, fill: pillars[0].color, fontSize: "1.6", fontFamily: "monospace", opacity: 0.2, textAnchor: "middle" }, "D0"),
+    createElement("text", { x: 69, y: 14, fill: pillars[1].color, fontSize: "1.6", fontFamily: "monospace", opacity: 0.2, textAnchor: "middle" }, "CLK"),
+    createElement("text", { x: 31, y: 72, fill: pillars[2].color, fontSize: "1.6", fontFamily: "monospace", opacity: 0.2, textAnchor: "middle" }, "PWR"),
+    createElement("text", { x: 69, y: 72, fill: pillars[3].color, fontSize: "1.6", fontFamily: "monospace", opacity: 0.2, textAnchor: "middle" }, "IO"),
+    // SVG filter definitions for electron glow
+    createElement("defs", null,
+      tracePaths.map(function(tp, i) {
+        return createElement("filter", { key: "f-" + i, id: "electronGlow" + i, x: "-100%", y: "-100%", width: "300%", height: "300%" },
+          createElement("feGaussianBlur", { stdDeviation: "0.4", result: "blur" }),
+          createElement("feFlood", { floodColor: tp.color, floodOpacity: "0.6", result: "color" }),
+          createElement("feComposite", { in2: "blur", operator: "in", result: "glow" }),
+          createElement("feMerge", null,
+            createElement("feMergeNode", { "in": "glow" }),
+            createElement("feMergeNode", { "in": "SourceGraphic" })
+          )
+        );
+      })
+    )
+  );
+
+  // 4 vision pillar cards
+  var driftDurations = [4.2, 4.6, 4.4, 5.0];
+  var pillarCards = pillars.map(function(p, i) {
+    var pos = cardPos[i];
+    return createElement("div", {
+      key: "vpillar-" + i,
+      style: {
+        position: "absolute",
+        top: pos.top + "%",
+        left: pos.left + "%",
+        width: "24%",
+        background: "rgba(13,21,37,0.9)",
+        borderLeft: "4px solid " + p.color,
+        borderRadius: 12,
+        padding: "16px 18px",
+        animation: "visionCardDrift" + i + " " + driftDurations[i] + "s ease-in-out infinite",
+        zIndex: 8
+      }
+    },
+      createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 8 } },
+        createElement("span", { style: { fontSize: 20 } }, p.icon),
+        createElement("span", { style: { fontSize: 13, fontWeight: 700, color: p.color } }, p.title)
+      ),
+      createElement("div", { style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.5 } }, p.statement)
+    );
+  });
+
+  // Full chip visual container
+  var orbitalVisual = createElement("div", {
+    style: {
+      position: "relative",
+      width: "100%",
+      height: vizHeight,
+      marginBottom: 16
+    }
+  },
+    // Subtle circuit grid background
+    createElement("div", {
+      style: {
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,
+        backgroundImage: "linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px)",
+        backgroundSize: "24px 24px",
+        pointerEvents: "none"
+      }
+    }),
+    // Radial glow at center
+    createElement("div", {
+      style: {
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: "radial-gradient(ellipse at 50% 45%, rgba(0,212,170,0.06) 0%, transparent 50%)",
+        pointerEvents: "none"
+      }
+    }),
+    // IC Package outline (outermost dashed border)
+    createElement("div", {
+      style: {
+        position: "absolute",
+        top: centerY + "%",
+        left: centerX + "%",
+        width: 370,
+        height: 370,
+        marginTop: -185,
+        marginLeft: -185,
+        borderRadius: 6,
+        border: "1px dashed rgba(0,212,170,0.06)",
+        pointerEvents: "none",
+        zIndex: 1
+      }
+    },
+      // Pin 1 indicator (dot in top-left corner)
+      createElement("div", {
+        style: {
+          position: "absolute", top: 6, left: 6, width: 6, height: 6,
+          borderRadius: "50%", background: COLORS.primary, opacity: 0.15
+        }
+      }),
+      // Package part number
+      createElement("div", {
+        style: {
+          position: "absolute", bottom: 4, right: 8, fontSize: 6,
+          fontFamily: "'DM Mono', monospace", color: COLORS.primary, opacity: 0.1, letterSpacing: "1px"
+        }
+      }, "GB-FOS-2030")
+    ),
+    // Corner registration marks
+    createElement("div", { style: { position: "absolute", top: 4, left: 4, width: 14, height: 14, borderTop: "1px solid rgba(0,212,170,0.12)", borderLeft: "1px solid rgba(0,212,170,0.12)", pointerEvents: "none", zIndex: 1 } }),
+    createElement("div", { style: { position: "absolute", top: 4, right: 4, width: 14, height: 14, borderTop: "1px solid rgba(0,212,170,0.12)", borderRight: "1px solid rgba(0,212,170,0.12)", pointerEvents: "none", zIndex: 1 } }),
+    createElement("div", { style: { position: "absolute", bottom: 4, left: 4, width: 14, height: 14, borderBottom: "1px solid rgba(0,212,170,0.12)", borderLeft: "1px solid rgba(0,212,170,0.12)", pointerEvents: "none", zIndex: 1 } }),
+    createElement("div", { style: { position: "absolute", bottom: 4, right: 4, width: 14, height: 14, borderBottom: "1px solid rgba(0,212,170,0.12)", borderRight: "1px solid rgba(0,212,170,0.12)", pointerEvents: "none", zIndex: 1 } }),
+    centralNode,
+    orbitElements,
+    traceLines,
+    beams,
+    pillarCards
+  );
+
+  return createElement("div", { style: S.slide },
+    styleTag,
+    createElement("h2", { style: S.slideTitle }, "The Vision"),
+    createElement("p", {
+      style: Object.assign({}, S.slideSubtitle, {
+        fontFamily: "'DM Serif Display', serif",
+        fontSize: 20,
+        fontStyle: "italic",
+        maxWidth: 700,
+        marginBottom: 16
+      })
+    }, "The operating system for autonomous fleets"),
+    orbitalVisual,
+    // Opportunity size numbers
+    createElement("div", {
+      style: {
+        display: "flex",
+        justifyContent: "center",
+        gap: 16,
+        padding: "10px 0 6px"
+      }
+    },
+      [
+        { value: fmtB(topDown.tam_2030_usd_b), label: "Fleet Tech Market 2030", color: COLORS.primary },
+        { value: (topDown.cagr_pct || 13.3) + "%", label: "Market CAGR", color: COLORS.purple },
+        { value: "10x", label: "EV Truck Growth", color: COLORS.accent },
+        { value: fmtM(bottomUp.tam_2035_usd_m), label: "Orchestration TAM 2035", color: COLORS.success }
+      ].map(function(stat, i) {
+        return createElement("div", {
+          key: "opp-" + i,
+          style: {
+            textAlign: "center",
+            padding: "10px 20px",
+            background: "rgba(13,21,37,0.85)",
+            border: "1px solid " + stat.color + "18",
+            borderTop: "2px solid " + stat.color,
+            borderRadius: 8,
+            minWidth: 115
+          }
+        },
+          createElement("div", {
+            style: {
+              fontFamily: "'DM Mono', monospace",
+              fontSize: 24,
+              fontWeight: 700,
+              color: stat.color,
+              letterSpacing: "1px"
+            }
+          }, stat.value),
+          createElement("div", {
+            style: {
+              fontSize: 9,
+              color: COLORS.textMuted,
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              marginTop: 4
+            }
+          }, stat.label)
+        );
+      })
+    ),
+    // Closing statement
+    createElement("div", {
+      style: {
+        textAlign: "center",
+        padding: "8px 0 0"
+      }
+    },
+      createElement("p", {
+        style: {
+          fontFamily: "'DM Serif Display', serif",
+          fontSize: 16,
+          color: COLORS.text,
+          animation: "visionTaglineGlow 4s ease-in-out infinite",
+          margin: 0
+        }
+      }, "By 2030, every fleet runs on AI. We\u2019re building the brain.")
+    )
+  );
+}
+
+// ============ SLIDE 11: THE ASK ============
 function SlideAsk() {
   var investmentAlloc = [
     { label: "R&D & Product", pct: 65, color: COLORS.primary },
@@ -2855,6 +3408,7 @@ function App() {
     SlideTraction,
     SlideTeam,
     SlideBusinessModel,
+    SlideVision,
     SlideAsk,
     SlideAppendix
   ];
