@@ -112,8 +112,7 @@ async function run() {
     var pageText = await page.textContent('#root');
     assert(pageText.includes('Greenbay'), 'Title slide shows "Greenbay"');
     assert(pageText.includes('Orchestration Layer'), 'Tagline present');
-    assert(pageText.includes('Pre-Seed Round'), 'Shows "Pre-Seed Round" (not "Seed Round")');
-    assert(!pageText.includes('Seed Round —') || pageText.includes('Pre-Seed Round'), 'No stale "Seed Round" references');
+    assert(pageText.includes('Modern Fleets'), 'Tagline says "Modern Fleets"');
 
     // Screenshot slide 1
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01-title.png'), fullPage: false });

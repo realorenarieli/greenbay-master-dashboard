@@ -317,6 +317,14 @@ var tooltipStyle = {
 
 // ============ SLIDE 1: TITLE ============
 function SlideTitle() {
+  // Inject keyframes
+  var styleTag = createElement("style", null,
+    // Breathing green glow on logo
+    "@keyframes titleLogoGlow { 0%, 100% { filter: drop-shadow(0 0 20px rgba(0,212,170,0.3)); } 50% { filter: drop-shadow(0 0 40px rgba(0,212,170,0.6)) drop-shadow(0 0 80px rgba(0,212,170,0.2)); } } " +
+    // Subtle text-shadow breathing on title
+    "@keyframes titleTextGlow { 0%, 100% { text-shadow: 0 0 30px rgba(0,212,170,0.08); } 50% { text-shadow: 0 0 50px rgba(0,212,170,0.2), 0 0 100px rgba(0,212,170,0.08); } }"
+  );
+
   return createElement("div", {
     style: Object.assign({}, S.slide, {
       justifyContent: "center",
@@ -324,24 +332,27 @@ function SlideTitle() {
       textAlign: "center"
     })
   },
+    styleTag,
     createElement("img", {
       src: "assets/greenbay-logo.png",
       alt: "Greenbay",
       style: {
-        width: 80,
-        height: 80,
+        width: 140,
+        height: 140,
         objectFit: "contain",
         marginBottom: 32,
-        filter: "drop-shadow(0 0 20px rgba(0,212,170,0.3))"
+        filter: "drop-shadow(0 0 20px rgba(0,212,170,0.3))",
+        animation: "titleLogoGlow 3.5s ease-in-out infinite"
       }
     }),
     createElement("h1", {
       style: {
         fontFamily: "'DM Serif Display', serif",
-        fontSize: 64,
+        fontSize: 72,
         color: COLORS.text,
         margin: "0 0 16px",
-        letterSpacing: "-2px"
+        letterSpacing: "-2px",
+        animation: "titleTextGlow 4s ease-in-out infinite"
       }
     }, "Greenbay"),
     createElement("p", {
@@ -353,30 +364,7 @@ function SlideTitle() {
         maxWidth: 600,
         lineHeight: 1.5
       }
-    }, "The Orchestration Layer for Electric & Autonomous Fleets"),
-    createElement("div", {
-      style: {
-        display: "flex",
-        gap: 24,
-        alignItems: "center",
-        marginBottom: 48
-      }
-    },
-      createElement("span", {
-        style: {
-          padding: "6px 16px",
-          borderRadius: 20,
-          background: "rgba(0,212,170,0.1)",
-          border: "1px solid rgba(0,212,170,0.3)",
-          color: COLORS.primary,
-          fontSize: 12,
-          fontFamily: "'DM Mono', monospace"
-        }
-      }, "Pre-Seed Round \u2014 $3M"),
-      createElement("span", {
-        style: { color: COLORS.textDim, fontSize: 13 }
-      }, "Data as of " + (meta.data_as_of || ''))
-    ),
+    }, "The Orchestration Layer for Modern Fleets"),
     createElement("div", {
       style: {
         color: COLORS.textDim,
