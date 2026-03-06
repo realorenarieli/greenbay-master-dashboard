@@ -238,7 +238,7 @@ async function run() {
 
     assert(askText.includes('Pre-Seed Round'), 'The Ask shows "Pre-Seed Round"');
     assert(askText.includes('$3M'), 'The Ask shows $3M raise');
-    assert(askText.includes('pre-seed'), 'Subtitle says "pre-seed" not "seed"');
+    assert(askText.includes('Pre-Seed'), 'Ask slide says "Pre-Seed" not "seed"');
 
     // Use of funds adds to 100%
     assert(askText.includes('65%') && askText.includes('18%') && askText.includes('9%') && askText.includes('8%'),
@@ -419,8 +419,8 @@ async function run() {
       assert(liveContent.status === 200, 'GitHub Pages returns 200 for dashboard.js (got ' + liveContent.status + ')');
       if (liveContent.status === 200) {
         // Check that key content from current version exists in live file
-        var hasCurrentSubtitle = liveContent.body.includes('disconnected tools');
-        assert(hasCurrentSubtitle, 'Live dashboard.js has current subtitle ("disconnected tools")');
+        var hasCurrentSubtitle = liveContent.body.includes('Disconnected. Fragmented. Broken.');
+        assert(hasCurrentSubtitle, 'Live dashboard.js has current subtitle ("Disconnected. Fragmented. Broken.")');
 
         var hasSiloedMetric = liveContent.body.includes('Siloed Tools Per Operator');
         assert(hasSiloedMetric, 'Live dashboard.js has current metric ("Siloed Tools Per Operator")');

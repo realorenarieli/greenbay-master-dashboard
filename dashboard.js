@@ -97,6 +97,48 @@ function fmtB(n) {
   return '$' + n + 'B';
 }
 
+// ============ ICON SYSTEM ============
+var ICON_PATHS = {
+  satellite: "M3 12h2m14 0h2M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M5.6 18.4l1.4-1.4m10-10l1.4-1.4M9 12a3 3 0 1 0 6 0 3 3 0 0 0-6 0",
+  plug: "M12 2v4m-4-2v4m8-4v4M8 8h8v4a4 4 0 0 1-4 4 4 4 0 0 1-4-4V8zm4 8v6",
+  bolt: "M13 2L4.5 12.5h6L9 22l9.5-11.5h-6L13 2z",
+  "cloud-sun": "M6 19a4 4 0 0 1-.8-7.9A5.5 5.5 0 0 1 16.8 10 3 3 0 0 1 18 16H6zM17 6l1-2m-1 8h2M7 3l-1 2",
+  calendar: "M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zm4-4v4m8-4v4M4 10h16",
+  wrench: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z",
+  "bar-chart": "M4 20h16M4 20V10m0 10h4V4h4v16h4v-8h4v8",
+  bell: "M10 5a2 2 0 1 1 4 0 7 7 0 0 1 4 6v3l2 2H4l2-2v-3a7 7 0 0 1 4-6m-1.5 14a2.5 2.5 0 0 0 5 0",
+  "map-pin": "M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6",
+  lightbulb: "M9 18h6m-5 2h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z",
+  "trending-up": "M22 7l-8.5 8.5-5-5L2 17m20-10h-6m6 0v6",
+  link: "M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7.1-7.1l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7.1 7.1l1.7-1.7",
+  "shield-check": "M12 2l8 4v5c0 5.5-3.8 10.7-8 12-4.2-1.3-8-6.5-8-12V6l8-4zm-2 10l2 2 4-4",
+  cpu: "M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zm4 2h8v8H8V8zm1-6v2m6-2v2M9 22v-2m6 2v-2M2 9h2m0 6H2m20-6h-2m2 6h-2",
+  truck: "M1 3h15v13H1V3zm15 8h4l3 3v5h-7v-8zM5.5 18a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm13 0a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z",
+  globe: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 0c2.5 0 4 4.5 4 10s-1.5 10-4 10-4-4.5-4-10 1.5-10 4-10zM2 12h20",
+  users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m7-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm11 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  target: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4",
+  layers: "M2 12l10 6 10-6M2 17l10 6 10-6M12 2l10 6-10 6L2 8l10-6z",
+  rocket: "M4.5 16.5c-1.5 1.3-2 4.1-2 4.1s2.8-.5 4.1-2M12 15l-3-3m3 3c3-3.3 5.5-9.5 9-13-3.5 3.5-9.7 6-13 9m3 3l-3 3m6-6l3-3M6 12l-3 3",
+  "dollar-sign": "M12 2v20m5-17c-1-1.3-3-2-5-2s-5 1.5-5 4c0 5 10 3 10 8 0 2.5-3 4-5 4s-4-.7-5-2",
+  briefcase: "M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8zm5-4h6v2H9V4zm-5 8h16",
+  zap: "M13 2L4.5 12.5h6L9 22l9.5-11.5h-6L13 2z",
+  handshake: "M2 14l4-4 4 4m8-4l-4 4-4-4M7 10h10M4 18l3-4m13 4l-3-4",
+  "external-link": "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6m4-3h6v6m-11 5L21 3"
+};
+
+function Icon(name, size, color) {
+  var s = size || 24;
+  var c = color || COLORS.text;
+  var p = ICON_PATHS[name];
+  if (!p) return null;
+  return createElement("svg", {
+    width: s, height: s, viewBox: "0 0 24 24",
+    fill: "none", stroke: c, strokeWidth: 1.8,
+    strokeLinecap: "round", strokeLinejoin: "round",
+    style: { flexShrink: 0 }
+  }, createElement("path", { d: p }));
+}
+
 // ============ SLIDE TITLES ============
 var SLIDE_TITLES = [
   "Greenbay",
@@ -383,9 +425,9 @@ function SlideTitle() {
 function SlideProblem() {
   // Alarm metric cards data
   var alarmMetrics = [
-    { value: "5\u20138", label: "Siloed Tools Per Operator", context: "Telematics, charging, routing, maintenance, compliance \u2014 none connected" },
-    { value: "40%", label: "Time Lost to Manual Bridging", context: "Operators re-key data across disconnected systems daily" },
-    { value: "0", label: "Unified Platforms", context: "No single pane of glass for fleet orchestration exists" }
+    { value: "5\u20138", label: "Siloed Tools Per Operator" },
+    { value: "40%", label: "Time Lost to Manual Bridging" },
+    { value: "0", label: "Unified Platforms" }
   ];
 
   // Tool chaos chips (spread across full width)
@@ -467,9 +509,7 @@ function SlideProblem() {
             marginBottom: 6
           }
         }, m.label),
-        createElement("div", {
-          style: { fontSize: 11, color: COLORS.textDim, fontFamily: "'DM Mono', monospace" }
-        }, m.context)
+        null
       );
     })
   );
@@ -568,7 +608,7 @@ function SlideProblem() {
     styleTag,
     createElement("h2", { style: S.slideTitle }, "The Problem"),
     createElement("p", { style: S.slideSubtitle },
-      "Fleet operators juggle disconnected tools that don\u2019t talk to each other. Accelerated by the shift to electric."
+      "Disconnected. Fragmented. Broken."
     ),
     metricCards,
     chaosVisual
@@ -578,12 +618,12 @@ function SlideProblem() {
 // ============ SLIDE 3: THE SOLUTION ============
 function SlideSolution() {
   var inputs = [
-    { icon: "\uD83D\uDCE1", label: "Telematics & GPS" },
-    { icon: "\uD83D\uDD0C", label: "EV Chargers" },
-    { icon: "\u26A1", label: "Grid & Energy" },
-    { icon: "\uD83C\uDF24\uFE0F", label: "Weather & Traffic" },
-    { icon: "\uD83D\uDCCB", label: "Fleet Schedules" },
-    { icon: "\uD83D\uDD27", label: "Vehicle Health" }
+    { svgIcon: "satellite", label: "Telematics & GPS" },
+    { svgIcon: "plug", label: "EV Chargers" },
+    { svgIcon: "bolt", label: "Grid & Energy" },
+    { svgIcon: "cloud-sun", label: "Weather & Traffic" },
+    { svgIcon: "calendar", label: "Fleet Schedules" },
+    { svgIcon: "wrench", label: "Vehicle Health" }
   ];
 
   var capabilities = [
@@ -594,12 +634,12 @@ function SlideSolution() {
   ];
 
   var outputs = [
-    { icon: "\uD83D\uDCCA", label: "Real-time Dashboards" },
-    { icon: "\uD83D\uDD14", label: "Automated Alerts" },
-    { icon: "\uD83D\uDDFA\uFE0F", label: "Route Recommendations" },
-    { icon: "\uD83D\uDCA1", label: "Energy Optimization" },
-    { icon: "\uD83D\uDCC8", label: "Performance Reports" },
-    { icon: "\uD83D\uDD17", label: "API Integrations" }
+    { svgIcon: "bar-chart", label: "Real-time Dashboards" },
+    { svgIcon: "bell", label: "Automated Alerts" },
+    { svgIcon: "map-pin", label: "Route Recommendations" },
+    { svgIcon: "lightbulb", label: "Energy Optimization" },
+    { svgIcon: "trending-up", label: "Performance Reports" },
+    { svgIcon: "link", label: "API Integrations" }
   ];
 
   // Scattered positions for chaos particles (left zone, percentages of zone)
@@ -658,7 +698,7 @@ function SlideSolution() {
         textAlign: "center",
         marginBottom: 4
       }
-    }, "Raw Data"),
+    }, "IN"),
     // Background tint
     createElement("div", {
       style: {
@@ -720,7 +760,7 @@ function SlideSolution() {
           zIndex: 2
         }
       },
-        createElement("span", { style: { fontSize: 14 } }, item.icon),
+        Icon(item.svgIcon, 14, chaosColors[i]),
         createElement("span", {
           style: { fontSize: 10, fontWeight: 600, color: chaosColors[i], opacity: 0.8 }
         }, item.label)
@@ -1000,7 +1040,7 @@ function SlideSolution() {
         textAlign: "center",
         marginBottom: 10
       }
-    }, "Actionable Intelligence"),
+    }, "OUT"),
     // Background tint
     createElement("div", {
       style: {
@@ -1028,9 +1068,7 @@ function SlideSolution() {
           animation: "outputPulse 4.8s " + pulseDelay + "s ease-in-out infinite"
         }
       },
-        createElement("span", {
-          style: { fontSize: 16, width: 24, textAlign: "center", flexShrink: 0 }
-        }, item.icon),
+        Icon(item.svgIcon, 16, COLORS.primary),
         createElement("span", {
           style: { fontSize: 11, fontWeight: 600, color: COLORS.text }
         }, item.label)
@@ -1041,9 +1079,6 @@ function SlideSolution() {
   return createElement("div", { style: S.slide },
     styleTag,
     createElement("h2", { style: S.slideTitle }, "The Solution"),
-    createElement("p", { style: Object.assign({}, S.slideSubtitle, { marginBottom: 20 }) },
-      "Raw, fragmented fleet data enters the Greenbay engine \u2014 and exits as unified, actionable intelligence."
-    ),
     // Main visual: Chaos → Prism → Harmony
     createElement("div", {
       style: {
@@ -1060,16 +1095,7 @@ function SlideSolution() {
       divergenceLines,
       harmonyZone
     ),
-    // Bottom tagline
-    createElement("div", {
-      style: {
-        marginTop: 16,
-        textAlign: "center",
-        fontSize: 13,
-        color: COLORS.textMuted,
-        fontStyle: "italic"
-      }
-    }, "One platform replacing 5\u20138 fragmented tools \u2014 hardware-agnostic, EV-native, built for autonomy")
+    null
   );
 }
 
@@ -1097,10 +1123,10 @@ function SlideWhyNow() {
 
   // ── 4 mega-forces ──
   var forces = [
-    { icon: "\uD83C\uDDEA\uD83C\uDDFA", title: "Regulatory Mandates", stat: "100% ZEV trucks by 2036", sub: "CA ACF Rule", color: COLORS.info },
-    { icon: "\u26A1", title: "Fleet Electrification", stat: "93K \u2192 370K EV trucks/yr", sub: "by 2030", color: COLORS.primary },
-    { icon: "\uD83E\uDD16", title: "Agentic AI Wave", stat: "2% \u2192 25% T&L adoption", sub: "Gartner", color: COLORS.accent },
-    { icon: "\uD83D\uDE9B", title: "Autonomous Vehicles", stat: "2.7K \u2192 475K L4+", sub: "by 2030", color: COLORS.purple }
+    { svgIcon: "shield-check", title: "Regulatory Mandates", stat: "100% ZEV trucks by 2036", color: COLORS.info },
+    { svgIcon: "bolt", title: "Fleet Electrification", stat: "93K \u2192 370K EV trucks/yr", color: COLORS.primary },
+    { svgIcon: "cpu", title: "Agentic AI Wave", stat: "2% \u2192 25% T&L adoption", color: COLORS.accent },
+    { svgIcon: "truck", title: "Autonomous Vehicles", stat: "2.7K \u2192 475K L4+", color: COLORS.purple }
   ];
 
   // Force card positions: [top-left, top-right, bottom-left, bottom-right]
@@ -1267,11 +1293,10 @@ function SlideWhyNow() {
       }
     },
       createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 6 } },
-        createElement("span", { style: { fontSize: 18 } }, f.icon),
+        Icon(f.svgIcon, 18, f.color),
         createElement("span", { style: { fontSize: 12, fontWeight: 700, color: f.color } }, f.title)
       ),
-      createElement("div", { style: { fontSize: 15, fontWeight: 800, color: COLORS.text, marginBottom: 2 } }, f.stat),
-      createElement("div", { style: { fontSize: 10, color: COLORS.textMuted } }, f.sub)
+      createElement("div", { style: { fontSize: 15, fontWeight: 800, color: COLORS.text } }, f.stat)
     );
   });
 
@@ -1301,9 +1326,9 @@ function SlideWhyNow() {
 
   // ── ZONE C: Bottom Split ──
   var statCards = [
-    { value: "4x", label: "EV Truck Sales Growth", sub: "93K to 370K units/yr by 2030", color: COLORS.primary, glowColor: "rgba(0,212,170,0.35)" },
-    { value: "176x", label: "Autonomous Fleet Scale", sub: "2.7K to 475K L4+ vehicles", color: COLORS.purple, glowColor: "rgba(168,85,247,0.35)" },
-    { value: "-15%", label: "Diesel Fleet Decline", sub: "Accelerating fleet turnover", color: COLORS.danger, glowColor: "rgba(239,68,68,0.35)" }
+    { value: "4x", label: "EV Truck Sales Growth", color: COLORS.primary, glowColor: "rgba(0,212,170,0.35)" },
+    { value: "176x", label: "Autonomous Fleet Scale", color: COLORS.purple, glowColor: "rgba(168,85,247,0.35)" },
+    { value: "-15%", label: "Diesel Fleet Decline", color: COLORS.danger, glowColor: "rgba(239,68,68,0.35)" }
   ];
 
   var bottomSection = createElement("div", {
@@ -1312,7 +1337,6 @@ function SlideWhyNow() {
     // Left: Gartner SPAs LineChart
     createElement("div", { style: S.chartCard },
       createElement("div", { style: S.chartTitle }, "Gartner Strategic Planning Assumptions"),
-      createElement("div", { style: S.chartSubtitle }, "Adoption curves \u2014 Predicts 2026: Transportation"),
       createElement(ResponsiveContainer, { width: "100%", height: 240 },
         createElement(LineChart, { data: spaChartData, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
           createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
@@ -1356,10 +1380,9 @@ function SlideWhyNow() {
           createElement("div", {
             style: { fontSize: 32, fontWeight: 800, color: sc.color, letterSpacing: "-1px", minWidth: 70, lineHeight: 1 }
           }, sc.value),
-          createElement("div", null,
-            createElement("div", { style: { fontSize: 13, fontWeight: 700, color: COLORS.text, marginBottom: 2 } }, sc.label),
-            createElement("div", { style: { fontSize: 10, color: COLORS.textMuted } }, sc.sub)
-          )
+          createElement("div", {
+            style: { fontSize: 13, fontWeight: 700, color: COLORS.text }
+          }, sc.label)
         );
       })
     )
@@ -1369,9 +1392,6 @@ function SlideWhyNow() {
     styleTag,
     // Zone A: Title
     createElement("h2", { style: S.slideTitle }, "Why Now"),
-    createElement("p", { style: Object.assign({}, S.slideSubtitle, { maxWidth: 850, marginBottom: 20 }) },
-      "Four mega-forces are converging on a single window. The platform that captures orchestration now owns the decade."
-    ),
     // Zone B: Convergence Visual
     convergenceVisual,
     // Zone C: Bottom Split
@@ -1418,9 +1438,9 @@ function SlideMarket() {
   // Each tier: full-width row with colored left accent, label, big value, sub-text
   // Widths via inner colored bar rather than card width (so text never gets cramped)
   var tierData = [
-    { label: "Total Addressable Market", value: fmtM(bottomUp.tam_2030_usd_m), sub: "6 fleet segments \u00D7 ARPU, global", right: "\u2192 " + fmtM(bottomUp.tam_2035_usd_m) + " by 2035", color: COLORS.primary, rgb: "0,212,170", barWidth: "100%", glow: "funnelGlow0", fontSize: 42 },
-    { label: "Serviceable Addressable Market", value: fmtM(bottomUp.sam_2030_usd_m), sub: "83% of TAM \u2014 EU + NA primary", right: "", color: COLORS.secondary, rgb: "99,102,241", barWidth: "83%", glow: "funnelGlow1", fontSize: 38 },
-    { label: "Serviceable Obtainable Market", value: fmtM(bottomUp.som_base_2030_usd_m), sub: "5% penetration \u2014 Samsara precedent", right: "Our capture target", color: COLORS.accent, rgb: "245,158,11", barWidth: "38%", glow: "funnelGlow2", fontSize: 36 }
+    { label: "Total Addressable Market", value: fmtM(bottomUp.tam_2030_usd_m), color: COLORS.primary, rgb: "0,212,170", barWidth: "100%", glow: "funnelGlow0", fontSize: 42 },
+    { label: "Serviceable Addressable Market", value: fmtM(bottomUp.sam_2030_usd_m), color: COLORS.secondary, rgb: "99,102,241", barWidth: "83%", glow: "funnelGlow1", fontSize: 38 },
+    { label: "Serviceable Obtainable Market", value: fmtM(bottomUp.som_base_2030_usd_m), color: COLORS.accent, rgb: "245,158,11", barWidth: "38%", glow: "funnelGlow2", fontSize: 36 }
   ];
 
   var funnelRows = [];
@@ -1458,10 +1478,7 @@ function SlideMarket() {
         createElement("div", { style: { flex: "0 0 240px", position: "relative", zIndex: 1 } },
           createElement("div", {
             style: { fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", color: t.color }
-          }, t.label),
-          createElement("div", {
-            style: { fontSize: 10, color: COLORS.textDim, marginTop: 2 }
-          }, t.sub)
+          }, t.label)
         ),
         // Big value
         createElement("div", {
@@ -1475,11 +1492,7 @@ function SlideMarket() {
             position: "relative",
             zIndex: 1
           }
-        }, t.value),
-        // Right context (spacer + text)
-        t.right ? createElement("div", {
-          style: { marginLeft: "auto", fontSize: 12, color: t.color, fontWeight: 600, fontFamily: "'DM Mono', monospace", position: "relative", zIndex: 1, whiteSpace: "nowrap" }
-        }, t.right) : null
+        }, t.value)
       )
     );
 
@@ -1549,8 +1562,7 @@ function SlideMarket() {
   var segmentChart = createElement("div", {
     style: Object.assign({}, S.chartCard, { animation: "funnelChartGlow 5s ease-in-out infinite" })
   },
-    createElement("div", { style: S.chartTitle }, "TAM by Segment \u2014 Ex-China vs China ($M)"),
-    createElement("div", { style: S.chartSubtitle }, "Vehicles \u00D7 ARPU across 6 fleet segments"),
+    createElement("div", { style: S.chartTitle }, "TAM by Segment ($M)"),
     createElement(ResponsiveContainer, { width: "100%", height: 220 },
       createElement(BarChart, {
         data: segmentData,
@@ -1571,8 +1583,7 @@ function SlideMarket() {
   var regionalDonut = createElement("div", {
     style: Object.assign({}, S.chartCard, { animation: "funnelChartGlow 5s ease-in-out infinite", animationDelay: "1s" })
   },
-    createElement("div", { style: S.chartTitle }, "SAM by Region \u2014 " + fmtM(bottomUp.sam_2030_usd_m) + " Total"),
-    createElement("div", { style: S.chartSubtitle }, "EU + NA primary | APAC emerging | China 30% accessible"),
+    createElement("div", { style: S.chartTitle }, "SAM by Region \u2014 " + fmtM(bottomUp.sam_2030_usd_m)),
     createElement(ResponsiveContainer, { width: "100%", height: 220 },
       createElement(PieChart, null,
         createElement(Pie, {
@@ -1602,9 +1613,6 @@ function SlideMarket() {
     styleTag,
     // Title
     createElement("h2", { style: S.slideTitle }, "Market Opportunity"),
-    createElement("p", { style: Object.assign({}, S.slideSubtitle, { maxWidth: 850, marginBottom: 24 }) },
-      fmtM(bottomUp.tam_2030_usd_m) + " addressable by 2030 \u2014 built bottom-up from 6 fleet segments \u00D7 ARPU. We capture " + fmtM(bottomUp.som_base_2030_usd_m) + " at just 5%."
-    ),
     // Funnel tiers (stacked full-width rows)
     createElement("div", { style: { marginBottom: 20 } }, funnelRows),
     // Evidence: charts side by side + pills underneath
@@ -1764,16 +1772,15 @@ function SlideCompetitive() {
 
   // ── Zone C: Evidence layer ──
   var diffCards = [
-    { label: "EV-Native", desc: advantages.vs_samsara, rgb: "0,212,170" },
-    { label: "Hardware-Agnostic", desc: advantages.vs_einride, rgb: "0,212,170" },
-    { label: "Full Orchestration", desc: advantages.vs_driivz, rgb: "0,212,170" }
+    { label: "EV-Native", rgb: "0,212,170" },
+    { label: "Hardware-Agnostic", rgb: "0,212,170" },
+    { label: "Full Orchestration", rgb: "0,212,170" }
   ];
 
   var chartCard = createElement("div", {
     style: Object.assign({}, S.chartCard, { animation: "compChartGlow 5s ease-in-out infinite" })
   },
     createElement("div", { style: S.chartTitle }, "Competitor Revenue ($M)"),
-    createElement("div", { style: S.chartSubtitle }, "Annual revenue \u2014 latest reported | All execution-layer players"),
     createElement(ResponsiveContainer, { width: "100%", height: 200 },
       createElement(BarChart, {
         data: competitors,
@@ -1811,11 +1818,8 @@ function SlideCompetitive() {
         }
       },
         createElement("div", {
-          style: { fontSize: 12, fontWeight: 700, color: COLORS.primary, marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.5px" }
-        }, d.label),
-        createElement("div", {
-          style: { fontSize: 10, color: COLORS.textMuted, lineHeight: 1.5 }
-        }, d.desc || '')
+          style: { fontSize: 12, fontWeight: 700, color: COLORS.primary, textTransform: "uppercase", letterSpacing: "0.5px" }
+        }, d.label)
       );
     })
   );
@@ -1825,9 +1829,6 @@ function SlideCompetitive() {
     styleTag,
     // Zone A: Title
     createElement("h2", { style: S.slideTitle }, "Why Greenbay Wins"),
-    createElement("p", { style: Object.assign({}, S.slideSubtitle, { marginBottom: 24 }) },
-      "Greenbay owns Layer 2 \u2014 the only orchestration layer in a 4-layer stack. Competitors are point-solutions or legacy platforms."
-    ),
     // Zone B: Tech stack hero
     createElement("div", { style: { marginBottom: 20 } }, stackRows),
     // Zone C: Evidence layer
@@ -1874,9 +1875,9 @@ function SlideTraction() {
         { value: "2", sublabel: "LOIs for Pilots" }
       ]
     },
-    { period: "Q2 2026", label: "Europe Expansion", value: "EU", detail: "Spain & Nordics", status: "upcoming" },
-    { period: "Q3 2026", label: "US Expansion", value: "US", detail: "First US market entry", status: "upcoming" },
-    { period: "Q4 2026", label: "Signed POs", value: "2", detail: "Purchase orders secured", status: "upcoming" }
+    { period: "Q2 2026", label: "Europe Expansion", value: "EU", status: "upcoming" },
+    { period: "Q3 2026", label: "US Expansion", value: "US", status: "upcoming" },
+    { period: "Q4 2026", label: "Signed POs", value: "2", status: "upcoming" }
   ];
 
   var nodePositions = [8, 34, 62, 80, 95];
@@ -1906,7 +1907,7 @@ function SlideTraction() {
     styleTag,
     createElement("h2", { style: S.slideTitle }, "Traction"),
     createElement("p", { style: S.slideSubtitle },
-      "2 LOIs secured for pilot deployments. 200+ Qualified Accounts identified, 20 engaged in product trials."
+      "2 LOIs | 200+ Accounts | 20 product trials"
     ),
 
     // Testimonial (compact, top)
@@ -2219,9 +2220,7 @@ function SlideTeam() {
       initials: "OA",
       photo: "assets/oren-arieli.jpg",
       color: COLORS.primary,
-      background: "10+ years in mobility operations software",
-      prev: "Ex-Optibus & Via",
-      expertise: "Fleet operations, product strategy, market development"
+      prev: "Ex-Optibus & Via"
     },
     {
       name: "Shira Golan",
@@ -2229,9 +2228,7 @@ function SlideTeam() {
       initials: "SG",
       photo: "assets/shira-golan.jpg",
       color: COLORS.secondary,
-      background: "2 successful exits, R&D scaling expert",
-      prev: "Fortune 500 partnerships",
-      expertise: "Business development, enterprise sales, strategic partnerships"
+      prev: "Fortune 500 partnerships"
     },
     {
       name: "Daniel Odesser",
@@ -2239,23 +2236,18 @@ function SlideTeam() {
       initials: "DO",
       photo: "assets/daniel-odesser.jpg",
       color: COLORS.accent,
-      background: "Second-time founder, high-reliability platforms",
-      prev: "Ex-Optibus & Auto Fleet",
-      expertise: "Platform architecture, real-time systems, infrastructure"
+      prev: "Ex-Optibus & Auto Fleet"
     }
   ];
 
   var whyUs = [
-    { label: "Domain Depth", desc: "All 3 founders built fleet-tech at scale. Not tourists \u2014 operators who shipped products used by thousands of vehicles.", color: COLORS.primary },
-    { label: "Technical Edge", desc: "Real-time systems, EV optimization, and hardware-agnostic platform architecture from day one.", color: COLORS.secondary },
-    { label: "Market Access", desc: "Direct relationships with EU and NA fleet operators, charging OEMs, and industry regulators.", color: COLORS.accent }
+    { label: "Domain Depth", icon: "briefcase", short: "Built fleet-tech at scale", color: COLORS.primary },
+    { label: "Technical Edge", icon: "zap", short: "Real-time EV platforms", color: COLORS.secondary },
+    { label: "Market Access", icon: "handshake", short: "EU & NA operator networks", color: COLORS.accent }
   ];
 
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "Team"),
-    createElement("p", { style: S.slideSubtitle },
-      "Deep domain expertise in fleet operations, mobility software, and enterprise scale. All founders are repeat builders in the space."
-    ),
     // Team cards
     createElement("div", {
       style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28, marginBottom: 32 }
@@ -2332,14 +2324,6 @@ function SlideTeam() {
           }, t.role),
           createElement("div", {
             style: {
-              fontSize: 13,
-              color: COLORS.text,
-              marginBottom: 6,
-              lineHeight: 1.5
-            }
-          }, t.background),
-          createElement("div", {
-            style: {
               fontSize: 12,
               color: COLORS.primary,
               fontWeight: 600,
@@ -2347,16 +2331,7 @@ function SlideTeam() {
               fontFamily: "'DM Mono', monospace"
             }
           }, t.prev),
-          createElement("div", {
-            style: {
-              fontSize: 11,
-              color: COLORS.textMuted,
-              lineHeight: 1.5,
-              borderTop: "1px solid " + COLORS.border,
-              paddingTop: 10,
-              marginTop: 4
-            }
-          }, t.expertise)
+          null
         );
       })
     ),
@@ -2371,15 +2346,21 @@ function SlideTeam() {
             background: w.color + "08",
             border: "1px solid " + w.color + "33",
             borderRadius: 12,
-            padding: "18px 20px"
+            padding: "18px 20px",
+            display: "flex",
+            alignItems: "center",
+            gap: 14
           }
         },
-          createElement("div", {
-            style: { fontSize: 13, fontWeight: 700, color: w.color, marginBottom: 6 }
-          }, w.label),
-          createElement("div", {
-            style: { fontSize: 12, color: COLORS.textMuted, lineHeight: 1.6 }
-          }, w.desc)
+          Icon(w.icon, 28, w.color),
+          createElement("div", null,
+            createElement("div", {
+              style: { fontSize: 13, fontWeight: 700, color: w.color, marginBottom: 3 }
+            }, w.label),
+            createElement("div", {
+              style: { fontSize: 12, color: COLORS.textMuted }
+            }, w.short)
+          )
         );
       })
     )
@@ -2393,18 +2374,16 @@ function SlideBusinessModel() {
   var arrSeries = (arr.tam_based_scenarios || {}).series || [];
 
   var keyMetrics = [
-    { label: "ACV", value: "$" + (cm.acv_usd || 0).toLocaleString(), color: COLORS.primary, sub: "Annual contract value" },
-    { label: "Gross Margin", value: (cm.gross_margin_pct || 0) + "%", color: COLORS.success, sub: "SaaS median: " + (benchmarks.saas_median_gross_margin_pct || 75) + "%" },
-    { label: "LTV:CAC", value: (cm.ltv_cac_ratio || 0) + "x", color: COLORS.accent, sub: "SaaS median: " + (benchmarks.saas_median_ltv_cac || 3) + "x" },
-    { label: "CAC Payback", value: (cm.cac_payback_months || 0) + " mo", color: COLORS.info, sub: "SaaS median: " + (benchmarks.saas_median_cac_payback_months || 18) + "mo" },
-    { label: "NRR", value: (cm.nrr_pct || 0) + "%", color: COLORS.purple, sub: "SaaS median: " + (benchmarks.saas_median_nrr_pct || 110) + "%" }
+    { label: "ACV", value: "$" + (cm.acv_usd || 0).toLocaleString(), color: COLORS.primary },
+    { label: "Gross Margin", value: (cm.gross_margin_pct || 0) + "%", color: COLORS.success },
+    { label: "LTV:CAC", value: (cm.ltv_cac_ratio || 0) + "x", color: COLORS.accent },
+    { label: "CAC Payback", value: (cm.cac_payback_months || 0) + " mo", color: COLORS.info },
+    { label: "NRR", value: (cm.nrr_pct || 0) + "%", color: COLORS.purple }
   ];
 
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "Business Model"),
-    createElement("p", { style: S.slideSubtitle },
-      "Enterprise SaaS with $" + ((ue.core_metrics || {}).acv_usd || 375000).toLocaleString() + " ACV. Land-and-expand model: start with one depot, grow across the fleet. " + ((ue.core_metrics || {}).cac_payback_months || 5.6) + "-month CAC payback."
-    ),
+    null,
     // Key metrics row
     createElement("div", { style: S.grid5 },
       keyMetrics.map(function(m, i) {
@@ -2413,15 +2392,14 @@ function SlideBusinessModel() {
           style: Object.assign({}, S.metricCard, { borderTop: "4px solid " + m.color })
         },
           createElement("div", { style: S.metricLabel }, m.label),
-          createElement("div", { style: Object.assign({}, S.metricValue, { color: m.color }) }, m.value),
-          createElement("div", { style: S.metricSub }, m.sub)
+          createElement("div", { style: Object.assign({}, S.metricValue, { color: m.color }) }, m.value)
         );
       })
     ),
     // ARR Chart
     createElement("div", { style: S.chartCard },
       createElement("div", { style: S.chartTitle }, "ARR Trajectory \u2014 5 Scenarios (2025\u20132030)"),
-      createElement("div", { style: S.chartSubtitle }, "Anchored: 2026=$0.8M, 2027=$3.0M | TAM-based penetration models"),
+      null,
       createElement(ResponsiveContainer, { width: "100%", height: 300 },
         createElement(LineChart, { data: arrSeries, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
           createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
@@ -2444,10 +2422,10 @@ function SlideBusinessModel() {
 function SlideVision() {
   // Vision pillars
   var pillars = [
-    { icon: "\uD83E\uDD16", title: "AI-Native Intelligence", statement: "Every decision optimized by real-time ML \u2014 routing, charging, maintenance", color: COLORS.primary },
-    { icon: "\uD83D\uDE9B", title: "Autonomous-Ready", statement: "Built for L4+ from day one \u2014 the orchestration layer driverless fleets need", color: COLORS.purple },
-    { icon: "\u26A1", title: "Full Electrification", statement: "Manage mixed fleets through the EV transition \u2014 diesel to electric, seamlessly", color: COLORS.accent },
-    { icon: "\uD83C\uDF0D", title: "Sustainable Operations", statement: "Carbon-aware routing, energy optimization, regulatory compliance \u2014 built in", color: COLORS.success }
+    { svgIcon: "cpu", title: "AI-Native Intelligence", color: COLORS.primary },
+    { svgIcon: "truck", title: "Autonomous-Ready", color: COLORS.purple },
+    { svgIcon: "bolt", title: "Full Electrification", color: COLORS.accent },
+    { svgIcon: "globe", title: "Sustainable Operations", color: COLORS.success }
   ];
 
   // Card positions: NW, NE, SW, SE
@@ -2832,11 +2810,10 @@ function SlideVision() {
         zIndex: 8
       }
     },
-      createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 8 } },
-        createElement("span", { style: { fontSize: 20 } }, p.icon),
+      createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } },
+        Icon(p.svgIcon, 20, p.color),
         createElement("span", { style: { fontSize: 13, fontWeight: 700, color: p.color } }, p.title)
-      ),
-      createElement("div", { style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.5 } }, p.statement)
+      )
     );
   });
 
@@ -2987,7 +2964,7 @@ function SlideVision() {
           animation: "visionTaglineGlow 4s ease-in-out infinite",
           margin: 0
         }
-      }, "By 2030, every fleet runs on AI. We\u2019re building the brain.")
+      }, "The fleet brain for 2030.")
     )
   );
 }
@@ -3002,17 +2979,14 @@ function SlideAsk() {
   ];
 
   var milestones = [
-    { period: "Q1 2026", event: "2 pilot LOIs signed, deployments begin", status: "active" },
-    { period: "Q2 2026", event: "First US pilot, commercial agreements", status: "upcoming" },
-    { period: "Q3\u2013Q4 2026", event: "First recurring revenue from engaged accounts", status: "upcoming" },
-    { period: "2027", event: "$3M ARR milestone, Series A readiness", status: "future" }
+    { period: "Q1 2026", event: "2 LOIs signed, deploy", status: "active" },
+    { period: "Q2 2026", event: "First US pilot", status: "upcoming" },
+    { period: "Q3\u2013Q4 2026", event: "First recurring revenue", status: "upcoming" },
+    { period: "2027", event: "$3M ARR \u2192 Series A", status: "future" }
   ];
 
   return createElement("div", { style: S.slide },
     createElement("h2", { style: S.slideTitle }, "The Ask"),
-    createElement("p", { style: S.slideSubtitle },
-      "Raising $3M pre-seed to convert pipeline into revenue, expand platform capabilities, and reach Series A milestone of $3M ARR by 2027."
-    ),
     // Raise headline
     createElement("div", {
       style: {
@@ -3039,7 +3013,7 @@ function SlideAsk() {
       }, "$3M"),
       createElement("div", {
         style: { fontSize: 16, color: COLORS.textMuted }
-      }, "18-month runway to $3M ARR and Series A")
+      }, "$3M ARR \u2192 Series A")
     ),
     // Two columns: Use of Funds + Milestones
     createElement("div", {
