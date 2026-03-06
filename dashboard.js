@@ -482,7 +482,7 @@ function SlideProblem() {
           background: COLORS.card,
           borderRadius: 16,
           border: "1px solid rgba(239,68,68,0.25)",
-          padding: "28px 24px",
+          padding: "20px 18px",
           textAlign: "center",
           animation: "alarmPulse 3s ease-in-out infinite",
           animationDelay: (i * 0.4) + "s"
@@ -656,7 +656,7 @@ function SlideSolution() {
   var chaosColors = ["#ef4444", "#f97316", "#d97706", "#b45309", "#dc2626", "#c2410c"];
 
   // Container height for the visual area
-  var vizHeight = 420;
+  var vizHeight = 340;
 
   // Inject keyframes for all animations
   var styleTag = createElement("style", null,
@@ -1772,9 +1772,9 @@ function SlideCompetitive() {
 
   // ── Zone C: Evidence layer ──
   var diffCards = [
-    { label: "EV-Native", rgb: "0,212,170" },
-    { label: "Hardware-Agnostic", rgb: "0,212,170" },
-    { label: "Full Orchestration", rgb: "0,212,170" }
+    { label: "EV-Native", icon: "bolt", rgb: "0,212,170" },
+    { label: "Hardware-Agnostic", icon: "layers", rgb: "0,212,170" },
+    { label: "Full Orchestration", icon: "cpu", rgb: "0,212,170" }
   ];
 
   var chartCard = createElement("div", {
@@ -1807,16 +1807,20 @@ function SlideCompetitive() {
       return createElement("div", {
         key: "diff-" + i,
         style: {
-          flex: 1,
-          padding: "12px 14px",
+          flex: "none",
+          padding: "14px 16px",
           borderRadius: 10,
           background: COLORS.card,
           border: "1px solid rgba(" + d.rgb + ",0.15)",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
           animation: "compPillGlow 4s ease-in-out infinite, compDrift 4.5s ease-in-out infinite",
           animationDelay: (i * 0.4) + "s",
           "--glow-color": "rgba(" + d.rgb + ",0.3)"
         }
       },
+        Icon(d.icon, 20, "rgba(" + d.rgb + ",0.7)"),
         createElement("div", {
           style: { fontSize: 12, fontWeight: 700, color: COLORS.primary, textTransform: "uppercase", letterSpacing: "0.5px" }
         }, d.label)
@@ -2250,7 +2254,7 @@ function SlideTeam() {
     createElement("h2", { style: S.slideTitle }, "Team"),
     // Team cards
     createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28, marginBottom: 32 }
+      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28, marginBottom: 24 }
     },
       team.map(function(t, i) {
         return createElement("div", {
@@ -2258,7 +2262,7 @@ function SlideTeam() {
           style: {
             background: "linear-gradient(135deg, " + COLORS.card + ", " + COLORS.cardHover + ")",
             borderRadius: 16,
-            padding: "32px 24px",
+            padding: "24px 20px",
             textAlign: "center",
             border: "1px solid " + t.color + "33",
             position: "relative",
@@ -2319,7 +2323,7 @@ function SlideTeam() {
               color: t.color,
               textTransform: "uppercase",
               letterSpacing: "1.5px",
-              marginBottom: 14
+              marginBottom: 8
             }
           }, t.role),
           createElement("div", {
