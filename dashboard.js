@@ -1855,25 +1855,37 @@ function SlideTraction() {
     "@keyframes tractionValueGlow { 0%, 100% { text-shadow: 0 0 8px rgba(0,212,170,0.3); } 50% { text-shadow: 0 0 20px rgba(0,212,170,0.6), 0 0 40px rgba(0,212,170,0.2); } }"
   );
 
-  // Milestone data — Q3 2025 through Q4 2026
+  // Milestone data — Q4 2025 through Q4 2026
   var milestones = [
-    { period: "Q3 2025", label: "Design Partnership", value: "+13%", detail: "Revenue uplift with Transport UK", status: "completed" },
-    { period: "Q4 2025", label: "Qualified Accounts", value: "200+", detail: "Accounts identified across EU & UK", status: "completed" },
-    { period: "Q1 2026", label: "LOIs for Pilots", value: "20", detail: "Engaged in product trials", status: "active" },
-    { period: "Q2 2026", label: "First Deployments", value: "+21%", detail: "On-time performance target", status: "upcoming" },
-    { period: "Q3 2026", label: "US Expansion", value: "1st", detail: "First US pilot launch", status: "upcoming" },
-    { period: "Q4 2026", label: "Recurring Revenue", value: "ARR", detail: "First contracts from engaged accounts", status: "upcoming" }
+    {
+      period: "Q4 2025", label: "Design Partnership", status: "completed",
+      subs: [
+        { value: "+13%", sublabel: "Revenue Uplift" },
+        { value: "+21%", sublabel: "On-Time Perf." },
+        { value: "1st", sublabel: "Transport UK" }
+      ]
+    },
+    {
+      period: "Q1 2026", label: "Pipeline & Partners", status: "active",
+      subs: [
+        { value: "200+", sublabel: "Qualified Accounts" },
+        { value: "2", sublabel: "Partnerships\nSolarEdge, EdgeControl" },
+        { value: "2", sublabel: "LOIs for Pilots" }
+      ]
+    },
+    { period: "Q2 2026", label: "Europe Expansion", value: "EU", detail: "Spain & Nordics", status: "upcoming" },
+    { period: "Q3 2026", label: "US Expansion", value: "US", detail: "First US market entry", status: "upcoming" },
+    { period: "Q4 2026", label: "Signed POs", value: "2", detail: "Purchase orders secured", status: "upcoming" }
   ];
 
-  var nodePositions = [4, 22, 40, 58, 76, 94];
+  var nodePositions = [8, 34, 62, 80, 95];
 
-  // Node style per status
-  function nodeStyle(status) {
+  // Circle style per status (no positioning — caller adds that)
+  function circleStyle(status, size) {
     var base = {
-      width: 54, height: 54, borderRadius: "50%",
+      width: size, height: size, borderRadius: "50%",
       display: "flex", alignItems: "center", justifyContent: "center",
-      position: "absolute", top: "50%", transform: "translateY(-50%)",
-      zIndex: 2, cursor: "default",
+      cursor: "default",
       background: "radial-gradient(circle at 30% 30%, " + COLORS.cardHover + ", " + COLORS.card + ")"
     };
     if (status === "completed") {
@@ -1893,15 +1905,37 @@ function SlideTraction() {
     styleTag,
     createElement("h2", { style: S.slideTitle }, "Traction"),
     createElement("p", { style: S.slideSubtitle },
-      "2 LOIs signed for pilot deployments. 200+ Qualified Accounts identified, 20 engaged in product trials."
+      "2 LOIs secured for pilot deployments. 200+ Qualified Accounts identified, 20 engaged in product trials."
+    ),
+
+    // Testimonial (compact, top)
+    createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        background: COLORS.card,
+        borderRadius: 10,
+        padding: "10px 20px",
+        borderLeft: "3px solid " + COLORS.primary,
+        maxWidth: 580,
+        marginBottom: 10
+      }
+    },
+      createElement("div", {
+        style: { fontSize: 13, fontStyle: "italic", color: COLORS.text, lineHeight: 1.5 }
+      }, "\u201CAfter few minutes of use I managed to find issues that I had no chance identifying\u201D"),
+      createElement("div", {
+        style: { fontSize: 11, fontWeight: 600, color: COLORS.primary, whiteSpace: "nowrap" }
+      }, "\u2014 Ian, Performance Mgr")
     ),
 
     // Timeline container
     createElement("div", {
       style: {
         position: "relative",
-        height: 360,
-        margin: "20px 0 40px",
+        height: 530,
+        margin: "10px 0 16px",
         background: "radial-gradient(ellipse at 50% 50%, rgba(0,212,170,0.04) 0%, transparent 70%)"
       }
     },
@@ -1909,11 +1943,11 @@ function SlideTraction() {
       createElement("div", {
         style: {
           position: "absolute",
-          top: "50%",
+          top: "40%",
           left: "3%",
           right: "3%",
           height: 2,
-          background: "linear-gradient(90deg, " + COLORS.primary + "33, " + COLORS.primary + " 35%, " + COLORS.primary + "88 55%, " + COLORS.secondary + "55 80%, " + COLORS.secondary + "33)",
+          background: "linear-gradient(90deg, " + COLORS.primary + "55, " + COLORS.primary + " 20%, " + COLORS.primary + " 38%, " + COLORS.secondary + "55 60%, " + COLORS.secondary + "33)",
           transform: "translateY(-50%)",
           zIndex: 1
         }
@@ -1925,7 +1959,7 @@ function SlideTraction() {
           key: "dot-" + i,
           style: {
             position: "absolute",
-            top: "50%",
+            top: "40%",
             width: 5,
             height: 5,
             borderRadius: "50%",
@@ -1940,102 +1974,238 @@ function SlideTraction() {
         });
       }),
 
-      // Milestone nodes + detail cards
+      // Milestone nodes
       milestones.map(function(m, i) {
         var left = nodePositions[i];
-        var isAbove = i % 2 === 0;
         var valueColor = m.status === "active" ? COLORS.primary : m.status === "completed" ? COLORS.primary : COLORS.secondary;
         var valueAnim = m.status === "active" ? "tractionValueGlow 3s ease-in-out infinite" : "none";
+        var periodColor = m.status === "upcoming" ? COLORS.secondary : COLORS.primary;
 
-        return createElement("div", { key: i },
-          // Node circle
-          createElement("div", {
-            style: Object.assign({}, nodeStyle(m.status), { left: left + "%" })
-          },
-            createElement("span", {
-              style: {
-                fontFamily: "'DM Serif Display', serif",
-                fontSize: 18,
-                fontWeight: 700,
-                color: valueColor,
-                animation: valueAnim
-              }
-            }, m.value)
-          ),
+        if (m.subs) {
+          // ── Branch & Leaf milestone ──
+          // Alternating: even index fans UP, odd index fans DOWN
+          var fanDown = i % 2 === 1;
+          var branchColor = m.status === "active" ? COLORS.primary : COLORS.primary + "99";
+          var glowColor = m.status === "active" ? COLORS.primary + "30" : COLORS.primary + "18";
 
-          // Detail card (zigzag above/below)
-          createElement("div", {
-            style: {
-              position: "absolute",
-              left: left + "%",
-              transform: "translateX(-50%)",
-              top: isAbove ? 10 : "auto",
-              bottom: isAbove ? "auto" : 16,
-              width: 136,
-              textAlign: "center",
-              animation: "tractionDrift 4s ease-in-out infinite",
-              animationDelay: (i * 0.5) + "s",
-              zIndex: 2
-            }
-          },
+          var leafY = fanDown ? 115 : -115;
+          var fanSpreadX = fanDown ? 148 : 116;
+          var fanLeaves = [
+            { x: -fanSpreadX, y: leafY },
+            { x: 0,           y: leafY },
+            { x: fanSpreadX,  y: leafY }
+          ];
+          var leafSize = 56;
+          var halfLeaf = leafSize / 2;
+
+          // SVG paths: fan up or fan down from anchor
+          // Down fan uses wider 340px SVG, up fan uses 280px
+          var svgPaths = fanDown
+            ? [
+                "M 170 10 C 120 45 42 70 22 92",
+                "M 170 10 C 170 40 170 70 170 92",
+                "M 170 10 C 220 45 298 70 318 92"
+              ]
+            : [
+                "M 140 230 C 100 195 46 170 24 148",
+                "M 140 230 C 140 200 140 170 140 148",
+                "M 140 230 C 180 195 234 170 256 148"
+              ];
+          var svgW = fanDown ? 340 : 280;
+          var svgTop = fanDown ? -10 : -230;
+
+          return createElement("div", { key: i },
+
             createElement("div", {
               style: {
-                fontFamily: "'DM Mono', monospace",
-                fontSize: 11,
-                fontWeight: 600,
-                color: m.status === "upcoming" ? COLORS.secondary : COLORS.primary,
-                textTransform: "uppercase",
-                letterSpacing: "1.5px",
-                marginBottom: 4
+                position: "absolute",
+                left: left + "%",
+                top: "40%",
+                zIndex: 3
               }
-            }, m.period),
+            },
+
+              // Anchor dot on the timeline
+              createElement("div", {
+                style: {
+                  position: "absolute",
+                  left: 0, top: 0,
+                  width: 14, height: 14,
+                  borderRadius: "50%",
+                  background: m.status === "active" ? COLORS.primary : COLORS.primary + "cc",
+                  border: "2px solid " + COLORS.primary,
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 6,
+                  boxShadow: m.status === "active"
+                    ? "0 0 14px " + COLORS.primary + "88, 0 0 28px " + COLORS.primary + "33"
+                    : "0 0 10px " + COLORS.primary + "55"
+                }
+              }),
+
+              // SVG curved branch lines
+              createElement("svg", {
+                width: svgW, height: 240,
+                style: {
+                  position: "absolute",
+                  left: -(svgW / 2), top: svgTop,
+                  pointerEvents: "none",
+                  overflow: "visible"
+                }
+              },
+                svgPaths.map(function(d, pi) {
+                  return createElement("path", {
+                    key: "glow-" + pi,
+                    d: d, fill: "none",
+                    stroke: branchColor,
+                    strokeWidth: 5,
+                    opacity: 0.12
+                  });
+                }),
+                svgPaths.map(function(d, pi) {
+                  return createElement("path", {
+                    key: "line-" + pi,
+                    d: d, fill: "none",
+                    stroke: branchColor,
+                    strokeWidth: 1.5,
+                    opacity: 0.7
+                  });
+                })
+              ),
+
+              // Period + label title
+              createElement("div", {
+                style: {
+                  position: "absolute",
+                  left: 0,
+                  top: fanDown ? 205 : -195,
+                  transform: "translateX(-50%)",
+                  textAlign: "center",
+                  width: 270
+                }
+              },
+                createElement("div", {
+                  style: {
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: periodColor,
+                    textTransform: "uppercase",
+                    letterSpacing: "1.5px",
+                    marginBottom: 5
+                  }
+                }, m.period),
+                createElement("div", {
+                  style: { fontSize: 14, fontWeight: 700, color: COLORS.text }
+                }, m.label)
+              ),
+
+              // 3 leaf circles with labels below each circle
+              m.subs.map(function(sub, si) {
+                var leaf = fanLeaves[si];
+                return createElement("div", {
+                  key: si,
+                  style: {
+                    position: "absolute",
+                    left: leaf.x,
+                    top: leaf.y - halfLeaf,
+                    transform: "translateX(-50%)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    zIndex: 4
+                  }
+                },
+                  // Leaf circle
+                  createElement("div", {
+                    style: circleStyle(m.status, leafSize)
+                  },
+                    createElement("span", {
+                      style: {
+                        fontFamily: "'DM Serif Display', serif",
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: valueColor,
+                        animation: valueAnim
+                      }
+                    }, sub.value)
+                  ),
+                  // Label below circle
+                  createElement("div", {
+                    style: {
+                      fontSize: 11,
+                      fontWeight: 500,
+                      color: COLORS.textMuted,
+                      textAlign: "center",
+                      lineHeight: 1.3,
+                      marginTop: 6,
+                      maxWidth: 110,
+                      whiteSpace: "pre-line"
+                    }
+                  }, sub.sublabel)
+                );
+              })
+            )
+          );
+
+        } else {
+          // ── Single node ──
+          return createElement("div", { key: i },
+            // Circle
+            createElement("div", {
+              style: Object.assign({}, circleStyle(m.status, 54), {
+                position: "absolute",
+                left: left + "%",
+                top: "40%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 2
+              })
+            },
+              createElement("span", {
+                style: {
+                  fontFamily: "'DM Serif Display', serif",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: valueColor,
+                  animation: valueAnim
+                }
+              }, m.value)
+            ),
+
+            // Detail card (below timeline)
             createElement("div", {
               style: {
-                fontSize: 14,
-                fontWeight: 600,
-                color: COLORS.text,
-                marginBottom: 3
+                position: "absolute",
+                left: left + "%",
+                transform: "translateX(-50%)",
+                top: "calc(40% + 42px)",
+                width: 140,
+                textAlign: "left",
+                zIndex: 2
               }
-            }, m.label),
-            createElement("div", {
-              style: {
-                fontSize: 11,
-                color: COLORS.textMuted,
-                lineHeight: 1.4
-              }
-            }, m.detail)
-          )
-        );
+            },
+              createElement("div", {
+                style: {
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: COLORS.secondary,
+                  textTransform: "uppercase",
+                  letterSpacing: "1.5px",
+                  marginBottom: 4
+                }
+              }, m.period),
+              createElement("div", {
+                style: { fontSize: 14, fontWeight: 600, color: COLORS.text, marginBottom: 3 }
+              }, m.label),
+              createElement("div", {
+                style: { fontSize: 11, color: COLORS.textMuted, lineHeight: 1.4 }
+              }, m.detail)
+            )
+          );
+        }
       })
     ),
 
-    // Standout testimonial
-    createElement("div", {
-      style: {
-        background: COLORS.card,
-        borderRadius: 14,
-        padding: "22px 28px",
-        borderLeft: "3px solid " + COLORS.primary,
-        maxWidth: 640,
-        margin: "0 auto"
-      }
-    },
-      createElement("div", {
-        style: {
-          fontSize: 15,
-          fontStyle: "italic",
-          color: COLORS.text,
-          lineHeight: 1.7,
-          marginBottom: 10
-        }
-      }, "\u201CAfter few minutes of use I managed to find issues that I had no chance identifying\u201D"),
-      createElement("div", {
-        style: { fontSize: 13, fontWeight: 600, color: COLORS.primary }
-      }, "Ian"),
-      createElement("div", {
-        style: { fontSize: 11, color: COLORS.textMuted }
-      }, "Performance Manager")
-    )
   );
 }
 
