@@ -31,6 +31,7 @@ var Tooltip = Recharts.Tooltip;
 var Legend = Recharts.Legend;
 var ResponsiveContainer = Recharts.ResponsiveContainer;
 var Cell = Recharts.Cell;
+var ComposedChart = Recharts.ComposedChart;
 
 // ============ COLOR PALETTE ============
 var COLORS = {
@@ -149,8 +150,8 @@ var SLIDE_TITLES = [
   "Why Greenbay Wins",
   "Traction",
   "Team",
-  "Business Model",
   "Vision",
+  "Business Model",
   "The Ask",
   "Appendix"
 ];
@@ -2506,46 +2507,244 @@ function SlideBusinessModel() {
   var cm = ue.core_metrics || {};
   var benchmarks = ue.benchmarks || {};
   var arrSeries = (arr.tam_based_scenarios || {}).series || [];
+  var costStructure = ue.cost_structure_at_scale_pct || {};
+
+  // Animations
+  var styleTag = createElement("style", null,
+    // Metric card entrance float-up
+    "@keyframes bmCardIn { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: translateY(0); } } " +
+    // Value count-up glow
+    "@keyframes bmValueGlow { 0%, 100% { text-shadow: 0 0 8px rgba(0,212,170,0.15); } 50% { text-shadow: 0 0 22px rgba(0,212,170,0.5), 0 0 44px rgba(0,212,170,0.15); } } " +
+    // Border shimmer on metric cards
+    "@keyframes bmBorderShimmer { 0% { border-color: rgba(30,58,95,0.6); } 50% { border-color: rgba(0,212,170,0.3); } 100% { border-color: rgba(30,58,95,0.6); } } " +
+    // Flowing revenue stream (horizontal pulse)
+    "@keyframes bmFlowPulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } } " +
+    // Subtle float for chart card
+    "@keyframes bmChartFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } } " +
+    // Ring fill animation for cost breakdown
+    "@keyframes bmRingFill { 0% { stroke-dashoffset: 251; } } "
+  );
 
   var keyMetrics = [
-    { label: "ACV", value: "$" + (cm.acv_usd || 0).toLocaleString(), color: COLORS.primary },
-    { label: "Gross Margin", value: (cm.gross_margin_pct || 0) + "%", color: COLORS.success },
-    { label: "LTV:CAC", value: (cm.ltv_cac_ratio || 0) + "x", color: COLORS.accent },
-    { label: "CAC Payback", value: (cm.cac_payback_months || 0) + " mo", color: COLORS.info },
-    { label: "NRR", value: (cm.nrr_pct || 0) + "%", color: COLORS.purple }
+    { label: "ACV", value: "$375K", sub: "Blended enterprise", color: COLORS.primary, icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" },
+    { label: "Gross Margin", value: (cm.gross_margin_pct || 0) + "%", sub: "SaaS benchmark: " + (benchmarks.saas_median_gross_margin_pct || 75) + "%", color: COLORS.success, icon: "M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" },
+    { label: "LTV:CAC", value: (cm.ltv_cac_ratio || 0).toFixed(1) + "x", sub: "Top quartile: " + (benchmarks.saas_top_quartile_ltv_cac || 5) + "x", color: COLORS.accent, icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" },
+    { label: "CAC Payback", value: (cm.cac_payback_months || 0).toFixed(1) + " mo", sub: "Median SaaS: " + (benchmarks.saas_median_cac_payback_months || 18) + " mo", color: COLORS.info, icon: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" },
+    { label: "NRR", value: (cm.nrr_pct || 0) + "%", sub: "Median SaaS: " + (benchmarks.saas_median_nrr_pct || 110) + "%", color: COLORS.purple, icon: "M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" }
+  ];
+
+  // Cost structure donut data
+  var costItems = [
+    { label: "R&D", pct: costStructure.rd || 20, color: COLORS.primary },
+    { label: "S&M", pct: costStructure.sales_marketing || 35, color: COLORS.info },
+    { label: "COGS", pct: costStructure.cogs || 28, color: COLORS.accent },
+    { label: "G&A", pct: costStructure.ga || 10, color: COLORS.purple },
+    { label: "Margin", pct: costStructure.operating_margin || 7, color: COLORS.success }
+  ];
+
+  // Revenue flow tiers
+  var tiers = [
+    { label: "Core Orchestration", desc: "Depot ops, routing, dispatch", pct: 60, color: COLORS.primary },
+    { label: "Energy & Charging", desc: "Smart charging, grid optimization", pct: 25, color: COLORS.accent },
+    { label: "AV Infrastructure", desc: "Autonomous fleet management layer", pct: 15, color: COLORS.purple }
   ];
 
   return createElement("div", { style: S.slide },
+    styleTag,
     createElement("h2", { style: S.slideTitle }, "Business Model"),
-    null,
-    // Key metrics row
-    createElement("div", { style: S.grid5 },
+    createElement("p", { style: Object.assign({}, S.slideSubtitle, { marginBottom: 28 }) },
+      "Enterprise SaaS \u2014 $375K ACV | 72% Gross Margin | 115% NRR"
+    ),
+
+    // ── Top: 5 metric cards with staggered entrance ──
+    createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16, marginBottom: 24 } },
       keyMetrics.map(function(m, i) {
         return createElement("div", {
           key: i,
-          style: Object.assign({}, S.metricCard, { borderTop: "4px solid " + m.color })
+          style: {
+            background: COLORS.card,
+            borderRadius: 14,
+            border: "1px solid " + COLORS.border,
+            padding: "18px 14px 14px",
+            textAlign: "center",
+            position: "relative",
+            overflow: "hidden",
+            animation: "bmCardIn 0.6s " + (i * 0.1).toFixed(1) + "s ease-out both, bmBorderShimmer " + (4 + i * 0.5).toFixed(1) + "s " + (2 + i * 0.3).toFixed(1) + "s ease-in-out infinite"
+          }
         },
-          createElement("div", { style: S.metricLabel }, m.label),
-          createElement("div", { style: Object.assign({}, S.metricValue, { color: m.color }) }, m.value)
+          // Top accent line with flow animation
+          createElement("div", {
+            style: {
+              position: "absolute", top: 0, left: 0, right: 0, height: 3,
+              backgroundImage: "linear-gradient(90deg, transparent 0%, " + m.color + " 50%, transparent 100%)",
+              backgroundSize: "200% 100%",
+              animation: "bmFlowPulse 3s " + (i * 0.4).toFixed(1) + "s linear infinite"
+            }
+          }),
+          // SVG icon
+          createElement("svg", {
+            width: 20, height: 20, viewBox: "0 0 24 24",
+            style: { marginBottom: 8, opacity: 0.5 }
+          },
+            createElement("path", { d: m.icon, fill: m.color, fillRule: "evenodd" })
+          ),
+          createElement("div", {
+            style: { fontSize: 10, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 600, marginBottom: 6 }
+          }, m.label),
+          createElement("div", {
+            style: {
+              fontFamily: "'DM Serif Display', serif",
+              fontSize: 30,
+              fontWeight: 700,
+              color: m.color,
+              letterSpacing: "-1px",
+              lineHeight: 1,
+              animation: "bmValueGlow 3s " + (1 + i * 0.5).toFixed(1) + "s ease-in-out infinite"
+            }
+          }, m.value),
+          createElement("div", {
+            style: { fontSize: 10, color: COLORS.textDim, marginTop: 6, lineHeight: 1.3 }
+          }, m.sub)
         );
       })
     ),
-    // ARR Chart
-    createElement("div", { style: S.chartCard },
-      createElement("div", { style: S.chartTitle }, "ARR Trajectory \u2014 5 Scenarios (2025\u20132030)"),
-      null,
-      createElement(ResponsiveContainer, { width: "100%", height: 300 },
-        createElement(LineChart, { data: arrSeries, margin: { top: 10, right: 30, left: 10, bottom: 0 } },
-          createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.5 }),
-          createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11 }),
-          createElement(YAxis, { stroke: COLORS.textDim, fontSize: 11, tickFormatter: function(v) { return '$' + v + 'M'; } }),
-          createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return ['$' + v + 'M']; } }),
-          createElement(Legend, { wrapperStyle: { fontSize: 11 } }),
-          createElement(Line, { type: "monotone", dataKey: "bear", stroke: COLORS.danger, strokeWidth: 1.5, dot: false, name: "Bear", strokeDasharray: "5 3" }),
-          createElement(Line, { type: "monotone", dataKey: "bottoms_up", stroke: COLORS.orange, strokeWidth: 2, dot: false, name: "Bottoms-Up" }),
-          createElement(Line, { type: "monotone", dataKey: "tam_conservative", stroke: COLORS.accent, strokeWidth: 2, dot: false, name: "TAM Conservative" }),
-          createElement(Line, { type: "monotone", dataKey: "tam_base", stroke: COLORS.primary, strokeWidth: 3, dot: false, name: "TAM Base" }),
-          createElement(Line, { type: "monotone", dataKey: "tam_upside", stroke: COLORS.success, strokeWidth: 2, dot: false, name: "TAM Upside" })
+
+    // ── Bottom: Two columns — Revenue Tiers + ARR Chart ──
+    createElement("div", { style: { display: "grid", gridTemplateColumns: "320px 1fr", gap: 20 } },
+
+      // Left column: Revenue streams + cost donut
+      createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16 } },
+
+        // Revenue tiers
+        createElement("div", {
+          style: {
+            background: COLORS.card, borderRadius: 14, border: "1px solid " + COLORS.border,
+            padding: "18px 20px",
+            animation: "bmCardIn 0.6s 0.6s ease-out both"
+          }
+        },
+          createElement("div", {
+            style: { fontSize: 13, fontWeight: 600, color: COLORS.text, marginBottom: 14, letterSpacing: "-0.3px" }
+          }, "Revenue Streams"),
+          tiers.map(function(t, i) {
+            return createElement("div", {
+              key: i,
+              style: { marginBottom: i < tiers.length - 1 ? 12 : 0 }
+            },
+              createElement("div", {
+                style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }
+              },
+                createElement("div", { style: { fontSize: 12, fontWeight: 600, color: COLORS.text } }, t.label),
+                createElement("div", {
+                  style: { fontSize: 12, fontWeight: 700, color: t.color, fontFamily: "'DM Mono', monospace" }
+                }, t.pct + "%")
+              ),
+              createElement("div", { style: { fontSize: 10, color: COLORS.textDim, marginBottom: 6 } }, t.desc),
+              // Animated bar
+              createElement("div", { style: { height: 4, borderRadius: 2, background: COLORS.border, overflow: "hidden" } },
+                createElement("div", {
+                  style: {
+                    width: t.pct + "%", height: "100%", borderRadius: 2,
+                    backgroundImage: "linear-gradient(90deg, " + t.color + "cc, " + t.color + ")",
+                    backgroundSize: "200% 100%",
+                    animation: "bmFlowPulse 4s " + (i * 0.3).toFixed(1) + "s linear infinite"
+                  }
+                })
+              )
+            );
+          })
+        ),
+
+        // Cost structure mini donut
+        createElement("div", {
+          style: {
+            background: COLORS.card, borderRadius: 14, border: "1px solid " + COLORS.border,
+            padding: "18px 20px",
+            animation: "bmCardIn 0.6s 0.8s ease-out both"
+          }
+        },
+          createElement("div", {
+            style: { fontSize: 13, fontWeight: 600, color: COLORS.text, marginBottom: 12, letterSpacing: "-0.3px" }
+          }, "Cost Structure at Scale"),
+          createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } },
+            // SVG donut
+            createElement("svg", { width: 90, height: 90, viewBox: "0 0 100 100" },
+              (function() {
+                var r = 40, circ = 2 * Math.PI * r;
+                var offset = 0;
+                return costItems.map(function(c, i) {
+                  var dashLen = (c.pct / 100) * circ;
+                  var el = createElement("circle", {
+                    key: i, cx: 50, cy: 50, r: r,
+                    fill: "none", stroke: c.color, strokeWidth: 10,
+                    strokeDasharray: dashLen + " " + (circ - dashLen),
+                    strokeDashoffset: -offset,
+                    strokeLinecap: "butt",
+                    style: { animation: "bmRingFill 1.2s " + (0.8 + i * 0.15).toFixed(2) + "s ease-out both" },
+                    transform: "rotate(-90 50 50)"
+                  });
+                  offset += dashLen;
+                  return el;
+                });
+              })()
+            ),
+            // Legend
+            createElement("div", { style: { flex: 1 } },
+              costItems.map(function(c, i) {
+                return createElement("div", {
+                  key: i,
+                  style: { display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }
+                },
+                  createElement("div", { style: { width: 8, height: 8, borderRadius: 2, background: c.color, flexShrink: 0 } }),
+                  createElement("div", {
+                    style: { fontSize: 10, color: COLORS.textMuted, flex: 1 }
+                  }, c.label),
+                  createElement("div", {
+                    style: { fontSize: 10, fontWeight: 600, color: c.color, fontFamily: "'DM Mono', monospace" }
+                  }, c.pct + "%")
+                );
+              })
+            )
+          )
+        )
+      ),
+
+      // Right column: ARR chart
+      createElement("div", {
+        style: {
+          background: COLORS.card, borderRadius: 14, border: "1px solid " + COLORS.border,
+          padding: "20px 22px",
+          animation: "bmCardIn 0.6s 0.5s ease-out both, bmChartFloat 6s 2s ease-in-out infinite"
+        }
+      },
+        createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 } },
+          createElement("div", { style: { fontSize: 14, fontWeight: 600, color: COLORS.text } }, "ARR Trajectory (2025\u20132030)"),
+          createElement("div", {
+            style: { fontSize: 11, color: COLORS.primary, fontFamily: "'DM Mono', monospace", fontWeight: 600 }
+          }, "$226M base")
+        ),
+        createElement("div", { style: { fontSize: 10, color: COLORS.textDim, marginBottom: 14 } },
+          "5 scenarios anchored at $0.8M (2026) and $3M (2027)"
+        ),
+        createElement(ResponsiveContainer, { width: "100%", height: 280 },
+          createElement(ComposedChart, { data: arrSeries, margin: { top: 10, right: 20, left: 0, bottom: 0 } },
+            createElement("defs", null,
+              createElement("linearGradient", { id: "bmArrGrad", x1: "0", y1: "0", x2: "0", y2: "1" },
+                createElement("stop", { offset: "0%", stopColor: COLORS.primary, stopOpacity: 0.25 }),
+                createElement("stop", { offset: "100%", stopColor: COLORS.primary, stopOpacity: 0.02 })
+              )
+            ),
+            createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#1e3a5f", opacity: 0.3 }),
+            createElement(XAxis, { dataKey: "year", stroke: COLORS.textDim, fontSize: 11, tickLine: false }),
+            createElement(YAxis, { stroke: COLORS.textDim, fontSize: 10, tickLine: false, axisLine: false, tickFormatter: function(v) { return '$' + v + 'M'; } }),
+            createElement(Tooltip, { contentStyle: tooltipStyle, formatter: function(v) { return ['$' + v + 'M']; } }),
+            createElement(Area, { type: "monotone", dataKey: "tam_base", stroke: COLORS.primary, strokeWidth: 2.5, fill: "url(#bmArrGrad)", name: "TAM Base", dot: false }),
+            createElement(Line, { type: "monotone", dataKey: "tam_upside", stroke: COLORS.success, strokeWidth: 1.5, dot: false, name: "Upside", strokeDasharray: "4 2" }),
+            createElement(Line, { type: "monotone", dataKey: "tam_conservative", stroke: COLORS.accent, strokeWidth: 1.5, dot: false, name: "Conservative", strokeDasharray: "4 2" }),
+            createElement(Line, { type: "monotone", dataKey: "bottoms_up", stroke: COLORS.orange, strokeWidth: 1.5, dot: false, name: "Bottoms-Up" }),
+            createElement(Line, { type: "monotone", dataKey: "bear", stroke: COLORS.danger, strokeWidth: 1, dot: false, name: "Bear", strokeDasharray: "3 3" }),
+            createElement(Legend, { wrapperStyle: { fontSize: 10, paddingTop: 4 } })
+          )
         )
       )
     )
@@ -3520,8 +3719,8 @@ function App() {
     SlideCompetitive,
     SlideTraction,
     SlideTeam,
-    SlideBusinessModel,
     SlideVision,
+    SlideBusinessModel,
     SlideAsk,
     SlideAppendix
   ];
