@@ -3307,6 +3307,11 @@ function SlideAppendix() {
       title: "Fleet Electrification Intel",
       desc: "EV fleet transition data, regional projections, and Gartner strategic planning assumptions.",
       url: "https://realorenarieli.github.io/fleet-electrification-intel/"
+    },
+    {
+      title: "Autonomous Fleet Evolution",
+      desc: "AV adoption timeline, TCO transformation, use case maturity, key players, and fleet impact scenarios.",
+      url: "https://realorenarieli.github.io/autonomous-fleet-evolution/"
     }
   ];
 
