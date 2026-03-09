@@ -3334,7 +3334,7 @@ function SlideAppendix() {
     ),
     // Dashboard links
     createElement("div", {
-      style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 36 }
+      style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, marginBottom: 36 }
     },
       dashboards.map(function(d, i) {
         return createElement("a", {
